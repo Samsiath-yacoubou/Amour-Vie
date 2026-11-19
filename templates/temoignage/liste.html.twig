@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Témoignages{% endblock %}
+{% block meta_description %}Des jeunes racontent, avec leurs mots, leur parcours accompagné par Amour&Vie ABMS.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Témoignages',
+        chapo: "Des jeunes partagent, avec leurs mots, ce que le programme Amour&Vie leur a apporté.",
+        ariane: [{libelle: 'Témoignages'}]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+            <div class="entete-section entete-section--repartie entete-section--haut">
+                <div>
+                    <span class="surtitre">Voix des jeunes</span>
+                    <h2 style="margin-bottom:0">Ce qu'ils et elles en disent</h2>
+                </div>
+                <a class="bouton bouton--primaire bouton--petit" href="{{ path('temoignage_partager') }}">
+                    {{ icone('citation', 15) }} Partager mon témoignage
+                </a>
+            </div>
+
+            {% if total > 0 %}
+                <div class="grille grille--3">
+                    {% for temoignage in temoignages %}
+                        {{ include('partials/_carte_temoignage.html.twig') }}
+                    {% endfor %}
+                </div>
+
+                {{ include('partials/_pagination.html.twig', {
+                    route: 'temoignages',
+                    parametres: {}
+                }) }}
+            {% else %}
+                <div class="etat-vide">
+                    <div class="etat-vide__icone" aria-hidden="true">{{ icone('citation', 44) }}</div>
+                    <h3>Aucun témoignage n'a encore été publié</h3>
+                    <p>Sois la première ou le premier à partager ton expérience avec la communauté Amour&Vie.</p>
+                    <p style="margin-top:1.5rem">
+                        <a class="bouton bouton--contour" href="{{ path('temoignage_partager') }}">Partager mon témoignage</a>
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}

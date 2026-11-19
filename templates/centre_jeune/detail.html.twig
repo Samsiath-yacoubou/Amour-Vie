@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}{{ centre.nom }}{% endblock %}
+{% block meta_description %}{{ centre.description|default('Centre Jeune Amour&Vie à ' ~ centre.ville)|extrait(160) }}{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: centre.nom,
+        chapo: centre.ville,
+        ariane: [{libelle: 'Centres Jeunes', chemin: path('centres_jeunes')}, {libelle: centre.nom}]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur mise-en-page">
+            <div>
+                {% if centre.imageName %}
+                    <div class="article-image">
+                        <img src="{{ vich_uploader_asset(centre, 'imageFile') }}" alt="">
+                    </div>
+                {% endif %}
+
+                {% if centre.description %}
+                    <div class="prose">{{ centre.description|nl2br }}</div>
+                {% endif %}
+
+                {% if centre.thematiques|length > 0 %}
+                    <div class="puces" style="margin-top:2rem">
+                        {% for thematique in centre.thematiques %}
+                            <span class="puce">{{ thematique.nom }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <aside class="mise-en-page__aside">
+                <div class="encadre">
+                    <p class="encadre__titre">Coordonnées</p>
+                    <ul class="encadre__liste">
+                        <li>{{ icone('localisation', 16) }} {{ centre.adresse }}</li>
+                        {% if centre.telephone %}
+                            <li>{{ icone('telephone', 16) }} <a href="tel:{{ centre.telephone|replace({' ': ''}) }}">{{ centre.telephone }}</a></li>
+                        {% endif %}
+                        {% if centre.email %}
+                            <li>{{ icone('enveloppe', 16) }} <a href="mailto:{{ centre.email }}">{{ centre.email }}</a></li>
+                        {% endif %}
+                        {% if centre.horaires %}
+                            <li>{{ icone('horloge', 16) }} {{ centre.horaires }}</li>
+                        {% endif %}
+                        {% if centre.responsable %}
+                            <li>{{ icone('utilisateur', 16) }} {{ centre.responsable }}</li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <div style="margin-top:1.5rem">
+                    <a class="bouton bouton--primaire bouton--large" href="{{ path('centres_jeunes') }}">
+                        {{ icone('carte', 16) }} Voir tous les centres
+                    </a>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+{% endblock %}

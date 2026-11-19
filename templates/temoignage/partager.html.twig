@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Partager mon témoignage{% endblock %}
+{% block meta_description %}Partage ton expérience avec la communauté Amour&Vie ABMS, de façon anonyme si tu le souhaites.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Partage ton témoignage',
+        chapo: "Ton expérience peut aider d'autres jeunes. Écris-la avec tes mots, tu restes libre de rester anonyme.",
+        ariane: [
+            {libelle: 'Témoignages', chemin: path('temoignages')},
+            {libelle: 'Partager'}
+        ]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+            {% if sections.intro is defined %}
+                <div class="prose" style="max-width:720px;margin-bottom:2.5rem">
+                    <h2>{{ sections.intro.titre }}</h2>
+                    {{ sections.intro.contenu|raw }}
+                </div>
+            {% endif %}
+
+            <div class="mise-en-page">
+
+                {# --------------------------------------------------- Formulaire #}
+                <div>
+                    <div class="entete-section" style="margin-bottom:2rem">
+                        <span class="surtitre">À toi la parole</span>
+                        <h2>Ton témoignage</h2>
+                        <p class="chapo">Tous les champs sauf le témoignage lui-même sont facultatifs : reste anonyme si tu préfères.</p>
+                    </div>
+
+                    {{ form_start(formulaire, {attr: {novalidate: 'novalidate'}}) }}
+                        <div class="grille grille--2" style="gap:0 1.25rem">
+                            {{ form_row(formulaire.pseudonyme) }}
+                            {{ form_row(formulaire.age) }}
+                        </div>
+
+                        {{ form_row(formulaire.ville) }}
+                        {{ form_row(formulaire.contenu) }}
+                        {{ form_row(formulaire.siteWeb) }}
+
+                        <p style="font-size:.85rem;color:var(--texte-tres-doux)">
+                            Ton témoignage est relu par notre équipe avant publication. N'indique aucune information
+                            permettant de t'identifier si tu souhaites rester anonyme.
+                        </p>
+
+                        <button type="submit" class="bouton bouton--primaire" style="margin-top:1rem">
+                            {{ icone('envoyer', 17) }} Envoyer mon témoignage
+                        </button>
+                    {{ form_end(formulaire) }}
+                </div>
+
+                {# ---------------------------------------------------- Repères #}
+                <aside class="mise-en-page__aside">
+                    <div class="encadre">
+                        <p class="encadre__titre">Bon à savoir</p>
+                        <ul class="encadre__liste">
+                            <li>{{ icone('valide', 15) }} La publication est facultative et relue avant mise en ligne.</li>
+                            <li>{{ icone('valide', 15) }} Tu peux rester complètement anonyme.</li>
+                            <li>{{ icone('valide', 15) }} Aucune donnée n'est utilisée à d'autres fins.</li>
+                        </ul>
+
+                        <a class="bouton bouton--contour bouton--large bouton--petit" href="{{ path('temoignages') }}" style="margin-top:1rem">
+                            Lire d'autres témoignages
+                        </a>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

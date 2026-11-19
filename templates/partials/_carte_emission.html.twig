@@ -1,0 +1,25 @@
+{# Carte d'une émission radio/TV. Paramètre : emission #}
+<article class="carte">
+    <a class="carte__media" href="{{ path('emission_detail', {slug: emission.slug}) }}">
+        {% if emission.imageName %}
+            <img src="{{ vich_uploader_asset(emission, 'imageFile') }}" alt="" loading="lazy">
+        {% else %}
+            <span class="carte__media-vide" aria-hidden="true">{{ icone(emission.type.value == 'tv' ? 'video' : 'audio', 34) }}</span>
+        {% endif %}
+        <span class="carte__etiquettes">
+            <span class="badge">{{ icone(emission.type.value == 'tv' ? 'video' : 'audio', 12) }} {{ emission.type.libelle }}</span>
+        </span>
+    </a>
+    <div class="carte__corps">
+        <div class="carte__meta">
+            {% if emission.dateDiffusion %}<span>{{ icone('calendrier', 13) }} {{ emission.dateDiffusion|date_fr }}</span>{% endif %}
+            {% if emission.animateurs %}<span>{{ icone('utilisateur', 13) }} {{ emission.animateurs }}</span>{% endif %}
+        </div>
+        <h3 class="carte__titre">
+            <a href="{{ path('emission_detail', {slug: emission.slug}) }}">{{ emission.titre }}</a>
+        </h3>
+        {% if emission.description %}
+            <p class="carte__resume">{{ emission.description|extrait(110) }}</p>
+        {% endif %}
+    </div>
+</article>

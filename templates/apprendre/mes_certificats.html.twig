@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Mes certificats{% endblock %}
+
+{% block corps %}
+
+    {{ include('apprendre/_barre_compte.html.twig') }}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Mes certificats',
+        chapo: 'Télécharge tes certificats et partage leur lien de vérification.',
+        ariane: [
+            {libelle: 'Apprendre', chemin: path('apprendre_catalogue')},
+            {libelle: 'Mes certificats'}
+        ]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+            {% if certificats|length > 0 %}
+                <div class="grille grille--2">
+                    {% for ligne in certificats %}
+                        {% set certificat = ligne.certificat %}
+                        <article class="carte certificat-carte">
+                            <div class="carte__corps">
+                                <div style="margin-bottom:.75rem">
+                                    {% if certificat.estValide %}
+                                        <span class="badge badge--succes">{{ icone('valide', 12) }} Valide</span>
+                                    {% else %}
+                                        <span class="badge badge--danger">Révoqué le {{ certificat.revoqueLe|date('d/m/Y') }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <h2 class="carte__titre">{{ certificat.titreCours }}</h2>
+                                <p class="carte__resume">
+                                    Délivré à <strong>{{ certificat.nomTitulaire }}</strong> le {{ certificat.delivreLe|date('d/m/Y') }}<br>
+                                    N° <code>{{ certificat.numero }}</code>
+                                </p>
+
+                                <div class="certificat-carte__actions">
+                                    <a class="bouton bouton--primaire bouton--petit" href="{{ path('apprendre_certificat_pdf', {numero: certificat.numero}) }}" download>
+                                        {{ icone('telecharger', 15) }} Télécharger (PDF)
+                                    </a>
+                                    <a class="bouton bouton--contour bouton--petit" href="{{ ligne.urlVerification }}">
+                                        {{ icone('lien', 15) }} Lien de vérification
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+
+                <p style="margin-top:2rem;font-size:.9rem;color:var(--texte-doux)">
+                    Une faute dans ton nom ? Contacte l'équipe Amour&amp;Vie : elle peut réémettre ton certificat corrigé, avec le même numéro.
+                </p>
+            {% else %}
+                <div class="etat-vide">
+                    <div class="etat-vide__icone" aria-hidden="true">{{ icone('etoile', 44) }}</div>
+                    <h3>Pas encore de certificat</h3>
+                    <p>Termine un cours pour recevoir ton premier certificat.</p>
+                    <a class="bouton bouton--primaire" href="{{ path('apprendre_mon_espace') }}" style="margin-top:1rem">Mes cours</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}

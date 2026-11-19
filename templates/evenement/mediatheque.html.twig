@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Médiathèque{% endblock %}
+{% block meta_description %}Photos, vidéos et galeries des actions menées par Amour&Vie.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Médiathèque',
+        chapo: "Les images et les vidéos de nos actions sur le terrain.",
+        ariane: [{libelle: 'Médiathèque'}]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+
+            {% if galeries|length > 0 %}
+                <div class="entete-section">
+                    <span class="surtitre">{{ icone('dossier', 14) }} Collections</span>
+                    <h2>Galeries</h2>
+                </div>
+
+                <div class="grille grille--3" style="margin-bottom:4rem">
+                    {% for galerie in galeries %}
+                        {% set couverture = galerie.medias|first %}
+                        <article class="carte">
+                            <div class="carte__media">
+                                {% if couverture and couverture.fichierName %}
+                                    <img src="{{ vich_uploader_asset(couverture, 'fichierFile') }}"
+                                         alt="{{ couverture.alt ?: galerie.nom }}" loading="lazy">
+                                {% else %}
+                                    <div class="carte__media-vide" aria-hidden="true">{{ icone('image', 34) }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="carte__corps">
+                                <h3 class="carte__titre">{{ galerie.nom }}</h3>
+                                {% if galerie.description %}
+                                    <p class="carte__resume">{{ galerie.description|extrait(120) }}</p>
+                                {% endif %}
+                                <div class="carte__pied">
+                                    <span style="font-size:.85rem;color:var(--texte-tres-doux)">
+                                        {{ galerie.medias|length }} média{{ galerie.medias|length > 1 ? 's' : '' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if images|length > 0 %}
+                <div class="entete-section">
+                    <span class="surtitre">{{ icone('image', 14) }} Photos</span>
+                    <h2>Photothèque</h2>
+                </div>
+
+                <div class="grille grille--4" style="gap:1rem;margin-bottom:4rem">
+                    {% for media in images %}
+                        {% if media.fichierName %}
+                            <figure style="margin:0">
+                                <img src="{{ vich_uploader_asset(media, 'fichierFile') }}"
+                                     alt="{{ media.alt ?: media.nom }}" loading="lazy"
+                                     style="border-radius:var(--rayon);width:100%;aspect-ratio:4/3;object-fit:cover">
+                                {% if media.legende %}
+                                    <figcaption style="font-size:.82rem;color:var(--texte-tres-doux);margin-top:.5rem">
+                                        {{ media.legende }}
+                                    </figcaption>
+                                {% endif %}
+                            </figure>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if videos|length > 0 %}
+                <div class="entete-section">
+                    <span class="surtitre">{{ icone('video', 14) }} Vidéos</span>
+                    <h2>Vidéothèque</h2>
+                </div>
+
+                <div class="grille grille--2">
+                    {% for media in videos %}
+                        <article class="carte">
+                            <div class="carte__corps">
+                                <h3 class="carte__titre">{{ media.nom }}</h3>
+                                {% if media.legende %}<p class="carte__resume">{{ media.legende }}</p>{% endif %}
+                                {% if media.urlExterne %}
+                                    <a class="lien-fleche" href="{{ media.urlExterne }}" target="_blank" rel="noopener noreferrer">
+                                        Regarder la vidéo
+                                    </a>
+                                {% elseif media.fichierName %}
+                                    <video controls style="width:100%;border-radius:var(--rayon)">
+                                        <source src="{{ vich_uploader_asset(media, 'fichierFile') }}" type="{{ media.fichierMime ?: 'video/mp4' }}">
+                                        Votre navigateur ne prend pas en charge la lecture vidéo.
+                                    </video>
+                                {% endif %}
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if galeries|length == 0 and images|length == 0 and videos|length == 0 %}
+                <div class="etat-vide">
+                    <div class="etat-vide__icone" aria-hidden="true">{{ icone('image', 44) }}</div>
+                    <h3>La médiathèque est en cours de constitution</h3>
+                    <p>Les photos et vidéos de nos actions seront prochainement mises en ligne.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Nouveau mot de passe · Apprendre{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Choisis un nouveau mot de passe',
+        ariane: [
+            {libelle: 'Apprendre', chemin: path('apprendre_catalogue')},
+            {libelle: 'Nouveau mot de passe'}
+        ]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur compte-apprenant">
+            {{ form_start(formulaire, {attr: {novalidate: 'novalidate'}}) }}
+                {{ form_row(formulaire.motDePasse.first) }}
+                {{ form_row(formulaire.motDePasse.second) }}
+
+                <button type="submit" class="bouton bouton--primaire bouton--large" style="margin-top:.5rem">
+                    {{ icone('valide', 17) }} Enregistrer
+                </button>
+            {{ form_end(formulaire) }}
+        </div>
+    </section>
+
+{% endblock %}

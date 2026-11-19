@@ -1,0 +1,358 @@
+{% extends 'base.html.twig' %}
+
+{%- set parametres = site.parametres -%}
+
+{% block titre_page %}{{ parametres.nomSite }} · {{ parametres.slogan }}{% endblock %}
+{% block meta_description %}{{ parametres.seoDescription ?: parametres.heroSousTitre ?: parametres.heroTitre }}{% endblock %}
+
+{% block corps %}
+
+    {# =========================================================== A. Hero #}
+    {# Carrousel piloté par les 4 derniers articles publiés : image, catégorie
+       et titre de chacun, avec puces et défilement automatique gauche-droite.
+       Repli sur le bandeau statique des paramètres si aucun article n'existe
+       encore (site fraîchement installé). #}
+    {% set diapositives = articles|default([])|slice(0, 4) %}
+
+    {% if diapositives|length > 0 %}
+        <section class="hero" data-carousel role="region" aria-roledescription="carrousel" aria-label="Actualités à la une">
+            <div class="hero__piste" data-carousel-piste>
+                {% for article in diapositives %}
+                    <div class="hero__diapo" data-carousel-diapo
+                         aria-roledescription="diapositive" aria-label="{{ loop.index }} sur {{ diapositives|length }}"
+                         aria-hidden="{{ loop.first ? 'false' : 'true' }}">
+                        <div class="hero__media">
+                            {% if article.imageName %}
+                                <img src="{{ vich_uploader_asset(article, 'imageFile') }}" alt="" aria-hidden="true" loading="{{ loop.first ? 'eager' : 'lazy' }}">
+                            {% endif %}
+                        </div>
+
+                        <div class="conteneur">
+                            <div class="hero__contenu">
+                                {% if article.type %}
+                                    <span class="hero__surtitre">{{ article.type.nom }}</span>
+                                {% endif %}
+
+                                {% if loop.first %}
+                                    <h1 class="hero__titre">{{ article.titre }}</h1>
+                                {% else %}
+                                    <h2 class="hero__titre">{{ article.titre }}</h2>
+                                {% endif %}
+
+                                <div class="hero__actions">
+                                    <a class="bouton bouton--contour-clair" href="{{ path('actualite_detail', {slug: article.slug}) }}"
+                                       {{ loop.first ? '' : 'tabindex="-1"' }}>
+                                        Voir plus
+                                    </a>
+                                    <a class="bouton bouton--primaire" href="{{ path('apprendre_catalogue') }}"
+                                       {{ loop.first ? '' : 'tabindex="-1"' }}>
+                                        {{ icone('formation', 17) }} Apprendre en ligne
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if diapositives|length > 1 %}
+                <div class="hero__puces" role="tablist" aria-label="Choisir une actualité">
+                    {% for article in diapositives %}
+                        <button type="button" class="hero__puce {{ loop.first ? 'est-active' }}"
+                                data-carousel-puce role="tab"
+                                aria-current="{{ loop.first ? 'true' : 'false' }}"
+                                aria-label="{{ article.titre|extrait(60) }}"></button>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </section>
+    {% else %}
+        <section class="hero hero--statique">
+            <div class="hero__media">
+                {% if parametres.heroVideoUrl %}
+                    <video autoplay muted loop playsinline
+                           {% if parametres.heroImageName %}poster="{{ vich_uploader_asset(parametres, 'heroImageFile') }}"{% endif %}>
+                        <source src="{{ parametres.heroVideoUrl }}" type="video/mp4">
+                    </video>
+                {% elseif parametres.heroImageName %}
+                    <img src="{{ vich_uploader_asset(parametres, 'heroImageFile') }}" alt="" aria-hidden="true">
+                {% endif %}
+            </div>
+
+            <div class="conteneur">
+                <div class="hero__contenu">
+                    <span class="hero__surtitre">Amour&Vie ABMS</span>
+
+                    <h1 class="hero__titre">{{ parametres.heroTitre }}</h1>
+
+                    <p class="hero__texte">
+                        {{ parametres.heroSousTitre
+                            ?: "Un programme pensé avec les jeunes, pour accompagner leur engagement, leur santé et leurs droits." }}
+                    </p>
+
+                    <div class="hero__actions">
+                        <a class="bouton bouton--primaire" href="{{ path('apprendre_catalogue') }}">
+                            {{ icone('formation', 17) }} Apprendre en ligne
+                        </a>
+                        {% if parametres.heroBouton1Libelle %}
+                            <a class="bouton bouton--contour-clair" href="{{ parametres.heroBouton1Lien ?: path('qui_sommes_nous') }}">
+                                {{ parametres.heroBouton1Libelle }}
+                            </a>
+                        {% endif %}
+                        {% if parametres.heroBouton2Libelle %}
+                            <a class="lien-fleche lien-fleche--clair" href="{{ parametres.heroBouton2Lien ?: path('programmes') }}">
+                                {{ parametres.heroBouton2Libelle }}
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    {# ================================================ D. Actualités récentes #}
+    {% if articles|length > 0 %}
+        {% set une = articles|first %}
+        {% set liste = articles|slice(1, 4) %}
+        <section class="section" aria-labelledby="titre-actualites">
+            <div class="conteneur">
+                <div class="entete-section entete-section--repartie entete-section--haut">
+                    <div>
+                        <h2 id="titre-actualites" class="titre-accent">À la une</h2>
+                        <p class="chapo">Découvrez les actualités, initiatives et opportunités du programme Amour&Vie.</p>
+                    </div>
+                    <a class="lien-fleche" href="{{ path('actualites') }}">Explorer les actualités</a>
+                </div>
+
+                <div class="actualites-vitrine">
+                    <article class="actualite-une">
+                        <a class="actualite-une__media" href="{{ path('actualite_detail', {slug: une.slug}) }}">
+                            {% if une.imageName %}
+                                <img src="{{ vich_uploader_asset(une, 'imageFile') }}"
+                                     alt="{{ une.imageAlt ?: une.titre }}" loading="lazy">
+                            {% else %}
+                                <div class="actualite-une__media-vide" aria-hidden="true">{{ icone('journal', 40) }}</div>
+                            {% endif %}
+                        </a>
+                        <div class="actualite-une__corps">
+                            {% if une.type %}<span class="badge badge--neutre">{{ une.type.nom }}</span>{% endif %}
+                            <h3 class="actualite-une__titre">
+                                <a href="{{ path('actualite_detail', {slug: une.slug}) }}">{{ une.titre }}</a>
+                            </h3>
+                            <p class="actualite-une__resume">{{ une.resume|extrait(160) }}</p>
+                            <time class="actualite-une__date" datetime="{{ une.datePublication|date('Y-m-d') }}">
+                                {{ une.datePublication|date_fr }}
+                            </time>
+                        </div>
+                    </article>
+
+                    <div class="actualites-liste">
+                        {% for article in liste %}
+                            <article class="actualite-ligne">
+                                <div class="actualite-ligne__corps">
+                                    {% if article.type %}<span class="badge badge--neutre">{{ article.type.nom }}</span>{% endif %}
+                                    <h3 class="actualite-ligne__titre">
+                                        <a href="{{ path('actualite_detail', {slug: article.slug}) }}">{{ article.titre }}</a>
+                                    </h3>
+                                    <time class="actualite-ligne__date" datetime="{{ article.datePublication|date('Y-m-d') }}">
+                                        {{ article.datePublication|date_fr }}
+                                    </time>
+                                </div>
+                                <a class="actualite-ligne__media" href="{{ path('actualite_detail', {slug: article.slug}) }}">
+                                    {% if article.imageName %}
+                                        <img src="{{ vich_uploader_asset(article, 'imageFile') }}"
+                                             alt="" loading="lazy">
+                                    {% else %}
+                                        <div class="actualite-ligne__media-vide" aria-hidden="true">{{ icone('journal', 18) }}</div>
+                                    {% endif %}
+                                </a>
+                            </article>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    {# ==================================================== Dernière émission TV #}
+    {% if derniereEmissionTv %}
+        <section class="section section--teinte" aria-labelledby="titre-derniere-emission">
+            <div class="conteneur">
+                <div class="duo">
+                    <div>
+                        {{ include('partials/_lecteur_emission.html.twig', {emission: derniereEmissionTv}) }}
+                    </div>
+
+                    <div>
+                        <span class="surtitre">{{ icone('video', 14) }} Émission TV</span>
+                        <h2 id="titre-derniere-emission">{{ derniereEmissionTv.titre }}</h2>
+
+                        {% if derniereEmissionTv.dateDiffusion %}
+                            <p class="chapo" style="margin-bottom:1.5rem">
+                                Diffusée le {{ derniereEmissionTv.dateDiffusion|date_fr }}
+                            </p>
+                        {% endif %}
+
+                        {% if derniereEmissionTv.description %}
+                            <div class="prose">{{ derniereEmissionTv.description|extrait(220) }}</div>
+                        {% endif %}
+
+                        <div style="display:flex;gap:.75rem 1.5rem;flex-wrap:wrap;align-items:center;margin-top:1.75rem">
+                            {% if derniereEmissionTv.urlExterne %}
+                                <a class="bouton bouton--primaire" href="{{ derniereEmissionTv.urlExterne }}" target="_blank" rel="noopener noreferrer">
+                                    Regarder l'émission {{ icone('lien-externe', 15) }}
+                                </a>
+                            {% endif %}
+                            <a class="lien-fleche" href="{{ path('emissions', {type: 'tv'}) }}">Toutes les émissions TV</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    {# ======================================================= Dernier magazine #}
+    {% if dernierMagazine %}
+        <section class="section" aria-labelledby="titre-dernier-magazine">
+            <div class="conteneur">
+                <div class="duo">
+                    <div>
+                        <span class="surtitre">{{ icone('journal', 14) }} Magazine Amour&Vie</span>
+                        <h2 id="titre-dernier-magazine">{{ dernierMagazine.titre }}</h2>
+                        <p class="chapo" style="margin-bottom:1.5rem">Numéro {{ dernierMagazine.annee }}</p>
+
+                        {% if dernierMagazine.description %}
+                            <div class="prose">{{ dernierMagazine.description|extrait(220) }}</div>
+                        {% endif %}
+
+                        <div style="display:flex;gap:.75rem 1.5rem;flex-wrap:wrap;align-items:center;margin-top:1.75rem">
+                            {% if dernierMagazine.fichierName %}
+                                <a class="bouton bouton--primaire" href="{{ path('publication_telecharger', {slug: dernierMagazine.slug}) }}" download>
+                                    {{ icone('telecharger', 15) }} Télécharger le numéro
+                                </a>
+                            {% endif %}
+                            <a class="lien-fleche" href="{{ path('publication_detail', {slug: dernierMagazine.slug}) }}">Voir la fiche complète</a>
+                        </div>
+                    </div>
+
+                    <div>
+                        {% if dernierMagazine.couvertureName %}
+                            <div style="max-width:320px;margin-inline:auto">
+                                <img src="{{ vich_uploader_asset(dernierMagazine, 'couvertureFile') }}"
+                                     alt="Couverture du magazine Amour&Vie : {{ dernierMagazine.titre }}"
+                                     style="width:100%;border-radius:var(--rayon-lg);box-shadow:var(--ombre-lg)" loading="lazy">
+                            </div>
+                        {% else %}
+                            <div class="duo__media" style="max-width:320px;aspect-ratio:3/4;margin-inline:auto">
+                                <div class="duo__media-vide" aria-hidden="true">{{ icone('journal', 56) }}</div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    {# =================================================== Réseau des Centres Jeunes #}
+    {% if centresJeunes|length > 0 %}
+        <section class="section section--teinte-profond" aria-labelledby="titre-centres-jeunes">
+            <div class="conteneur">
+                <div class="titre-ruban">
+                    <h2 id="titre-centres-jeunes" class="titre-ruban__texte">Nos Centres Jeunes</h2>
+                </div>
+
+                <div class="centres-reseau">
+                    {% for piste in [1, 2] %}
+                        <div class="centres-reseau__piste" {{ piste == 2 ? 'aria-hidden="true"' }}>
+                            {% for centre in centresJeunes %}
+                                <a class="centre-puce" href="{{ path('centre_jeune_detail', {slug: centre.slug}) }}"
+                                   {{ piste == 2 ? 'tabindex="-1"' }}>
+                                    <span class="centre-puce__nom">{{ centre.nom }}</span>
+                                    {% if centre.ville %}
+                                        <span class="centre-puce__commune">
+                                            {{ icone('localisation', 13) }} {{ centre.ville }}
+                                        </span>
+                                    {% endif %}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    {# ======================================= Apprendre en ligne (e-learning) #}
+    <section class="section section--teinte" aria-labelledby="titre-apprendre">
+        <div class="conteneur">
+            <div class="entete-section entete-section--centre" style="margin-bottom:0">
+                <span class="surtitre">{{ icone('formation', 14) }} Apprendre en ligne</span>
+                <h2 id="titre-apprendre">Des cours gratuits sur ta santé, à ton rythme</h2>
+                <p class="chapo">Des leçons courtes à suivre sur ton téléphone, un quiz à la fin de chaque module, et ta progression gardée en mémoire.</p>
+                <a class="bouton bouton--primaire" href="{{ path('apprendre_catalogue') }}" style="margin-top:1.25rem">
+                    Commencer à apprendre {{ icone('fleche-droite', 16) }}
+                </a>
+            </div>
+        </div>
+    </section>
+
+    {# ======================================= Mission + chiffres clés #}
+    {# Bloc texte à gauche, chiffres empilés à droite derrière un simple
+       filet vertical — pas de cartes, dans l'esprit du bloc « mission »
+       de la référence retenue. #}
+    {% if sections.presentation is defined or chiffres|length > 0 %}
+        {% set presentation = sections.presentation ?? null %}
+        <section class="section" aria-labelledby="titre-mission">
+            <div class="conteneur">
+                <div class="mission">
+                    <div class="mission__gauche">
+                        <div class="mission__texte">
+                            {% if presentation %}
+                                <h2 id="titre-mission" class="mission__titre">{{ presentation.titre }}</h2>
+                                <div class="prose">{{ presentation.contenu|raw }}</div>
+                                <a class="lien-fleche" href="{{ path('qui_sommes_nous') }}" style="margin-top:1.5rem">
+                                    En savoir plus
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        {% if chiffres|length > 0 %}
+                            <div class="mission__chiffres">
+                                {% for chiffre in chiffres|slice(0, 3) %}
+                                    <div class="mission__chiffre">
+                                        <p class="mission__chiffre-valeur">
+                                            <span data-compteur="{{ chiffre.valeur }}">0</span>{{ chiffre.suffixe }}
+                                        </p>
+                                        <p class="mission__chiffre-libelle">{{ chiffre.libelle }}</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {% if parametres.facebook %}
+                        <div class="mission__reseau">
+                            <div id="fb-root"></div>
+                            <script async defer crossorigin="anonymous"
+                                    src="https://connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v19.0"></script>
+                            <div class="fb-page"
+                                 data-href="{{ parametres.facebook }}"
+                                 data-tabs="timeline"
+                                 data-width="1080"
+                                 data-height="500"
+                                 data-small-header="false"
+                                 data-adapt-container-width="true"
+                                 data-hide-cover="false"
+                                 data-show-facepile="true">
+                                <blockquote cite="{{ parametres.facebook }}" class="fb-xfbml-parse-ignore">
+                                    <a href="{{ parametres.facebook }}">{{ parametres.nomSite }}</a>
+                                </blockquote>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+{% endblock %}

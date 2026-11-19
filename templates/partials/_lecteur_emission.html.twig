@@ -1,0 +1,57 @@
+{# Aperçu cliquable d'une émission radio ou TV. Paramètre : emission.
+   - Radio avec fichier audio : couverture cliquable qui révèle un lecteur
+     audio natif (lecture + progression) directement sur le site.
+   - TV avec lien YouTube : couverture cliquable qui ouvre YouTube dans un
+     nouvel onglet.
+   - Repli (radio sans fichier, ou aucun média) : simple lien externe ou
+     couverture statique. #}
+{%- if emission.type.value == 'radio' and emission.fichierAudioName -%}
+    <div class="lecteur-audio" data-lecteur-audio>
+        <button type="button" class="lecteur-audio__poster" data-lecteur-audio-bouton
+                aria-label="Écouter « {{ emission.titre }} »">
+            {% if emission.imageName %}
+                <img src="{{ vich_uploader_asset(emission, 'imageFile') }}" alt="" loading="lazy">
+            {% else %}
+                <span class="lecteur-audio__poster-vide" aria-hidden="true">{{ icone('audio', 48) }}</span>
+            {% endif %}
+            <span class="lecteur-media__bouton-lecture" aria-hidden="true">{{ icone('lecture', 26) }}</span>
+        </button>
+
+        <audio class="lecteur-audio__element" controls preload="none" data-lecteur-audio-element hidden>
+            <source src="{{ vich_uploader_asset(emission, 'fichierAudioFile') }}">
+            Ton navigateur ne prend pas en charge la lecture audio. Utilise le lien de téléchargement ci-dessous.
+        </audio>
+    </div>
+{%- elseif emission.type.value == 'tv' and emission.urlExterne -%}
+    <a class="lecteur-video" href="{{ emission.urlExterne }}" target="_blank" rel="noopener noreferrer"
+       aria-label="Regarder « {{ emission.titre }} » sur YouTube (nouvelle fenêtre)">
+        {% if emission.imageName %}
+            <img src="{{ vich_uploader_asset(emission, 'imageFile') }}" alt="" loading="lazy">
+        {% else %}
+            <span class="lecteur-video__vide" aria-hidden="true">{{ icone('video', 48) }}</span>
+        {% endif %}
+        <span class="lecteur-media__bouton-lecture" aria-hidden="true">{{ icone('lecture', 26) }}</span>
+        <span class="lecteur-video__etiquette">{{ icone('lien-externe', 13) }} Voir sur YouTube</span>
+    </a>
+{%- elseif emission.urlExterne -%}
+    {% if emission.imageName %}
+        <figure class="article-image" style="margin-bottom:1.5rem">
+            <img src="{{ vich_uploader_asset(emission, 'imageFile') }}" alt="">
+        </figure>
+    {% endif %}
+    <p style="margin:0">
+        <a class="bouton bouton--primaire" href="{{ emission.urlExterne }}" target="_blank" rel="noopener noreferrer">
+            Écouter / regarder l'émission {{ icone('lien-externe', 15) }}
+        </a>
+    </p>
+{%- elseif emission.imageName -%}
+    <figure class="article-image" style="margin-bottom:0">
+        <img src="{{ vich_uploader_asset(emission, 'imageFile') }}" alt="">
+    </figure>
+{%- else -%}
+    <div class="duo__media" style="aspect-ratio:16/9">
+        <div class="duo__media-vide" aria-hidden="true">
+            {{ icone(emission.type.value == 'tv' ? 'video' : 'audio', 56) }}
+        </div>
+    </div>
+{%- endif -%}

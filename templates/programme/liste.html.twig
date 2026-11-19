@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Nos programmes{% endblock %}
+{% block meta_description %}Les actions et programmes d'Amour&Vie ABMS pour les jeunes au Bénin.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Nos programmes',
+        chapo: "Des actions pensées avec les jeunes pour leur santé, leurs droits et leur engagement.",
+        ariane: [{libelle: 'Nos programmes'}]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+            {% if programmes|length > 0 %}
+                <div class="grille grille--2">
+                    {% for programme in programmes %}
+                        <article class="carte-programme" style="--accent: {{ programme.couleur ?: '#E3001B' }}; padding:2.25rem 2rem">
+                            <div style="display:flex;align-items:flex-start;gap:1.25rem">
+                                <span class="carte-programme__logo" style="margin-bottom:0;flex-shrink:0">
+                                    {% if programme.logoName %}
+                                        <img src="{{ vich_uploader_asset(programme, 'logoFile') }}" alt="" loading="lazy">
+                                    {% else %}
+                                        {{ programme.sigle|slice(0, 4) }}
+                                    {% endif %}
+                                </span>
+                                <div>
+                                    <p class="carte-programme__sigle">{{ programme.sigle }}</p>
+                                    <p class="carte-programme__nom">{{ programme.nom }}</p>
+                                </div>
+                            </div>
+
+                            <p class="carte-programme__texte" style="margin-top:1.25rem">{{ programme.descriptionCourte }}</p>
+
+                            <a class="lien-fleche carte-programme__lien"
+                               href="{{ path('programme_detail', {slug: programme.slug}) }}">
+                                Découvrir le programme<span class="sr-only"> {{ programme.sigle }}</span>
+                            </a>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="etat-vide">
+                    <div class="etat-vide__icone" aria-hidden="true">{{ icone('dossier', 44) }}</div>
+                    <h3>Les programmes seront bientôt publiés</h3>
+                    <p>Cette rubrique est en cours d'alimentation depuis l'espace d'administration.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}

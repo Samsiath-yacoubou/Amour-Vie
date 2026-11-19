@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {%- set parametres = site.parametres -%}
+    {#- block() renvoie un contenu déjà échappé par les {{ }} du bloc : les
+        valeurs de repli sont donc échappées ici aussi, et le tout est affiché
+        avec |raw (sinon « Amour&Vie » deviendrait « Amour&amp;amp;Vie »). -#}
+    {%- set meta_titre = block('meta_titre') is defined and block('meta_titre') is not empty
+        ? block('meta_titre')
+        : (block('titre') is defined ? block('titre') : parametres.nomSite|e) -%}
+    {%- set meta_description = block('meta_description') is defined and block('meta_description') is not empty
+        ? block('meta_description')
+        : (parametres.seoDescription ?: parametres.slogan)|e -%}
+
+    <title>{% block titre_page %}{{ meta_titre|raw }} · {{ parametres.nomSite }}{% endblock %}</title>
+
+    <meta name="description" content="{{ meta_description|striptags|raw }}">
+    {% if parametres.seoMotsCles %}<meta name="keywords" content="{{ parametres.seoMotsCles }}">{% endif %}
+    <link rel="canonical" href="{{ app.request.schemeAndHttpHost ~ app.request.pathInfo }}">
+
+    {# Partage social : Open Graph et Twitter Cards #}
+    <meta property="og:site_name" content="{{ parametres.nomSite }}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:title" content="{{ meta_titre|striptags|raw }}">
+    <meta property="og:description" content="{{ meta_description|striptags|raw }}">
+    <meta property="og:url" content="{{ app.request.uri }}">
+    <meta property="og:locale" content="fr_FR">
+    {%- set og_image = block('og_image') is defined and block('og_image') is not empty
+        ? block('og_image')
+        : (parametres.imagePartageName ? vich_uploader_asset(parametres, 'imagePartageFile') : null) -%}
+    {% if og_image %}<meta property="og:image" content="{{ app.request.schemeAndHttpHost ~ og_image }}">{% endif %}
+    <meta name="twitter:card" content="summary_large_image">
+
+    {% if parametres.faviconName %}
+        <link rel="icon" href="{{ vich_uploader_asset(parametres, 'faviconFile') }}">
+    {% else %}
+        <link rel="icon" href="data:image/svg+xml,{{ '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="%23E3001B"/><text x="16" y="22" font-family="Arial" font-size="15" font-weight="bold" fill="white" text-anchor="middle">A</text></svg>'|url_encode }}">
+    {% endif %}
+
+    {#- Lu et appliqué avant le premier rendu, pour éviter un flash de
+        mauvais thème : ce script inline est la seule exception justifiée
+        à « tout vit dans app.js ». Le bouton bascule (voir _entete.html.twig
+        et initTheme() dans app.js) écrit la même clé localStorage. -#}
+    <script>
+        (function () {
+            try {
+                var theme = localStorage.getItem('theme');
+                if (theme === 'clair') { document.documentElement.dataset.theme = 'light'; }
+                else if (theme === 'sombre') { document.documentElement.dataset.theme = 'dark'; }
+            } catch (e) {}
+        })();
+    </script>
+
+    {% block feuilles_de_style %}
+        {{ importmap('app') }}
+    {% endblock %}
+
+    {% block donnees_structurees %}
+        {# Liste reconstruite manuellement : filter() conserve les clés d'origine,
+           ce qui produirait un objet JSON au lieu d'un tableau. #}
+        {%- set reseaux = [] -%}
+        {%- for url in [parametres.facebook, parametres.instagram, parametres.tiktok, parametres.linkedin, parametres.twitter, parametres.youtube] -%}
+            {%- if url %}{% set reseaux = reseaux|merge([url]) %}{% endif -%}
+        {%- endfor -%}
+        <script type="application/ld+json">
+        {{ {
+            '@context': 'https://schema.org',
+            '@type': 'NGO',
+            'name': parametres.nomSite,
+            'alternateName': parametres.slogan,
+            'url': app.request.schemeAndHttpHost,
+            'email': parametres.email,
+            'telephone': parametres.telephone,
+            'address': parametres.adresse,
+            'sameAs': reseaux,
+        }|filter(v => v is not null and v is not empty)|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}
+        </script>
+    {% endblock %}
+</head>
+<body class="{% block classe_body %}{% endblock %}">
+
+<a class="lien-evitement" href="#contenu-principal">Aller au contenu principal</a>
+
+{{ include('partials/_sprite.html.twig') }}
+{{ include('partials/_entete.html.twig') }}
+
+<main id="contenu-principal">
+    {% block messages_flash %}
+        {% for type, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="conteneur" style="padding-top:1.5rem">
+                    <div class="message message--{{ type == 'success' ? 'succes' : (type == 'error' ? 'erreur' : (type == 'warning' ? 'attention' : 'info')) }}" role="{{ type in ['error', 'warning'] ? 'alert' : 'status' }}">
+                        {{ icone(type == 'success' ? 'circle-check' : (type == 'error' ? 'triangle-exclamation' : 'circle-info'), 20) }}
+                        <div>{{ message }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    {% endblock %}
+
+    {% block corps %}{% endblock %}
+</main>
+
+{{ include('partials/_pied.html.twig') }}
+
+<button type="button" class="retour-haut" data-retour-haut aria-label="Revenir en haut de la page">
+    {{ icone('fleche-haut', 20) }}
+</button>
+
+{% block javascripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}{{ emission.titre }}{% endblock %}
+{% block meta_description %}{{ emission.description ? emission.description|extrait(160) : 'Émission ' ~ emission.type.libelle ~ ' produite par Amour&Vie ABMS.' }}{% endblock %}
+{% block og_image %}{{ emission.imageName ? vich_uploader_asset(emission, 'imageFile') : '' }}{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: emission.titre,
+        chapo: (emission.type.libelle) ~ (emission.dateDiffusion ? ' · ' ~ (emission.dateDiffusion|date_fr) : ''),
+        ariane: [
+            {libelle: 'Émissions radio & TV', chemin: path('emissions')},
+            {libelle: emission.titre}
+        ]
+    }) }}
+
+    <div class="conteneur section">
+        <div class="mise-en-page">
+            <div>
+                {# ------------------------------------------------- Lecteur #}
+                <div style="margin-bottom:2rem">
+                    {{ include('partials/_lecteur_emission.html.twig', {emission: emission}) }}
+                </div>
+
+                {% if emission.description %}
+                    <section aria-labelledby="titre-description">
+                        <span class="surtitre">À propos</span>
+                        <h2 id="titre-description">Présentation de l'émission</h2>
+                        <div class="prose">{{ emission.description|nl2br }}</div>
+                    </section>
+                {% endif %}
+            </div>
+
+            {# --------------------------------------------------- Colonne #}
+            <aside class="mise-en-page__aside">
+                <div class="encadre">
+                    <p class="encadre__titre">En bref</p>
+
+                    <ul style="list-style:none;margin:0;padding:0">
+                        <li style="display:flex;gap:.85rem;margin-bottom:1.25rem">
+                            <span style="color:var(--rose);flex-shrink:0;margin-top:.15rem">
+                                {{ icone(emission.type.value == 'tv' ? 'video' : 'audio', 19) }}
+                            </span>
+                            <span>
+                                <strong style="display:block;font-size:.85rem;color:var(--gris-900)">Type</strong>
+                                {{ emission.type.libelle }}
+                            </span>
+                        </li>
+
+                        {% if emission.dateDiffusion %}
+                            <li style="display:flex;gap:.85rem;margin-bottom:1.25rem">
+                                <span style="color:var(--rose);flex-shrink:0;margin-top:.15rem">{{ icone('calendrier', 19) }}</span>
+                                <span>
+                                    <strong style="display:block;font-size:.85rem;color:var(--gris-900)">Date de diffusion</strong>
+                                    <time datetime="{{ emission.dateDiffusion|date('Y-m-d') }}">{{ emission.dateDiffusion|date_fr }}</time>
+                                </span>
+                            </li>
+                        {% endif %}
+
+                        {% if emission.animateurs %}
+                            <li style="display:flex;gap:.85rem;margin-bottom:1.25rem">
+                                <span style="color:var(--rose);flex-shrink:0;margin-top:.15rem">{{ icone('utilisateur', 19) }}</span>
+                                <span>
+                                    <strong style="display:block;font-size:.85rem;color:var(--gris-900)">Animation</strong>
+                                    {{ emission.animateurs }}
+                                </span>
+                            </li>
+                        {% endif %}
+
+                        {% if emission.programme %}
+                            <li style="display:flex;gap:.85rem">
+                                <span style="color:var(--rose);flex-shrink:0;margin-top:.15rem">{{ icone('dossier', 19) }}</span>
+                                <span>
+                                    <strong style="display:block;font-size:.85rem;color:var(--gris-900)">Programme</strong>
+                                    <a href="{{ path('programme_detail', {slug: emission.programme.slug}) }}">{{ emission.programme.nom }}</a>
+                                </span>
+                            </li>
+                        {% endif %}
+                    </ul>
+
+                    {% if emission.thematiques|length > 0 %}
+                        <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--bordure-douce)">
+                            <p style="font-size:.85rem;font-weight:700;margin-bottom:.75rem">Thématiques</p>
+                            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+                                {% for thematique in emission.thematiques %}
+                                    <span class="badge badge--neutre">{{ thematique.nom }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <p style="margin-top:1.5rem">
+                    <a class="lien-fleche" href="{{ path('emissions') }}">Toutes les émissions</a>
+                </p>
+            </aside>
+        </div>
+    </div>
+
+{% endblock %}

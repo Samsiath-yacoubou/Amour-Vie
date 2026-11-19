@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Connexion · Apprendre{% endblock %}
+{% block meta_description %}Connecte-toi pour suivre tes cours en ligne Amour&Vie.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Connexion',
+        chapo: 'Retrouve tes cours et ta progression.',
+        ariane: [
+            {libelle: 'Apprendre', chemin: path('apprendre_catalogue')},
+            {libelle: 'Connexion'}
+        ]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur compte-apprenant">
+            {% if erreur %}
+                <div class="message message--erreur" role="alert">
+                    {{ icone('triangle-alerte', 20) }}
+                    <div>
+                        {% if erreur.messageKey == 'Invalid credentials.' %}
+                            Adresse e-mail ou mot de passe incorrect.
+                        {% elseif erreur.messageKey starts with 'Too many failed login attempts' %}
+                            Trop d'essais. Patiente une minute avant de réessayer.
+                        {% else %}
+                            {{ erreur.messageKey|trans(erreur.messageData, 'security') }}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <form method="post" action="{{ path('apprendre_connexion') }}">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                {% if cible %}<input type="hidden" name="_target_path" value="{{ cible }}">{% endif %}
+
+                <div class="champ">
+                    <label class="champ__label" for="email">Adresse e-mail</label>
+                    <input type="email" id="email" name="email" class="controle" value="{{ derniereSaisie }}"
+                           required autocomplete="email" inputmode="email">
+                </div>
+
+                <div class="champ">
+                    <label class="champ__label" for="motdepasse">Mot de passe</label>
+                    <input type="password" id="motdepasse" name="motdepasse" class="controle"
+                           required autocomplete="current-password">
+                </div>
+
+                <label class="champ__case" style="margin-bottom:1.5rem">
+                    <input type="checkbox" name="_remember_me" value="on" checked>
+                    <span>Rester connecté·e sur ce téléphone</span>
+                </label>
+
+                <button type="submit" class="bouton bouton--primaire bouton--large">
+                    {{ icone('utilisateur', 17) }} Se connecter
+                </button>
+            </form>
+
+            <p class="compte-apprenant__liens">
+                <a href="{{ path('apprendre_mot_de_passe_oublie') }}">Mot de passe oublié ?</a>
+                <a href="{{ path('apprendre_inscription', cible ? {cible: cible} : {}) }}">Pas encore de compte ? Inscris-toi</a>
+            </p>
+        </div>
+    </section>
+
+{% endblock %}

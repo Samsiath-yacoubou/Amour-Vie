@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}{{ publication.titre }}{% endblock %}
+{% block meta_description %}{{ publication.description ?: publication.titre }}{% endblock %}
+{% block og_image %}{{ publication.couvertureName ? vich_uploader_asset(publication, 'couvertureFile') : '' }}{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: publication.titre,
+        ariane: [
+            {libelle: 'Publications', chemin: path('publications')},
+            {libelle: publication.titre|extrait(48)}
+        ]
+    }) }}
+
+    <div class="conteneur section">
+        <div class="mise-en-page">
+            <div>
+                <div style="display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:2rem">
+                    {% if publication.type %}<span class="badge">{{ publication.type.nom }}</span>{% endif %}
+                    <span class="badge badge--neutre">{{ publication.annee }}</span>
+                    {% if publication.programme %}
+                        <a class="badge badge--profond" href="{{ path('programme_detail', {slug: publication.programme.slug}) }}">
+                            {{ publication.programme.sigle }}
+                        </a>
+                    {% endif %}
+                </div>
+
+                {% if publication.description %}
+                    <div class="prose">{{ publication.description|raw }}</div>
+                {% else %}
+                    <p class="chapo">Ce document est disponible en téléchargement libre.</p>
+                {% endif %}
+
+                {% if publication.thematiques|length > 0 %}
+                    <div class="puces" style="margin-top:2.5rem">
+                        {% for thematique in publication.thematiques %}
+                            <a class="puce" href="{{ path('publications', {thematique: thematique.slug}) }}">
+                                {{ icone('etiquette', 13) }} {{ thematique.nom }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if similaires|length > 0 %}
+                    <section aria-labelledby="titre-similaires" style="margin-top:3.5rem">
+                        <h2 id="titre-similaires">Documents du même type</h2>
+                        <div class="grille" style="gap:1rem">
+                            {% for autre in similaires %}
+                                {% if autre.id != publication.id %}
+                                    {{ include('partials/_carte_publication.html.twig', {publication: autre}) }}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endif %}
+            </div>
+
+            <aside class="mise-en-page__aside">
+                <div class="encadre">
+                    {% if publication.couvertureName %}
+                        <img src="{{ vich_uploader_asset(publication, 'couvertureFile') }}"
+                             alt="Couverture de « {{ publication.titre }} »"
+                             style="width:100%;border-radius:var(--rayon);margin-bottom:1.25rem;box-shadow:var(--ombre-sm)">
+                    {% endif %}
+
+                    <p class="encadre__titre">Fiche du document</p>
+                    <ul class="encadre__liste">
+                        {% if publication.type %}
+                            <li><strong>Type :</strong> {{ publication.type.nom }}</li>
+                        {% endif %}
+                        <li><strong>Année :</strong> {{ publication.annee }}</li>
+                        {% if publication.programme %}
+                            <li><strong>Programme :</strong> {{ publication.programme.sigle }}</li>
+                        {% endif %}
+                        {% if publication.fichierTaille %}
+                            <li><strong>Taille :</strong> {{ publication.tailleLisible }}</li>
+                        {% endif %}
+                        <li><strong>Téléchargements :</strong> {{ publication.nombreTelechargements|nombre_fr }}</li>
+                    </ul>
+
+                    {% if publication.fichierName %}
+                        <a class="bouton bouton--primaire bouton--large" style="margin-top:1.5rem"
+                           href="{{ path('publication_telecharger', {slug: publication.slug}) }}" download>
+                            {{ icone('telecharger', 16) }} Télécharger
+                        </a>
+                    {% else %}
+                        <p class="message message--info" style="margin-top:1.5rem;margin-bottom:0">
+                            {{ icone('circle-info', 18) }}
+                            <span>Le fichier de ce document sera prochainement mis en ligne.</span>
+                        </p>
+                    {% endif %}
+                </div>
+            </aside>
+        </div>
+
+        <p style="margin-top:3rem">
+            <a class="bouton bouton--neutre" href="{{ path('publications') }}">
+                {{ icone('fleche-gauche', 16) }} Retour à la bibliothèque
+            </a>
+        </p>
+    </div>
+
+{% endblock %}

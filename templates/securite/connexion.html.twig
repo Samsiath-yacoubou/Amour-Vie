@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Connexion à l'espace admin · {{ site.parametres.nomSite }}</title>
+    {{ importmap('app') }}
+    <style>
+        .connexion {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem 1.25rem;
+            background: linear-gradient(130deg, var(--violet) 0%, var(--rose-sombre) 55%, var(--rose) 100%);
+        }
+        .connexion__boite {
+            width: min(460px, 100%);
+            background: #fff;
+            border-radius: var(--rayon-xl);
+            box-shadow: var(--ombre-lg);
+            padding: clamp(2rem, 1.5rem + 2vw, 3rem);
+        }
+        .connexion__entete { text-align: center; margin-bottom: 2rem; }
+        .connexion__marque {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px; height: 64px;
+            margin-bottom: 1.25rem;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--rose) 0%, var(--violet) 100%);
+            color: #fff; font-weight: 800; font-size: .95rem;
+        }
+        .connexion__retour { display: block; text-align: center; margin-top: 1.75rem; font-size: .9rem; }
+    </style>
+</head>
+<body>
+
+{{ include('partials/_sprite.html.twig') }}
+
+<main class="connexion">
+    <div class="connexion__boite">
+        <div class="connexion__entete">
+            <span class="connexion__marque" aria-hidden="true">A&V</span>
+            <h1 style="font-size:1.6rem;margin-bottom:.4rem">Espace admin</h1>
+            <p style="color:var(--texte-doux);margin:0">Espace d'administration du site</p>
+        </div>
+
+        {% if erreur %}
+            <div class="message message--erreur" role="alert">
+                {{ icone('triangle-exclamation', 20) }}
+                <div>
+                    {% if erreur.messageKey == 'Invalid credentials.' %}
+                        Adresse e-mail ou mot de passe incorrect.
+                    {% else %}
+                        {{ erreur.messageKey|trans(erreur.messageData, 'security') }}
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+
+        {% for message in app.flashes('success') %}
+            <div class="message message--succes" role="status">
+                {{ icone('circle-check', 20) }}<div>{{ message }}</div>
+            </div>
+        {% endfor %}
+
+        <form method="post" action="{{ path('connexion') }}">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <div class="champ">
+                <label class="champ__label" for="email">Adresse e-mail</label>
+                <input type="email" id="email" name="email" class="controle"
+                       value="{{ derniereSaisie }}" required autofocus autocomplete="email"
+                       placeholder="prenom.nom@abmsbj.org">
+            </div>
+
+            <div class="champ">
+                <label class="champ__label" for="motdepasse">Mot de passe</label>
+                <input type="password" id="motdepasse" name="motdepasse" class="controle"
+                       required autocomplete="current-password" placeholder="••••••••">
+            </div>
+
+            <label style="display:flex;align-items:center;gap:.6rem;font-size:.9rem;color:var(--texte-doux);margin-bottom:1.5rem">
+                <input type="checkbox" name="_remember_me" value="on">
+                Rester connecté sur cet appareil
+            </label>
+
+            <button type="submit" class="bouton bouton--primaire bouton--large">
+                {{ icone('utilisateur', 17) }} Se connecter
+            </button>
+        </form>
+
+        <a class="connexion__retour" href="{{ path('accueil') }}">
+            {{ icone('fleche-gauche', 14) }} Retour au site public
+        </a>
+    </div>
+</main>
+
+</body>
+</html>

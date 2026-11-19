@@ -1,0 +1,44 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}
+    {{ action == 'revoquer' ? 'Révoquer' : 'Réémettre' }} le certificat {{ certificat.numero }}
+{% endblock %}
+
+{% block main %}
+    <div style="max-width:640px">
+        <p>
+            Certificat délivré à <strong>{{ certificat.nomTitulaire }}</strong>
+            pour le cours « {{ certificat.titreCours }} » le {{ certificat.delivreLe|date('d/m/Y') }}.
+        </p>
+
+        {% if action == 'revoquer' %}
+            <p>Une fois révoqué, le certificat apparaîtra comme <strong>non valable</strong> sur la page publique de vérification,
+               et son PDF portera la mention « révoqué ». Cette action peut être annulée par une réémission.</p>
+        {% else %}
+            <p>La réémission garde le <strong>même numéro</strong>, rétablit le certificat s'il était révoqué et reprend
+               le nom actuel du compte apprenant
+               {%- if certificat.apprenant %} (« <strong>{{ certificat.apprenant.nomComplet }}</strong> »){% endif %}.
+               Pour corriger une faute, modifiez d'abord le nom dans la fiche de l'apprenant si nécessaire.</p>
+            {% if not certificat.apprenant %}
+                <p class="text-warning">Le compte de l'apprenant a été supprimé : le nom actuel du certificat sera conservé.</p>
+            {% endif %}
+        {% endif %}
+
+        <form method="post">
+            <input type="hidden" name="_token" value="{{ csrf_token(action ~ '-' ~ certificat.id) }}">
+
+            {% if action == 'revoquer' %}
+                <div class="mb-3">
+                    <label class="form-label" for="motif">Motif (interne, facultatif)</label>
+                    <input class="form-control" type="text" id="motif" name="motif" maxlength="255"
+                           placeholder="Ex. : fraude constatée, doublon, demande du titulaire…">
+                </div>
+            {% endif %}
+
+            <button type="submit" class="btn {{ action == 'revoquer' ? 'btn-danger' : 'btn-primary' }}">
+                {{ action == 'revoquer' ? 'Révoquer le certificat' : 'Réémettre le certificat' }}
+            </button>
+            <a class="btn btn-secondary" href="{{ path('admin_certificat_detail', {entityId: certificat.id}) }}">Annuler</a>
+        </form>
+    </div>
+{% endblock %}

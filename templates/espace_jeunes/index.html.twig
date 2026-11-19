@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Espace jeunes{% endblock %}
+{% block meta_description %}Un espace confidentiel, sans jugement, pour poser tes questions, t'informer et trouver de l'aide près de chez toi.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Espace jeunes',
+        chapo: "Un espace confidentiel, sans jugement, pour toi. Pose tes questions, informe-toi et trouve de l'aide, à ton rythme.",
+        ariane: [{libelle: 'Espace jeunes'}]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+            {% if sections.intro is defined %}
+                <div class="prose" style="max-width:720px;margin-bottom:3rem">
+                    {% if sections.intro.titre %}<h2>{{ sections.intro.titre }}</h2>{% endif %}
+                    {{ sections.intro.contenu|raw }}
+                </div>
+            {% else %}
+                <div class="prose" style="max-width:720px;margin-bottom:3rem">
+                    <p>
+                        Que tu aies une question sur ton corps, tes relations, la contraception ou tes émotions,
+                        tu es au bon endroit. Ici, personne ne te juge : tu peux poser tes questions anonymement,
+                        t'informer à ton rythme et échanger avec d'autres jeunes qui vivent la même chose.
+                    </p>
+                </div>
+            {% endif %}
+
+            <div class="grille grille--4">
+                <div class="valeur" style="--accent: var(--rose)">
+                    <span class="valeur__icone">{{ icone('message', 24) }}</span>
+                    <h3 class="valeur__titre">Pose ta question</h3>
+                    <p class="valeur__texte">
+                        Écris à un·e pair-éducateur·rice, en toute confidentialité. Aucune information permettant
+                        de t'identifier n'est demandée.
+                    </p>
+                    <a class="lien-fleche" href="{{ path('question_anonyme_poser') }}" style="margin-top:1rem">
+                        Pose ta question
+                    </a>
+                </div>
+
+                <div class="valeur" style="--accent: var(--violet)">
+                    <span class="valeur__icone">{{ icone('circle-question', 24) }}</span>
+                    <h3 class="valeur__titre">Consulte la FAQ</h3>
+                    <p class="valeur__texte">
+                        Des réponses claires aux questions que d'autres jeunes se posent déjà, classées par thématique.
+                    </p>
+                    <a class="lien-fleche" href="{{ path('faq') }}" style="margin-top:1rem">
+                        Voir la FAQ
+                    </a>
+                </div>
+
+                <div class="valeur" style="--accent: var(--emeraude)">
+                    <span class="valeur__icone">{{ icone('ampoule', 24) }}</span>
+                    <h3 class="valeur__titre">Teste tes connaissances</h3>
+                    <p class="valeur__texte">
+                        Des quiz ludiques pour vérifier (et compléter) ce que tu sais déjà. Rien n'est enregistré.
+                    </p>
+                    <a class="lien-fleche" href="{{ path('quiz_liste') }}" style="margin-top:1rem">
+                        Faire un quiz
+                    </a>
+                </div>
+
+                <div class="valeur" style="--accent: var(--rose-sombre)">
+                    <span class="valeur__icone">{{ icone('citation', 24) }}</span>
+                    <h3 class="valeur__titre">Lis des témoignages</h3>
+                    <p class="valeur__texte">
+                        Découvre le vécu d'autres jeunes accompagné·e·s par Amour&Vie, raconté avec leurs mots.
+                    </p>
+                    <a class="lien-fleche" href="{{ path('temoignages') }}" style="margin-top:1rem">
+                        Lire les témoignages
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# --------------------------------------------- Trouver un Centre Jeune #}
+    <section class="section section--teinte">
+        <div class="conteneur">
+            <div class="cta">
+                <div class="cta__contenu">
+                    <span class="surtitre" style="color:var(--emeraude)">Près de chez toi</span>
+                    <h2>Trouve un Centre Jeune</h2>
+                    <p>
+                        Des lieux d'accueil gratuits et confidentiels, ouverts aux 15-24 ans, partout au Bénin.
+                        Une équipe t'y accueille sans rendez-vous et sans jugement.
+                    </p>
+                    <div class="cta__actions">
+                        <a class="bouton bouton--emeraude" href="{{ path('centres_jeunes') }}">
+                            {{ icone('localisation', 16) }} Trouver un Centre Jeune
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

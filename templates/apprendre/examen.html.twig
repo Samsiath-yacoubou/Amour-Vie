@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Examen final · {{ cours.titre }}{% endblock %}
+{% block meta_description %}Examen final du cours « {{ cours.titre }} ».{% endblock %}
+
+{% block corps %}
+
+    {{ include('apprendre/_barre_compte.html.twig') }}
+
+    {% set restantes = bilan.examen.restantes %}
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Examen final',
+        chapo: 'Dernière étape avant ton certificat : il faut ' ~ cours.seuilReussite ~ ' % de bonnes réponses. '
+            ~ (restantes is null ? 'Tu peux le repasser autant que nécessaire.' : 'Il te reste ' ~ restantes ~ ' tentative' ~ (restantes > 1 ? 's' : '') ~ '.'),
+        ariane: [
+            {libelle: 'Apprendre', chemin: path('apprendre_catalogue')},
+            {libelle: cours.titre, chemin: path('apprendre_cours', {slug: cours.slug})},
+            {libelle: 'Examen final'}
+        ]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur" style="max-width:760px">
+            {{ include('apprendre/_progression.html.twig', {bilan: bilan, libelle: 'Progression dans le cours'}) }}
+
+            <div class="message message--info" style="margin-bottom:2rem">
+                {{ icone('info', 20) }}
+                <div>Prends ton temps et relis tes réponses avant de valider. Les bonnes réponses ne s'affichent qu'une fois l'examen réussi
+                    {%- if restantes is not null %} ou tes tentatives épuisées{% endif %}.</div>
+            </div>
+
+            {# Îlot Vue (assets/vue/composants/QuizModule.js, mode examen) : correction côté serveur. #}
+            <div data-vue="quiz-module" data-props="{{ {
+                questions: questions,
+                urlCorrection: path('apprendre_examen_corriger', {slug: cours.slug}),
+                jetonCsrf: csrf_token('examen-' ~ cours.id),
+                seuil: cours.seuilReussite,
+                urlCours: path('apprendre_cours', {slug: cours.slug}),
+                examen: true,
+                tentativesRestantes: restantes,
+            }|json_encode|e('html_attr') }}">
+                <ol class="quiz__repli">
+                    {% for question in questions %}
+                        <li class="quiz__question"><strong>{{ question.enonce }}</strong></li>
+                    {% endfor %}
+                </ol>
+                <noscript><p>Active JavaScript pour passer l'examen.</p></noscript>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

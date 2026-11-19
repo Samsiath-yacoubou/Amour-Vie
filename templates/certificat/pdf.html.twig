@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Certificat {{ certificat.numero }}</title>
+    {# Mise en page pour dompdf (A4 paysage) : CSS 2.1, tableaux, pas de flex. #}
+    <style>
+        @page { margin: 0; }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: Helvetica, Arial, sans-serif; color: #1f1f29; }
+        .cadre {
+            position: absolute; top: 14mm; left: 14mm; right: 14mm; bottom: 14mm;
+            border: 2.5mm solid #e3001b; padding: 12mm 18mm 10mm;
+        }
+        .cadre-interieur {
+            position: absolute; top: 18mm; left: 18mm; right: 18mm; bottom: 18mm;
+            border: 0.4mm solid #f2b8bf;
+        }
+        .entete { width: 100%; }
+        .entete td { vertical-align: middle; }
+        .logo { height: 22mm; }
+        .organisation { text-align: right; font-size: 10pt; color: #6b6b7b; }
+        .titre { margin: 9mm 0 0; text-align: center; font-size: 34pt; font-weight: bold; letter-spacing: 1.5pt; color: #e3001b; }
+        .sous-titre { margin: 2mm 0 0; text-align: center; font-size: 12pt; letter-spacing: 3pt; text-transform: uppercase; color: #6b6b7b; }
+        .mention { margin: 10mm 0 0; text-align: center; font-size: 13pt; }
+        .nom { margin: 4mm 0 0; text-align: center; font-size: 30pt; font-weight: bold; }
+        .cours { margin: 6mm 0 0; text-align: center; font-size: 13pt; }
+        .cours strong { font-size: 16pt; color: #7d000f; }
+        .score { margin: 2mm 0 0; text-align: center; font-size: 11pt; color: #6b6b7b; }
+        .pied { position: absolute; left: 18mm; right: 18mm; bottom: 18mm; width: auto; }
+        .pied table { width: 100%; }
+        .pied td { vertical-align: bottom; font-size: 9.5pt; color: #4a4a5a; }
+        .signature img { height: 16mm; }
+        .signature .trait { border-top: 0.3mm solid #1f1f29; padding-top: 1.5mm; width: 62mm; }
+        .verification { text-align: right; }
+        .verification img { width: 26mm; height: 26mm; }
+        .numero { font-family: Courier, monospace; font-size: 11pt; font-weight: bold; color: #1f1f29; }
+        .revoque {
+            position: absolute; top: 80mm; left: 40mm; right: 40mm; text-align: center;
+            font-size: 40pt; font-weight: bold; color: #e3001b; border: 2mm solid #e3001b; padding: 4mm;
+            transform: rotate(-12deg); opacity: .85;
+        }
+    </style>
+</head>
+<body>
+    <div class="cadre"></div>
+    <div class="cadre-interieur"></div>
+
+    <div style="position:absolute;top:24mm;left:28mm;right:28mm">
+        <table class="entete">
+            <tr>
+                <td>{% if logo %}<img class="logo" src="{{ logo }}" alt="">{% else %}<strong style="font-size:20pt;color:#e3001b">{{ parametres.nomSite }}</strong>{% endif %}</td>
+                <td class="organisation">{{ parametres.nomSite }}<br>Programme de santé sexuelle et reproductive des jeunes</td>
+            </tr>
+        </table>
+
+        <p class="titre">CERTIFICAT</p>
+        <p class="sous-titre">de réussite</p>
+
+        <p class="mention">Ce certificat est décerné à</p>
+        <p class="nom">{{ certificat.nomTitulaire }}</p>
+
+        <p class="cours">pour avoir suivi et réussi le cours en ligne<br><strong>« {{ certificat.titreCours }} »</strong></p>
+        {% if certificat.scoreExamen is not null %}
+            <p class="score">Score à l'examen final : {{ certificat.scoreExamen }} %</p>
+        {% endif %}
+    </div>
+
+    <div class="pied">
+        <table>
+            <tr>
+                <td class="signature" style="width:40%">
+                    {% if signature %}<img src="{{ signature }}" alt=""><br>{% endif %}
+                    <div class="trait">
+                        {% if parametres.certificatSignataireNom %}<strong>{{ parametres.certificatSignataireNom }}</strong><br>{% endif %}
+                        {{ parametres.certificatSignataireFonction ?: 'Pour ' ~ parametres.nomSite }}
+                    </div>
+                </td>
+                <td style="width:25%;text-align:center">
+                    Délivré le<br><strong>{{ certificat.delivreLe|date('d/m/Y') }}</strong>
+                    {% if certificat.reemisLe %}<br><span style="font-size:8pt">(réémis le {{ certificat.reemisLe|date('d/m/Y') }})</span>{% endif %}
+                </td>
+                <td class="verification" style="width:35%">
+                    <table style="width:auto;margin-left:auto">
+                        <tr>
+                            <td style="text-align:right;padding-right:3mm;font-size:8.5pt">
+                                Certificat n°<br><span class="numero">{{ certificat.numero }}</span><br>
+                                Vérifier l'authenticité :<br>{{ urlVerification|replace({'https://': '', 'http://': ''}) }}
+                            </td>
+                            <td><img src="{{ qrCode }}" alt=""></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    {% if not certificat.estValide %}
+        <div class="revoque">CERTIFICAT RÉVOQUÉ</div>
+    {% endif %}
+</body>
+</html>

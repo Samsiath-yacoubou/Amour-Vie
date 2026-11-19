@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}{{ evenement.titre }}{% endblock %}
+{% block meta_description %}{{ evenement.description|extrait(200) }}{% endblock %}
+{% block og_type %}event{% endblock %}
+{% block og_image %}{{ evenement.imageName ? vich_uploader_asset(evenement, 'imageFile') : '' }}{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: evenement.titre,
+        ariane: [
+            {libelle: 'Agenda', chemin: path('evenements')},
+            {libelle: evenement.titre|extrait(48)}
+        ]
+    }) }}
+
+    <div class="conteneur section">
+        <div class="mise-en-page">
+            <div>
+                {% if evenement.imageName %}
+                    <figure class="article-image">
+                        <img src="{{ vich_uploader_asset(evenement, 'imageFile') }}" alt="{{ evenement.titre }}">
+                    </figure>
+                {% endif %}
+
+                <div class="prose">{{ evenement.description|raw }}</div>
+
+                {% if evenement.lien %}
+                    <p style="margin-top:2rem">
+                        <a class="bouton bouton--primaire" href="{{ evenement.lien }}" target="_blank" rel="noopener noreferrer">
+                            {{ icone('lien-externe', 16) }} S'inscrire / en savoir plus
+                        </a>
+                    </p>
+                {% endif %}
+            </div>
+
+            <aside class="mise-en-page__aside">
+                <div class="encadre">
+                    <p class="encadre__titre">Informations pratiques</p>
+                    <ul class="encadre__liste">
+                        <li>
+                            <strong>Date :</strong>
+                            <time datetime="{{ evenement.dateDebut|date('Y-m-d') }}">{{ evenement.dateDebut|date_fr }}</time>
+                            {% if evenement.dateFin and evenement.dateFin|date('Y-m-d') != evenement.dateDebut|date('Y-m-d') %}
+                                au <time datetime="{{ evenement.dateFin|date('Y-m-d') }}">{{ evenement.dateFin|date_fr }}</time>
+                            {% endif %}
+                        </li>
+                        <li><strong>Heure :</strong> {{ evenement.dateDebut|date('H\\hi') }}</li>
+                        <li><strong>Lieu :</strong> {{ evenement.lieu }}</li>
+                        {% if evenement.programme %}
+                            <li>
+                                <strong>Programme :</strong>
+                                <a href="{{ path('programme_detail', {slug: evenement.programme.slug}) }}">
+                                    {{ evenement.programme.sigle }}
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li>
+                            <strong>Statut :</strong>
+                            {% if evenement.estAVenir %}
+                                <span class="badge badge--succes">À venir</span>
+                            {% else %}
+                                <span class="badge badge--neutre">Terminé</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+
+                {% if autres|length > 0 %}
+                    <div class="encadre" style="margin-top:1.5rem">
+                        <p class="encadre__titre">Autres événements</p>
+                        <ul class="encadre__liste">
+                            {% for autre in autres %}
+                                <li>
+                                    <a href="{{ path('evenement_detail', {slug: autre.slug}) }}"
+                                       style="text-decoration:none;color:var(--gris-800);font-weight:600;display:block">
+                                        {{ autre.titre|extrait(60) }}
+                                    </a>
+                                    <span style="font-size:.8rem;color:var(--texte-tres-doux)">{{ autre.dateDebut|date_fr }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </aside>
+        </div>
+
+        <p style="margin-top:3rem">
+            <a class="bouton bouton--neutre" href="{{ path('evenements') }}">
+                {{ icone('fleche-gauche', 16) }} Retour à l'agenda
+            </a>
+        </p>
+    </div>
+
+{% endblock %}

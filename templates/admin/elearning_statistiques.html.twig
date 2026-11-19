@@ -1,0 +1,81 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}E-learning : statistiques{% endblock %}
+
+{% block page_actions %}
+    {% if is_granted('ROLE_EDITEUR') %}
+        <a class="btn btn-primary" href="{{ path('admin_elearning_export') }}">
+            <i class="fa fa-file-csv"></i> Exporter le suivi (Excel / CSV)
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    <style>
+        .st-grille { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:2rem; }
+        .st-tuile { padding:1.25rem; border-radius:12px; background:var(--white,#fff); border:1px solid #e9edf2; border-top:4px solid var(--accent,#E3001B); }
+        .st-tuile__valeur { font-size:2rem; font-weight:800; line-height:1; letter-spacing:-.03em; }
+        .st-tuile__libelle { margin:.45rem 0 0; font-size:.85rem; color:#6b7a8d; }
+        .st-bloc { background:var(--white,#fff); border:1px solid #e9edf2; border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; }
+        .st-bloc h2 { font-size:1.05rem; font-weight:700; margin:0 0 1rem; }
+        .st-barres { display:grid; gap:.5rem; }
+        .st-barre { display:grid; grid-template-columns:90px 1fr 40px; gap:.75rem; align-items:center; font-size:.88rem; }
+        .st-barre__piste { height:10px; border-radius:999px; background:#f1f3f6; overflow:hidden; }
+        .st-barre__piste span { display:block; height:100%; background:#1e9e6d; border-radius:inherit; }
+        .st-note { color:#6b7a8d; font-size:.85rem; }
+    </style>
+
+    {% set g = globales %}
+    <div class="st-grille">
+        <div class="st-tuile"><div class="st-tuile__valeur">{{ g.apprenants }}</div><p class="st-tuile__libelle">Apprenants inscrits<br>(+{{ g.nouveaux30j }} en 30 jours)</p></div>
+        <div class="st-tuile" style="--accent:#5b2a86"><div class="st-tuile__valeur">{{ g.actifs30j }}</div><p class="st-tuile__libelle">Connectés ces 30 derniers jours</p></div>
+        <div class="st-tuile" style="--accent:#f0a500"><div class="st-tuile__valeur">{{ g.inscriptions }}</div><p class="st-tuile__libelle">Inscriptions à un cours</p></div>
+        <div class="st-tuile" style="--accent:#1e9e6d"><div class="st-tuile__valeur">{{ g.tauxAchevement is null ? 'Pas encore' : g.tauxAchevement ~ ' %' }}</div><p class="st-tuile__libelle">Taux d'achèvement<br>({{ g.terminees }} cours terminés)</p></div>
+        <div class="st-tuile" style="--accent:#1c8ad6"><div class="st-tuile__valeur">{{ g.scoreMoyenQuiz is null ? 'Pas encore' : g.scoreMoyenQuiz ~ ' %' }}</div><p class="st-tuile__libelle">Score moyen aux quiz de module</p></div>
+        <div class="st-tuile" style="--accent:#1c8ad6"><div class="st-tuile__valeur">{{ g.scoreMoyenExamen is null ? 'Pas encore' : g.scoreMoyenExamen ~ ' %' }}</div><p class="st-tuile__libelle">Score moyen aux examens finaux</p></div>
+        <div class="st-tuile" style="--accent:#e3001b"><div class="st-tuile__valeur">{{ g.certificats }}</div><p class="st-tuile__libelle">Certificats valides délivrés</p></div>
+    </div>
+
+    <div class="st-bloc">
+        <h2>Par cours</h2>
+        <table class="table datagrid">
+            <thead>
+                <tr><th>Cours</th><th>Publié</th><th class="text-end">Inscrits</th><th class="text-end">Terminés</th><th class="text-end">Achèvement</th><th class="text-end">Score moyen examen</th><th class="text-end">Certificats</th></tr>
+            </thead>
+            <tbody>
+                {% for ligne in parCours %}
+                    <tr>
+                        <td>{{ ligne.cours.titre }}</td>
+                        <td>{{ ligne.cours.publie ? 'Oui' : 'Non' }}</td>
+                        <td class="text-end">{{ ligne.inscrits }}</td>
+                        <td class="text-end">{{ ligne.terminees }}</td>
+                        <td class="text-end">{{ ligne.tauxAchevement is null ? 'Pas encore' : ligne.tauxAchevement ~ ' %' }}</td>
+                        <td class="text-end">{{ ligne.scoreMoyenExamen is null ? 'Pas encore' : ligne.scoreMoyenExamen ~ ' %' }}</td>
+                        <td class="text-end">{{ ligne.certificats }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="7" class="st-note">Aucun cours pour l'instant.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="st-bloc">
+        <h2>Nouveaux apprenants par mois</h2>
+        {% set maximum = max(parMois|map(m => m.inscrits)|merge([1])) %}
+        <div class="st-barres">
+            {% for ligne in parMois %}
+                <div class="st-barre">
+                    <span>{{ ligne.mois|date('m/Y') }}</span>
+                    <span class="st-barre__piste" role="img" aria-label="{{ ligne.inscrits }} inscrits"><span style="width:{{ (ligne.inscrits / maximum * 100)|round }}%"></span></span>
+                    <strong class="text-end">{{ ligne.inscrits }}</strong>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <p class="st-note">
+        Chiffres agrégés, sans résultat individuel. Le détail par apprenant se trouve dans « Suivi des apprenants »
+        {%- if is_granted('ROLE_EDITEUR') %} et dans l'export CSV (données personnelles : à conserver de façon sécurisée){% endif %}.
+    </p>
+{% endblock %}

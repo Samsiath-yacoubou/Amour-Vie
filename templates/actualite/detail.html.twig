@@ -1,0 +1,170 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}{{ article.titre }}{% endblock %}
+{% block meta_titre %}{{ article.seoTitre ?: article.titre }}{% endblock %}
+{% block meta_description %}{{ article.seoDescription ?: article.resume }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_image %}{{ article.imageName ? vich_uploader_asset(article, 'imageFile') : '' }}{% endblock %}
+
+{% block donnees_structurees %}
+    <script type="application/ld+json">
+    {{ {
+        '@context': 'https://schema.org',
+        '@type': 'NewsArticle',
+        'headline': article.titre,
+        'description': article.resume,
+        'datePublished': article.datePublication|date('c'),
+        'dateModified': (article.updatedAt ?: article.datePublication)|date('c'),
+        'author': {'@type': 'Organization', 'name': article.signature},
+        'publisher': {'@type': 'Organization', 'name': site.parametres.nomSite},
+        'mainEntityOfPage': app.request.uri,
+    }|json_encode(constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES'))|raw }}
+    </script>
+{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: article.titre,
+        ariane: [
+            {libelle: 'Actualités', chemin: path('actualites')},
+            {libelle: article.titre|extrait(48)}
+        ]
+    }) }}
+
+    <div class="conteneur section">
+        <div class="mise-en-page">
+
+            {# ------------------------------------------------------ Article #}
+            <article>
+                <div class="article-entete" style="padding-top:0">
+                    <div class="article-entete__meta">
+                        {% if article.type %}
+                            <span class="badge">{{ article.type.nom }}</span>
+                        {% endif %}
+                        <span>{{ icone('calendrier', 15) }}
+                            <time datetime="{{ article.datePublication|date('Y-m-d') }}">{{ article.datePublication|date_fr }}</time>
+                        </span>
+                        <span>{{ icone('utilisateur', 15) }} {{ article.signature }}</span>
+                        {% if article.lieu %}<span>{{ icone('localisation', 15) }} {{ article.lieu }}</span>{% endif %}
+                        <span>{{ icone('horloge', 15) }} {{ article.tempsLecture }} min de lecture</span>
+                    </div>
+
+                    {% if article.sousTitre %}
+                        <p class="article-entete__soustitre">{{ article.sousTitre }}</p>
+                    {% endif %}
+                </div>
+
+                {% if article.imageName %}
+                    <figure class="article-image">
+                        <img src="{{ vich_uploader_asset(article, 'imageFile') }}"
+                             alt="{{ article.imageAlt ?: article.titre }}">
+                    </figure>
+                {% endif %}
+
+                <div class="prose">
+                    {{ article.contenu|raw }}
+                </div>
+
+                {# --------------------------------------------------- Galerie #}
+                {% if article.galerie|length > 0 %}
+                    <section aria-labelledby="titre-galerie" style="margin-top:3rem">
+                        <h2 id="titre-galerie" style="font-size:1.35rem">Galerie photos</h2>
+                        <div class="grille grille--3" style="gap:1rem">
+                            {% for media in article.galerie %}
+                                {% if media.fichierName %}
+                                    <figure style="margin:0">
+                                        <img src="{{ vich_uploader_asset(media, 'fichierFile') }}"
+                                             alt="{{ media.alt ?: media.nom }}" loading="lazy"
+                                             style="border-radius:var(--rayon);width:100%;aspect-ratio:4/3;object-fit:cover">
+                                        {% if media.legende %}
+                                            <figcaption style="font-size:.83rem;color:var(--texte-tres-doux);margin-top:.5rem">
+                                                {{ media.legende }}
+                                            </figcaption>
+                                        {% endif %}
+                                    </figure>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endif %}
+
+                {# -------------------------------------------------- Thématiques #}
+                {% if article.thematiques|length > 0 %}
+                    <div class="puces" style="margin-top:2.5rem">
+                        <span style="font-size:.88rem;font-weight:700;color:var(--texte-doux);align-self:center;margin-right:.35rem">
+                            Thématiques :
+                        </span>
+                        {% for thematique in article.thematiques %}
+                            <a class="puce" href="{{ path('actualites', {thematique: thematique.slug}) }}">
+                                {{ icone('etiquette', 13) }} {{ thematique.nom }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {# ------------------------------------------------------ Partage #}
+                {% set url_partage = app.request.uri|url_encode %}
+                {% set titre_partage = article.titre|url_encode %}
+                <div class="partage">
+                    <span class="partage__titre">Partager cet article</span>
+                    <a class="partage__lien" href="https://www.facebook.com/sharer/sharer.php?u={{ url_partage }}"
+                       target="_blank" rel="noopener noreferrer" aria-label="Partager sur Facebook (nouvelle fenêtre)">
+                        {{ icone('facebook', 17) }}
+                    </a>
+                    <a class="partage__lien" href="https://twitter.com/intent/tweet?url={{ url_partage }}&text={{ titre_partage }}"
+                       target="_blank" rel="noopener noreferrer" aria-label="Partager sur X (nouvelle fenêtre)">
+                        {{ icone('twitter', 15) }}
+                    </a>
+                    <a class="partage__lien" href="https://www.linkedin.com/sharing/share-offsite/?url={{ url_partage }}"
+                       target="_blank" rel="noopener noreferrer" aria-label="Partager sur LinkedIn (nouvelle fenêtre)">
+                        {{ icone('linkedin', 16) }}
+                    </a>
+                    <a class="partage__lien" href="mailto:?subject={{ titre_partage }}&body={{ url_partage }}"
+                       aria-label="Partager par e-mail">
+                        {{ icone('enveloppe', 17) }}
+                    </a>
+                </div>
+            </article>
+
+            {# ------------------------------------------------------- Colonne #}
+            <aside class="mise-en-page__aside">
+                {% if article.programme %}
+                    <div class="encadre" style="margin-bottom:1.5rem">
+                        <p class="encadre__titre">Programme concerné</p>
+                        <p style="font-weight:700;font-size:1.15rem;margin-bottom:.35rem">{{ article.programme.sigle }}</p>
+                        <p style="font-size:.92rem;color:var(--texte-doux)">{{ article.programme.nom }}</p>
+                        <a class="bouton bouton--contour bouton--petit bouton--large" style="margin-top:1rem"
+                           href="{{ path('programme_detail', {slug: article.programme.slug}) }}">
+                            Découvrir le programme
+                        </a>
+                    </div>
+                {% endif %}
+
+                {% if similaires|length > 0 %}
+                    <div class="encadre">
+                        <p class="encadre__titre">À lire aussi</p>
+                        <ul class="encadre__liste">
+                            {% for autre in similaires %}
+                                <li>
+                                    <a href="{{ path('actualite_detail', {slug: autre.slug}) }}"
+                                       style="text-decoration:none;color:var(--gris-800);font-weight:600;display:block">
+                                        {{ autre.titre|extrait(72) }}
+                                    </a>
+                                    <span style="font-size:.8rem;color:var(--texte-tres-doux)">{{ autre.datePublication|date_fr }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </aside>
+        </div>
+
+        <p style="margin-top:3rem">
+            <a class="bouton bouton--neutre" href="{{ path('actualites') }}">
+                {{ icone('fleche-gauche', 16) }} Retour aux actualités
+            </a>
+        </p>
+    </div>
+
+{% endblock %}

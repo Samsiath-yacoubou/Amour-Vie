@@ -1,0 +1,78 @@
+/* =========================================================================
+   My Amour&Vie — Habillage du back-office EasyAdmin
+   ---------------------------------------------------------------------
+   EasyAdmin est déjà entièrement stylé (thème Bootstrap 5 complet, ~550 Ko
+   de CSS) : ce fichier ne le remplace pas, il le RE-TEINTE avec l'identité
+   Amour&Vie. EasyAdmin expose ses couleurs via les tokens CSS --ea-*,
+   dérivés les uns des autres avec color-mix() — changer --ea-primary suffit
+   à reteindre boutons, liens, focus, badges actifs, etc. dans toute
+   l'interface.
+
+   Ces règles ne sont pas posées dans une @layer : dans la cascade CSS, un
+   style hors-layer l'emporte toujours sur un style posé dans une layer
+   (ce qu'utilise EasyAdmin), donc pas besoin de !important ici.
+   ========================================================================= */
+
+@font-face {
+    font-family: "Poppins";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("../fonts/poppins/poppins-400.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Poppins";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("../fonts/poppins/poppins-500.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Poppins";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("../fonts/poppins/poppins-600.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Poppins";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("../fonts/poppins/poppins-700.woff2") format("woff2");
+}
+
+:root {
+    /* Rouge du logo Amour&Vie à la place du bleu-violet par défaut. */
+    --ea-primary: #e3001b;
+    --ea-radius: 0.5rem;
+}
+
+.ea-dark-scheme {
+    --ea-primary: #ed596b;
+}
+
+body {
+    font-family: "Poppins", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+/* Barre latérale et en-tête : violet de la charte plutôt que le
+   dégradé par défaut, pour ancrer visuellement le back-office au site. */
+.main-sidebar,
+.main-header {
+    background: #6d3fd1 !important;
+}
+
+.main-header .navbar-brand,
+.main-header .navbar-brand:hover {
+    color: #fff !important;
+}
+
+/* Élément de menu actif : vert émeraude de la charte, cohérent avec le site public. */
+.sidebar-item.active > .sidebar-item-link,
+.content-panel-switcher .nav-link.active {
+    box-shadow: inset 3px 0 0 #1e9e6d;
+}

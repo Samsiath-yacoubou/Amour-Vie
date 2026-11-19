@@ -1,0 +1,10 @@
+twig:
+    file_name_pattern: '*.twig'
+    form_themes: ['form/champs.html.twig']
+    globals:
+        # Paramètres, programmes et taxonomies disponibles sur toutes les pages.
+        site: '@App\Service\SiteContexte'
+
+when@test:
+    twig:
+        strict_variables: true

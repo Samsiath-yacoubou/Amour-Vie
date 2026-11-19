@@ -1,0 +1,181 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}{{ programme.sigle }} · {{ programme.nom }}{% endblock %}
+{% block meta_titre %}{{ programme.seoTitre ?: programme.sigle ~ ' · ' ~ programme.nom }}{% endblock %}
+{% block meta_description %}{{ programme.seoDescription ?: programme.descriptionCourte }}{% endblock %}
+{% block og_image %}{{ programme.imageName ? vich_uploader_asset(programme, 'imageFile') : '' }}{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: programme.nom,
+        chapo: programme.descriptionCourte,
+        ariane: [
+            {libelle: 'Nos programmes', chemin: path('programmes')},
+            {libelle: programme.sigle}
+        ]
+    }) }}
+
+    <div class="conteneur section">
+        <div class="mise-en-page">
+            <div>
+                {% if programme.imageName %}
+                    <figure class="article-image">
+                        <img src="{{ vich_uploader_asset(programme, 'imageFile') }}" alt="{{ programme.nom }}">
+                    </figure>
+                {% endif %}
+
+                {% if programme.description %}
+                    <section aria-labelledby="titre-presentation" style="margin-bottom:3rem">
+                        <span class="surtitre">Présentation</span>
+                        <h2 id="titre-presentation">Le programme {{ programme.sigle }}</h2>
+                        <div class="prose">{{ programme.description|raw }}</div>
+                    </section>
+                {% endif %}
+
+                {% if programme.objectifs %}
+                    <section aria-labelledby="titre-objectifs" style="margin-bottom:3rem">
+                        <h2 id="titre-objectifs" style="display:flex;align-items:center;gap:.75rem">
+                            <span style="color:{{ programme.couleur ?: 'var(--rose)' }}">{{ icone('cible', 26) }}</span>
+                            Objectifs
+                        </h2>
+                        <div class="prose">{{ programme.objectifs|raw }}</div>
+                    </section>
+                {% endif %}
+
+                {% if programme.activites %}
+                    <section aria-labelledby="titre-activites" style="margin-bottom:3rem">
+                        <h2 id="titre-activites" style="display:flex;align-items:center;gap:.75rem">
+                            <span style="color:{{ programme.couleur ?: 'var(--rose)' }}">{{ icone('reseau', 26) }}</span>
+                            Activités principales
+                        </h2>
+                        <div class="prose">{{ programme.activites|raw }}</div>
+                    </section>
+                {% endif %}
+
+                {% if programme.resultats %}
+                    <section aria-labelledby="titre-resultats" style="margin-bottom:3rem">
+                        <h2 id="titre-resultats" style="display:flex;align-items:center;gap:.75rem">
+                            <span style="color:{{ programme.couleur ?: 'var(--rose)' }}">{{ icone('tendance', 26) }}</span>
+                            Résultats et impact
+                        </h2>
+                        <div class="prose">{{ programme.resultats|raw }}</div>
+                    </section>
+                {% endif %}
+
+                {# ------------------------------------------------- Galerie #}
+                {% if programme.galerie|length > 0 %}
+                    <section aria-labelledby="titre-galerie" style="margin-bottom:3rem">
+                        <h2 id="titre-galerie">Galerie photos</h2>
+                        <div class="grille grille--3" style="gap:1rem">
+                            {% for media in programme.galerie %}
+                                {% if media.fichierName %}
+                                    <img src="{{ vich_uploader_asset(media, 'fichierFile') }}"
+                                         alt="{{ media.alt ?: media.nom }}" loading="lazy"
+                                         style="border-radius:var(--rayon);width:100%;aspect-ratio:4/3;object-fit:cover">
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endif %}
+
+                {# --------------------------------------------- Centres Jeunes #}
+                {% if centresJeunes|length > 0 %}
+                    <section aria-labelledby="titre-centres" style="margin-bottom:3rem">
+                        <h2 id="titre-centres">Centres Jeunes de ce pilier</h2>
+                        <div class="grille grille--2">
+                            {% for centre in centresJeunes %}
+                                {{ include('partials/_carte_centre.html.twig', {centre: centre}) }}
+                            {% endfor %}
+                        </div>
+                        <p style="margin-top:1.5rem">
+                            <a class="lien-fleche" href="{{ path('centres_jeunes') }}">Tous les Centres Jeunes</a>
+                        </p>
+                    </section>
+                {% endif %}
+
+                {# -------------------------------------------------- Émissions #}
+                {% if emissions|length > 0 %}
+                    <section aria-labelledby="titre-emissions" style="margin-bottom:3rem">
+                        <h2 id="titre-emissions">Émissions de ce pilier</h2>
+                        <div class="grille grille--3">
+                            {% for emission in emissions %}
+                                {{ include('partials/_carte_emission.html.twig', {emission: emission}) }}
+                            {% endfor %}
+                        </div>
+                        <p style="margin-top:1.5rem">
+                            <a class="lien-fleche" href="{{ path('emissions') }}">Toutes les émissions</a>
+                        </p>
+                    </section>
+                {% endif %}
+
+                {# ------------------------------------- Documents à télécharger #}
+                {% if publications|length > 0 %}
+                    <section aria-labelledby="titre-documents" style="margin-bottom:3rem">
+                        <h2 id="titre-documents">Documents du programme</h2>
+                        <div class="grille" style="gap:1rem">
+                            {% for publication in publications %}
+                                {{ include('partials/_carte_publication.html.twig') }}
+                            {% endfor %}
+                        </div>
+                        <p style="margin-top:1.5rem">
+                            <a class="lien-fleche" href="{{ path('publications', {programme: programme.slug}) }}">
+                                Toutes les publications de ce programme
+                            </a>
+                        </p>
+                    </section>
+                {% endif %}
+
+                {# ------------------------------------------ Articles associés #}
+                {% if articles|length > 0 %}
+                    <section aria-labelledby="titre-articles">
+                        <h2 id="titre-articles">Actualités du programme</h2>
+                        <div class="grille grille--2">
+                            {% for article in articles %}
+                                {{ include('partials/_carte_article.html.twig') }}
+                            {% endfor %}
+                        </div>
+                        <p style="margin-top:1.5rem">
+                            <a class="lien-fleche" href="{{ path('actualites', {programme: programme.slug}) }}">
+                                Toutes les actualités de ce programme
+                            </a>
+                        </p>
+                    </section>
+                {% endif %}
+            </div>
+
+            {# --------------------------------------------------- Colonne #}
+            <aside class="mise-en-page__aside">
+                <div class="encadre" style="margin-bottom:1.5rem;border-top:4px solid {{ programme.couleur ?: 'var(--rose)' }}">
+                    <p class="encadre__titre">En bref</p>
+                    <p style="font-size:1.5rem;font-weight:800;margin-bottom:.35rem;letter-spacing:-.02em">{{ programme.sigle }}</p>
+                    <p style="font-size:.93rem;color:var(--texte-doux);margin-bottom:1.25rem">{{ programme.nom }}</p>
+
+                    <a class="bouton bouton--primaire bouton--large bouton--petit" href="{{ path('contact') }}">
+                        {{ icone('envoyer', 15) }} Nous écrire
+                    </a>
+                </div>
+
+                {% if autresProgrammes|length > 0 %}
+                    <div class="encadre">
+                        <p class="encadre__titre">Autres programmes</p>
+                        <ul class="encadre__liste">
+                            {% for autre in autresProgrammes %}
+                                <li>
+                                    <a href="{{ path('programme_detail', {slug: autre.slug}) }}"
+                                       style="text-decoration:none;color:var(--gris-800);font-weight:600">
+                                        {{ autre.sigle }}
+                                    </a>
+                                    <span style="display:block;font-size:.8rem;color:var(--texte-tres-doux)">
+                                        {{ autre.nom|extrait(52) }}
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </aside>
+        </div>
+    </div>
+
+{% endblock %}

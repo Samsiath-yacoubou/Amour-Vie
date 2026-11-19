@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{%- set parametres = site.parametres -%}
+
+{% block titre %}Contact{% endblock %}
+{% block meta_description %}Contactez Amour&Vie ABMS : formulaire, coordonnées et informations pratiques.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Nous contacter',
+        chapo: "Une question, une idée ou une demande d'information ? L'équipe Amour&Vie vous répond.",
+        ariane: [{libelle: 'Contact'}]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+            <div class="mise-en-page">
+
+                {# --------------------------------------------------- Formulaire #}
+                <div>
+                    <div class="entete-section" style="margin-bottom:2rem">
+                        <span class="surtitre">Écrivez-nous</span>
+                        <h2>Formulaire de contact</h2>
+                        <p class="chapo">Les champs suivis d'un astérisque sont obligatoires.</p>
+                    </div>
+
+                    {{ form_start(formulaire, {attr: {novalidate: 'novalidate'}}) }}
+                        <div class="grille grille--2" style="gap:0 1.25rem">
+                            {{ form_row(formulaire.prenom) }}
+                            {{ form_row(formulaire.nom) }}
+                        </div>
+
+                        {{ form_row(formulaire.email) }}
+                        {{ form_row(formulaire.sujet) }}
+                        {{ form_row(formulaire.message) }}
+                        {{ form_row(formulaire.siteWeb) }}
+
+                        <p style="font-size:.85rem;color:var(--texte-tres-doux)">
+                            Les informations transmises sont utilisées uniquement pour traiter votre demande.
+                            Consultez notre
+                            <a href="{{ path('page_legale', {page: 'politique-de-confidentialite'}) }}">politique de confidentialité</a>.
+                        </p>
+
+                        <button type="submit" class="bouton bouton--primaire" style="margin-top:1rem">
+                            {{ icone('envoyer', 17) }} Envoyer le message
+                        </button>
+                    {{ form_end(formulaire) }}
+                </div>
+
+                {# -------------------------------------------------- Coordonnées #}
+                <aside class="mise-en-page__aside">
+                    <div class="encadre">
+                        <p class="encadre__titre">Nos coordonnées</p>
+
+                        <ul style="list-style:none;margin:0;padding:0">
+                            {% if parametres.adresse %}
+                                <li style="display:flex;gap:.85rem;margin-bottom:1.25rem">
+                                    <span style="color:var(--rose);flex-shrink:0;margin-top:.15rem">{{ icone('localisation', 19) }}</span>
+                                    <span>
+                                        <strong style="display:block;font-size:.85rem;color:var(--gris-900)">Adresse</strong>
+                                        {{ parametres.adresse|nl2br }}
+                                    </span>
+                                </li>
+                            {% endif %}
+
+                            {% if parametres.telephone %}
+                                <li style="display:flex;gap:.85rem;margin-bottom:1.25rem">
+                                    <span style="color:var(--rose);flex-shrink:0;margin-top:.15rem">{{ icone('telephone', 19) }}</span>
+                                    <span>
+                                        <strong style="display:block;font-size:.85rem;color:var(--gris-900)">Téléphone</strong>
+                                        <a href="tel:{{ parametres.telephone|replace({' ': '', '.': ''}) }}">{{ parametres.telephone }}</a>
+                                        {% if parametres.telephoneSecondaire %}
+                                            <br><a href="tel:{{ parametres.telephoneSecondaire|replace({' ': '', '.': ''}) }}">{{ parametres.telephoneSecondaire }}</a>
+                                        {% endif %}
+                                    </span>
+                                </li>
+                            {% endif %}
+
+                            {% if parametres.email %}
+                                <li style="display:flex;gap:.85rem;margin-bottom:1.25rem">
+                                    <span style="color:var(--rose);flex-shrink:0;margin-top:.15rem">{{ icone('enveloppe', 19) }}</span>
+                                    <span>
+                                        <strong style="display:block;font-size:.85rem;color:var(--gris-900)">E-mail</strong>
+                                        <a href="mailto:{{ parametres.email }}">{{ parametres.email }}</a>
+                                    </span>
+                                </li>
+                            {% endif %}
+
+                            {% if parametres.horaires %}
+                                <li style="display:flex;gap:.85rem">
+                                    <span style="color:var(--rose);flex-shrink:0;margin-top:.15rem">{{ icone('horloge', 19) }}</span>
+                                    <span>
+                                        <strong style="display:block;font-size:.85rem;color:var(--gris-900)">Horaires</strong>
+                                        {{ parametres.horaires }}
+                                    </span>
+                                </li>
+                            {% endif %}
+                        </ul>
+
+                        {% if parametres.facebook or parametres.linkedin or parametres.twitter or parametres.youtube %}
+                            <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--bordure-douce)">
+                                <p style="font-size:.85rem;font-weight:700;margin-bottom:.75rem">Suivez-nous</p>
+                                <div style="display:flex;gap:.5rem">
+                                    {% for reseau, url in {
+                                        'facebook': parametres.facebook,
+                                        'linkedin': parametres.linkedin,
+                                        'twitter': parametres.twitter,
+                                        'youtube': parametres.youtube
+                                    } %}
+                                        {% if url %}
+                                            <a class="partage__lien" href="{{ url }}" target="_blank" rel="noopener noreferrer"
+                                               aria-label="{{ reseau|capitalize }} (nouvelle fenêtre)">{{ icone(reseau, 16) }}</a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+    {# ------------------------------------------------------ Plan d'accès #}
+    {% if parametres.mapsEmbed %}
+        <section class="section section--teinte" aria-labelledby="titre-acces">
+            <div class="conteneur">
+                <div class="entete-section entete-section--centre">
+                    <span class="surtitre">{{ icone('carte', 14) }} Nous trouver</span>
+                    <h2 id="titre-acces">Plan d'accès</h2>
+                </div>
+                <div style="border-radius:var(--rayon-lg);overflow:hidden;box-shadow:var(--ombre)">
+                    {{ parametres.mapsEmbed|raw }}
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+{% endblock %}

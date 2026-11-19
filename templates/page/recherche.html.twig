@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}{{ terme ? 'Recherche : ' ~ terme : 'Recherche' }}{% endblock %}
+{% block meta_description %}Recherchez une actualité, une publication ou un programme sur le site Amour&Vie.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Recherche',
+        chapo: terme ? '"' ~ terme ~ '" : ' ~ total ~ ' résultat' ~ (total > 1 ? 's' : '') : null,
+        ariane: [{libelle: 'Recherche'}]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+
+            <form class="filtres" method="get" action="{{ path('recherche') }}" role="search" style="margin-bottom:3rem">
+                <div class="champ" style="margin:0">
+                    <label class="champ__label" for="recherche-terme">Que recherchez-vous ?</label>
+                    <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+                        <input type="search" id="recherche-terme" name="q" class="controle" style="flex:1;min-width:220px"
+                               value="{{ terme }}" placeholder="Actualité, publication, programme…" autofocus>
+                        <button type="submit" class="bouton bouton--primaire">
+                            {{ icone('recherche', 16) }} Rechercher
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            {% if terme is empty %}
+                <div class="etat-vide">
+                    <div class="etat-vide__icone" aria-hidden="true">{{ icone('recherche', 44) }}</div>
+                    <h3>Saisissez un mot-clé pour lancer la recherche</h3>
+                    <p>La recherche porte sur les actualités, les publications et les programmes.</p>
+                </div>
+            {% elseif total == 0 %}
+                <div class="etat-vide">
+                    <div class="etat-vide__icone" aria-hidden="true">{{ icone('recherche', 44) }}</div>
+                    <h3>Aucun résultat pour « {{ terme }} »</h3>
+                    <p>Vérifiez l'orthographe ou essayez des termes plus généraux.</p>
+                </div>
+            {% else %}
+
+                {% if programmes|length > 0 %}
+                    <section aria-labelledby="resultats-programmes" style="margin-bottom:3.5rem">
+                        <h2 id="resultats-programmes" style="font-size:1.4rem">
+                            Programmes <span style="color:var(--texte-tres-doux);font-weight:500">({{ programmes|length }})</span>
+                        </h2>
+                        <div class="grille grille--3">
+                            {% for programme in programmes %}
+                                <article class="carte-programme" style="--accent: {{ programme.couleur ?: '#E3001B' }}">
+                                    <p class="carte-programme__sigle">{{ programme.sigle }}</p>
+                                    <p class="carte-programme__nom">{{ programme.nom }}</p>
+                                    <p class="carte-programme__texte">{{ programme.descriptionCourte|extrait(110) }}</p>
+                                    <a class="lien-fleche carte-programme__lien"
+                                       href="{{ path('programme_detail', {slug: programme.slug}) }}">Découvrir</a>
+                                </article>
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endif %}
+
+                {% if articles|length > 0 %}
+                    <section aria-labelledby="resultats-articles" style="margin-bottom:3.5rem">
+                        <h2 id="resultats-articles" style="font-size:1.4rem">
+                            Actualités <span style="color:var(--texte-tres-doux);font-weight:500">({{ articles|length }})</span>
+                        </h2>
+                        <div class="grille grille--3">
+                            {% for article in articles %}
+                                {{ include('partials/_carte_article.html.twig') }}
+                            {% endfor %}
+                        </div>
+                        <p style="margin-top:1.5rem">
+                            <a class="lien-fleche" href="{{ path('actualites', {q: terme}) }}">Affiner dans les actualités</a>
+                        </p>
+                    </section>
+                {% endif %}
+
+                {% if publications|length > 0 %}
+                    <section aria-labelledby="resultats-publications">
+                        <h2 id="resultats-publications" style="font-size:1.4rem">
+                            Publications <span style="color:var(--texte-tres-doux);font-weight:500">({{ publications|length }})</span>
+                        </h2>
+                        <div class="grille grille--2">
+                            {% for publication in publications %}
+                                {{ include('partials/_carte_publication.html.twig') }}
+                            {% endfor %}
+                        </div>
+                        <p style="margin-top:1.5rem">
+                            <a class="lien-fleche" href="{{ path('publications', {q: terme}) }}">Affiner dans la bibliothèque</a>
+                        </p>
+                    </section>
+                {% endif %}
+
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}

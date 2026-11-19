@@ -1,0 +1,11 @@
+{# Carte d'un témoignage publié. Paramètre : temoignage #}
+<article class="carte-membre" style="text-align:left">
+    <p class="carte-membre__bio" style="font-size:1rem;margin-bottom:1rem">
+        {{ icone('citation', 22, null, 'titre-accent') }}
+        <span style="display:block;margin-top:.5rem">{{ temoignage.contenu|extrait(220) }}</span>
+    </p>
+    <p class="carte-membre__fonction" style="margin-bottom:0">
+        {{ temoignage.pseudonyme ?: 'Anonyme' }}{% if temoignage.age %}, {{ temoignage.age }} ans{% endif %}
+        {% if temoignage.ville %} · {{ temoignage.ville }}{% endif %}
+    </p>
+</article>

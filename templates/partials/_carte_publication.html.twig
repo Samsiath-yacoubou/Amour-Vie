@@ -1,0 +1,35 @@
+{# Carte de document de la bibliothèque numérique. #}
+<article class="carte-publication">
+    <div class="carte-publication__vignette">
+        {% if publication.couvertureName %}
+            <img src="{{ vich_uploader_asset(publication, 'couvertureFile') }}"
+                 alt="Couverture de « {{ publication.titre }} »" loading="lazy">
+        {% else %}
+            {{ icone(publication.type ? publication.type.icone : 'document', 30) }}
+        {% endif %}
+    </div>
+
+    <div class="carte-publication__corps">
+        <h3 class="carte-publication__titre">
+            <a href="{{ path('publication_detail', {slug: publication.slug}) }}">{{ publication.titre }}</a>
+        </h3>
+
+        <div class="carte-publication__meta">
+            {% if publication.type %}<span class="badge badge--neutre">{{ publication.type.nom }}</span>{% endif %}
+            <span>{{ publication.annee }}</span>
+            {% if publication.programme %}<span>{{ publication.programme.sigle }}</span>{% endif %}
+            {% if publication.fichierTaille %}<span>{{ publication.tailleLisible }}</span>{% endif %}
+        </div>
+
+        <div class="carte-publication__actions">
+            {% if publication.fichierName %}
+                <a class="bouton bouton--contour bouton--petit"
+                   href="{{ path('publication_telecharger', {slug: publication.slug}) }}" download>
+                    {{ icone('telecharger', 15) }} Télécharger
+                </a>
+            {% else %}
+                <a class="lien-fleche" href="{{ path('publication_detail', {slug: publication.slug}) }}">Consulter la fiche</a>
+            {% endif %}
+        </div>
+    </div>
+</article>

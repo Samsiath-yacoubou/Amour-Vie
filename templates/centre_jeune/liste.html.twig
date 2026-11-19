@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Centres Jeunes{% endblock %}
+{% block meta_description %}Trouve le Centre Jeune Amour&Vie le plus proche de chez toi : adresse, horaires, services offerts.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Nos Centres Jeunes',
+        chapo: "Des lieux d'accueil gratuits et confidentiels, ouverts aux 15-24 ans, partout au Bénin.",
+        ariane: [{libelle: 'Centres Jeunes'}]
+    }) }}
+
+    {% if centresCarte|length > 0 %}
+        <section class="section">
+            <div class="conteneur">
+                {# Îlot Vue (assets/vue/composants/CarteCentresJeunes.js). #}
+                <div data-vue="carte-centres-jeunes"
+                     data-props="{{ {centres: centresCarte, centreLat: 9.3077, centreLon: 2.3158, zoom: 7}|json_encode|e('html_attr') }}"></div>
+            </div>
+        </section>
+    {% endif %}
+
+    <section class="section section--douce">
+        <div class="conteneur">
+            <div class="entete-section entete-section--centre">
+                <p class="surtitre">Annuaire</p>
+                <h2>Tous les centres</h2>
+            </div>
+
+            {% if centres|length > 0 %}
+                <div class="grille grille--2">
+                    {% for centre in centres %}
+                        {{ include('partials/_carte_centre.html.twig', {centre: centre}) }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="etat-vide">
+                    <div class="etat-vide__icone" aria-hidden="true">{{ icone('house-medical', 44) }}</div>
+                    <h3>Les Centres Jeunes seront bientôt publiés</h3>
+                    <p>Cette rubrique est en cours d'alimentation depuis l'espace d'administration.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}

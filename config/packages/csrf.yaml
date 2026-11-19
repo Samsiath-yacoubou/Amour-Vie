@@ -1,0 +1,13 @@
+# Protection CSRF classique, adossée à la session.
+#
+# La variante « stateless » proposée par défaut fait calculer le jeton par
+# JavaScript : sans JS, la connexion au back-office devient impossible.
+# L'exigence d'accessibilité du § 4.4 impose de rester sur le mécanisme
+# fonctionnant sans script côté client.
+framework:
+    csrf_protection:
+        enabled: true
+
+    form:
+        csrf_protection:
+            enabled: true

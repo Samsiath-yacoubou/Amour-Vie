@@ -1,0 +1,71 @@
+# Réécriture d'URL pour Apache (XAMPP en local, hébergement mutualisé en production).
+#
+# Idéalement, la racine du site (DocumentRoot ou VirtualHost) pointe directement
+# sur ce dossier « public ». Ce fichier gère aussi le cas d'une installation dans
+# un sous-répertoire, par exemple http://localhost/Wanep-Bénin/public/.
+
+DirectoryIndex index.php
+
+# Type MIME correct pour les polices et les cartes de sources.
+<IfModule mod_negotiation.c>
+    Options -MultiViews
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Détermine automatiquement le préfixe d'URL, y compris en sous-répertoire.
+    RewriteCond %{REQUEST_URI}::$0 ^(/.+)/(.*)::\2$
+    RewriteRule .* - [E=BASE:%1]
+
+    # Redirige vers l'URI sans « /index.php » (une seule forme d'URL = meilleur SEO).
+    RewriteCond %{ENV:REDIRECT_STATUS} =""
+    RewriteRule ^index\.php(?:/(.*)|$) %{ENV:BASE}/$1 [R=301,L]
+
+    # Sert directement les fichiers existants (images, CSS, JS, PDF téléversés).
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Toute autre requête est confiée au contrôleur frontal de Symfony.
+    RewriteRule ^ %{ENV:BASE}/index.php [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    <IfModule mod_alias.c>
+        RedirectMatch 307 ^/$ /index.php/
+    </IfModule>
+</IfModule>
+
+# ------------------------------------------------------------------ Sécurité
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# Empêche l'exécution de code dans le dossier des fichiers téléversés.
+<Directory "uploads">
+    php_flag engine off
+</Directory>
+
+# ---------------------------------------------------- Performances (§ 4.2)
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript
+    AddOutputFilterByType DEFLATE application/javascript application/json
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    # Les fichiers d'AssetMapper portent une empreinte dans leur nom :
+    # ils peuvent être mis en cache très longtemps sans risque.
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 6 months"
+    ExpiresByType image/webp "access plus 6 months"
+    ExpiresByType image/jpeg "access plus 6 months"
+    ExpiresByType image/png "access plus 6 months"
+</IfModule>

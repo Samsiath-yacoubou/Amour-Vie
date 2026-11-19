@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Mes cours{% endblock %}
+
+{% block corps %}
+
+    {{ include('apprendre/_barre_compte.html.twig') }}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Bonjour ' ~ apprenant.prenom ~ ' !',
+        chapo: 'Retrouve ici les cours que tu suis et reprends là où tu t\'es arrêté·e.',
+        ariane: [
+            {libelle: 'Apprendre', chemin: path('apprendre_catalogue')},
+            {libelle: 'Mes cours'}
+        ]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+            {% if suivis|length > 0 %}
+                <div class="grille grille--2">
+                    {% for suivi in suivis %}
+                        {% set cours = suivi.inscription.cours %}
+                        <article class="carte suivi-cours">
+                            <div class="carte__corps">
+                                <div class="carte__etiquettes" style="position:static;margin-bottom:.75rem">
+                                    {% if suivi.bilan.estTermine %}
+                                        <span class="badge badge--succes">{{ icone('valide', 12) }} Terminé le {{ suivi.inscription.termineeAt|date('d/m/Y') }}</span>
+                                    {% else %}
+                                        <span class="badge badge--neutre">En cours</span>
+                                    {% endif %}
+                                </div>
+
+                                <h2 class="carte__titre">
+                                    <a href="{{ path('apprendre_cours', {slug: cours.slug}) }}">{{ cours.titre }}</a>
+                                </h2>
+
+                                {{ include('apprendre/_progression.html.twig', {bilan: suivi.bilan}) }}
+
+                                <div class="carte__pied" style="margin-top:1.25rem">
+                                    {% if suivi.bilan.estTermine %}
+                                        {% if suivi.certificat %}
+                                            <a class="bouton bouton--primaire bouton--petit" href="{{ path('apprendre_mes_certificats') }}">{{ icone('etoile', 14) }} Mon certificat</a>
+                                        {% else %}
+                                            <a class="bouton bouton--primaire bouton--petit" href="{{ path('apprendre_certificat_obtenir', {slug: cours.slug}) }}">{{ icone('etoile', 14) }} Obtenir mon certificat</a>
+                                        {% endif %}
+                                        <a class="bouton bouton--contour bouton--petit" href="{{ path('apprendre_cours', {slug: cours.slug}) }}">Revoir le cours</a>
+                                    {% else %}
+                                        <a class="bouton bouton--primaire bouton--petit" href="{{ suivi.reprise }}">
+                                            {{ suivi.bilan.estCommence ? 'Reprendre' : 'Commencer' }} {{ icone('fleche-droite', 14) }}
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="etat-vide">
+                    <div class="etat-vide__icone" aria-hidden="true">{{ icone('formation', 44) }}</div>
+                    <h3>Tu ne suis encore aucun cours</h3>
+                    <p>Choisis un premier cours dans le catalogue pour commencer.</p>
+                    <a class="bouton bouton--primaire" href="{{ path('apprendre_catalogue') }}" style="margin-top:1rem">Voir les cours</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}

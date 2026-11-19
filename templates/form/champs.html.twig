@@ -1,0 +1,56 @@
+{# Thème de formulaire aligné sur le système de design Amour&Vie.
+   Les messages d'erreur sont reliés au champ par aria-describedby (§ 4.4). #}
+{% use 'form_div_layout.html.twig' %}
+
+{% block form_row %}
+    {%- set erreurs_id = id ~ '_erreurs' -%}
+    {%- set aide_id = id ~ '_aide' -%}
+    <div class="champ {{ row_attr.class|default('') }}">
+        {{- form_label(form) -}}
+        {%- set decrit_par = [] -%}
+        {%- if help is not empty %}{% set decrit_par = decrit_par|merge([aide_id]) %}{% endif -%}
+        {%- if errors|length > 0 %}{% set decrit_par = decrit_par|merge([erreurs_id]) %}{% endif -%}
+        {{- form_widget(form, {
+            attr: attr|merge({
+                'aria-describedby': decrit_par|length ? decrit_par|join(' ') : null,
+                'aria-invalid': errors|length > 0 ? 'true' : null,
+            })
+        }) -}}
+        {%- if help is not empty %}
+            <p class="champ__aide" id="{{ aide_id }}">{{ help }}</p>
+        {% endif -%}
+        {%- if errors|length > 0 %}
+            <p class="champ__erreur" id="{{ erreurs_id }}" role="alert">
+                {%- for error in errors %}{{ error.message }}{% if not loop.last %} {% endif %}{% endfor -%}
+            </p>
+        {% endif -%}
+    </div>
+{% endblock %}
+
+{% block form_label %}
+    {%- if label is not same as(false) -%}
+        {%- if label is empty -%}
+            {%- set label = name|humanize -%}
+        {%- endif -%}
+        <label for="{{ id }}" class="champ__label">
+            {{- label|trans(label_translation_parameters, translation_domain) -}}
+            {%- if required %}<span class="champ__requis" aria-hidden="true">*</span>{% endif -%}
+        </label>
+    {%- endif -%}
+{% endblock %}
+
+{% block form_errors %}{# Rendues dans form_row, au plus près du champ. #}{% endblock %}
+
+{% block checkbox_row %}
+    <div class="champ champ--case">
+        <label class="champ__case">
+            {{ form_widget(form) }}
+            <span>{{ form.vars.label|trans }}{% if required %}<span class="champ__requis">*</span>{% endif %}</span>
+        </label>
+        {%- if errors|length > 0 %}
+            <p class="champ__erreur" role="alert">
+                {%- for error in errors %}{{ error.message }}{% endfor -%}
+            </p>
+        {% endif -%}
+    </div>
+{% endblock %}

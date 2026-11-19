@@ -1,0 +1,55 @@
+{# Pagination accessible.
+   Paramètres : page, totalPages, route, parametres (query string à conserver) #}
+{% if totalPages > 1 %}
+    {% set parametres = parametres|default({})|filter(v => v is not null and v != '') %}
+
+    <nav aria-label="Pagination des résultats">
+        <ul class="pagination">
+            <li class="{{ page <= 1 ? 'est-desactive' }}">
+                {% if page > 1 %}
+                    <a href="{{ path(route, parametres|merge({page: page - 1})) }}" rel="prev">
+                        {{ icone('fleche-gauche', 15) }}<span class="sr-only">Page précédente</span>
+                    </a>
+                {% else %}
+                    <span aria-hidden="true">{{ icone('fleche-gauche', 15) }}</span>
+                {% endif %}
+            </li>
+
+            {# Fenêtre glissante autour de la page courante, avec ellipses. #}
+            {% set debut = max(1, page - 2) %}
+            {% set fin = min(totalPages, page + 2) %}
+
+            {% if debut > 1 %}
+                <li><a href="{{ path(route, parametres|merge({page: 1})) }}">1</a></li>
+                {% if debut > 2 %}<li><span aria-hidden="true">…</span></li>{% endif %}
+            {% endif %}
+
+            {% for numero in debut..fin %}
+                <li class="{{ numero == page ? 'est-active' }}">
+                    {% if numero == page %}
+                        <span aria-current="page">{{ numero }}<span class="sr-only"> (page courante)</span></span>
+                    {% else %}
+                        <a href="{{ path(route, parametres|merge({page: numero})) }}">
+                            <span class="sr-only">Page </span>{{ numero }}
+                        </a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+
+            {% if fin < totalPages %}
+                {% if fin < totalPages - 1 %}<li><span aria-hidden="true">…</span></li>{% endif %}
+                <li><a href="{{ path(route, parametres|merge({page: totalPages})) }}">{{ totalPages }}</a></li>
+            {% endif %}
+
+            <li class="{{ page >= totalPages ? 'est-desactive' }}">
+                {% if page < totalPages %}
+                    <a href="{{ path(route, parametres|merge({page: page + 1})) }}" rel="next">
+                        {{ icone('fleche-droite', 15) }}<span class="sr-only">Page suivante</span>
+                    </a>
+                {% else %}
+                    <span aria-hidden="true">{{ icone('fleche-droite', 15) }}</span>
+                {% endif %}
+            </li>
+        </ul>
+    </nav>
+{% endif %}

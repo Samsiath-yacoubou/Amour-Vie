@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}{{ titre }}{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: titre,
+        ariane: [{libelle: titre}]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur conteneur--etroit">
+            {% if contenu %}
+                <div class="prose">{{ contenu|raw }}</div>
+            {% else %}
+                <div class="message message--info">
+                    {{ icone('circle-info', 20) }}
+                    <div>
+                        Le contenu de cette page n'a pas encore été renseigné.
+                        Il se saisit depuis <strong>l'espace admin → Paramètres généraux</strong>.
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}

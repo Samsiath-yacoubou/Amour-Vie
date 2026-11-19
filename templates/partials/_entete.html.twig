@@ -1,0 +1,193 @@
+{%- set parametres = site.parametres -%}
+{%- set route = app.request.attributes.get('_route') -%}
+
+{# --------------------------------------------------------------- En-tête #}
+{# En-tête à deux bandes : bande blanche de coordonnées (téléphone, e-mail,
+   recherche) en haut — repliée dès que la page défile —, puis bande rouge
+   avec logo principal, navigation et bouton Contact en pilule. #}
+<header class="entete" data-entete>
+    <div class="entete__topbar">
+        <div class="entete__topbar-interieur">
+            <div class="entete__coordonnees">
+                {% if parametres.telephone %}
+                    <a class="entete__coord-lien" href="tel:{{ parametres.telephone|replace({' ': '', '.': ''}) }}">
+                        {{ icone('telephone', 13) }} {{ parametres.telephone }}
+                    </a>
+                {% endif %}
+                {% if parametres.telephoneSecondaire %}
+                    <span class="entete__coord-separateur" aria-hidden="true">·</span>
+                    <a class="entete__coord-lien" href="tel:{{ parametres.telephoneSecondaire|replace({' ': '', '.': ''}) }}">
+                        {{ parametres.telephoneSecondaire }}
+                    </a>
+                {% endif %}
+                {% if parametres.email %}
+                    <a class="entete__coord-lien" href="mailto:{{ parametres.email }}">
+                        {{ icone('enveloppe', 13) }} {{ parametres.email }}
+                    </a>
+                {% endif %}
+            </div>
+
+            <button type="button" class="bouton-icone" data-ouvre-recherche
+                    aria-label="Ouvrir la recherche" aria-expanded="false" aria-controls="recherche-globale">
+                {{ icone('recherche', 15) }}
+            </button>
+        </div>
+    </div>
+
+    <div class="entete__ligne">
+      <div class="entete__ligne-interieur">
+        <a class="logo" href="{{ path('accueil') }}">
+            {% if parametres.logoBlancName %}
+                <img src="{{ vich_uploader_asset(parametres, 'logoBlancFile') }}" alt="{{ parametres.nomSite }}">
+            {% elseif parametres.logoName %}
+                <img class="logo--secours" src="{{ vich_uploader_asset(parametres, 'logoFile') }}" alt="{{ parametres.nomSite }}">
+            {% else %}
+                <span class="logo__marque" aria-hidden="true">A&V</span>
+                <span class="logo__texte">
+                    <span class="logo__nom">{{ parametres.nomSite }}</span>
+                    {% if parametres.slogan %}<span class="logo__baseline">{{ parametres.slogan }}</span>{% endif %}
+                </span>
+            {% endif %}
+        </a>
+
+        <nav class="nav" aria-label="Navigation principale">
+            <ul class="nav__liste">
+                <li class="nav__item">
+                    <a class="nav__lien {{ route == 'accueil' ? 'est-actif' }}" href="{{ path('accueil') }}">Accueil</a>
+                </li>
+
+                <li class="nav__item">
+                    <a class="nav__lien {{ route starts with 'actualite' ? 'est-actif' }}"
+                       href="{{ path('actualites') }}">Articles</a>
+                </li>
+
+                <li class="nav__item">
+                    <a class="nav__lien {{ route starts with 'publication' ? 'est-actif' }}"
+                       href="{{ path('publications') }}">Magazine</a>
+                </li>
+
+                <li class="nav__item">
+                    <a class="nav__lien {{ route starts with 'emission' ? 'est-actif' }}"
+                       href="{{ path('emissions') }}">Émissions</a>
+                </li>
+
+                <li class="nav__item">
+                    <a class="nav__lien {{ route starts with 'centre' or route starts with 'programme' or route starts with 'espace_jeunes' or route starts with 'question_anonyme' ? 'est-actif' }}"
+                       href="{{ path('centres_jeunes') }}" aria-haspopup="true">
+                        CJAV {{ icone('chevron-bas', 11, null, 'nav__chevron') }}
+                    </a>
+                    <ul class="sous-menu">
+                        <li><a class="sous-menu__lien" href="{{ path('centres_jeunes') }}">Annuaire des Centres Jeunes</a></li>
+                        <li><a class="sous-menu__lien" href="{{ path('espace_jeunes') }}">Espace jeunes</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav__item">
+                    <a class="nav__lien {{ route starts with 'apprendre' ? 'est-actif' }}"
+                       href="{{ path('apprendre_catalogue') }}">Apprendre</a>
+                </li>
+
+                <li class="nav__item">
+                    <a class="nav__lien {{ route starts with 'temoignage' ? 'est-actif' }}"
+                       href="{{ path('temoignages') }}">Témoignages</a>
+                </li>
+
+                <li class="nav__item">
+                    <a class="nav__lien {{ route starts with 'qui_sommes_nous' ? 'est-actif' }}"
+                       href="{{ path('qui_sommes_nous') }}" aria-haspopup="true">
+                        À propos A&V {{ icone('chevron-bas', 11, null, 'nav__chevron') }}
+                    </a>
+                    <ul class="sous-menu sous-menu--fin">
+                        <li><a class="sous-menu__lien" href="{{ path('qui_sommes_nous') }}#histoire">Notre histoire</a></li>
+                        <li><a class="sous-menu__lien" href="{{ path('qui_sommes_nous') }}#mission">Notre mission</a></li>
+                        <li><a class="sous-menu__lien" href="{{ path('qui_sommes_nous') }}#vision">Notre vision</a></li>
+                        <li><a class="sous-menu__lien" href="{{ path('qui_sommes_nous') }}#valeurs">Nos valeurs</a></li>
+                        <li><a class="sous-menu__lien" href="{{ path('qui_sommes_nous') }}#organisation">Notre organisation</a></li>
+                    </ul>
+                </li>
+
+            </ul>
+        </nav>
+
+        <div class="entete__cta-zone">
+            <a class="bouton bouton--contour-clair bouton--petit entete__cta" href="{{ path('contact') }}">Contact</a>
+
+            <button type="button" class="bouton-icone bouton-burger" data-ouvre-menu
+                    aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu-mobile">
+                {{ icone('menu', 20) }}
+            </button>
+        </div>
+      </div>
+    </div>
+</header>
+
+{# ------------------------------------------------------- Recherche globale #}
+<div class="recherche" id="recherche-globale" data-recherche role="dialog" aria-modal="true" aria-label="Recherche sur le site">
+    <div class="recherche__boite">
+        <form action="{{ path('recherche') }}" method="get" role="search">
+            <label class="sr-only" for="champ-recherche">Rechercher sur le site</label>
+            <div class="recherche__champ">
+                {{ icone('recherche', 20, null, 'recherche__icone') }}
+                <input type="search" id="champ-recherche" name="q" data-champ-recherche
+                       placeholder="Rechercher une actualité, une publication, un programme…"
+                       autocomplete="off">
+                <button type="button" class="bouton-icone" data-ferme-recherche aria-label="Fermer la recherche">
+                    {{ icone('fermer', 18) }}
+                </button>
+            </div>
+            <p class="recherche__aide">Appuyez sur <kbd>Entrée</kbd> pour lancer la recherche, <kbd>Échap</kbd> pour fermer.</p>
+        </form>
+    </div>
+</div>
+
+{# ----------------------------------------------------------- Menu mobile #}
+<div class="menu-mobile" id="menu-mobile" data-menu-mobile role="dialog" aria-modal="true" aria-label="Menu de navigation">
+    <div class="menu-mobile__panneau">
+        <div class="menu-mobile__entete">
+            <span class="logo__nom">{{ parametres.nomSite }}</span>
+            <button type="button" class="bouton-icone" data-ferme-menu aria-label="Fermer le menu">
+                {{ icone('fermer', 20) }}
+            </button>
+        </div>
+
+        <ul class="menu-mobile__liste">
+            <li><a class="menu-mobile__lien" href="{{ path('accueil') }}">Accueil</a></li>
+            <li><a class="menu-mobile__lien" href="{{ path('actualites') }}">Articles</a></li>
+            <li><a class="menu-mobile__lien" href="{{ path('publications') }}">Magazine</a></li>
+            <li><a class="menu-mobile__lien" href="{{ path('emissions') }}">Émissions</a></li>
+
+            <li>
+                <button type="button" class="menu-mobile__lien" data-bascule-sous-menu aria-expanded="false">
+                    CJAV {{ icone('chevron-bas', 14) }}
+                </button>
+                <ul class="menu-mobile__sous-liste">
+                    <li><a class="menu-mobile__sous-lien" href="{{ path('centres_jeunes') }}">Annuaire des Centres Jeunes</a></li>
+                    <li><a class="menu-mobile__sous-lien" href="{{ path('espace_jeunes') }}">Espace jeunes</a></li>
+                </ul>
+            </li>
+
+            <li><a class="menu-mobile__lien" href="{{ path('apprendre_catalogue') }}">Apprendre</a></li>
+            <li><a class="menu-mobile__lien" href="{{ path('temoignages') }}">Témoignages</a></li>
+            <li><a class="menu-mobile__lien" href="{{ path('contact') }}">Contact</a></li>
+
+            <li>
+                <button type="button" class="menu-mobile__lien" data-bascule-sous-menu aria-expanded="false">
+                    À propos A&V {{ icone('chevron-bas', 14) }}
+                </button>
+                <ul class="menu-mobile__sous-liste">
+                    <li><a class="menu-mobile__sous-lien" href="{{ path('qui_sommes_nous') }}">Présentation</a></li>
+                    <li><a class="menu-mobile__sous-lien" href="{{ path('qui_sommes_nous') }}#histoire">Notre histoire</a></li>
+                    <li><a class="menu-mobile__sous-lien" href="{{ path('qui_sommes_nous') }}#mission">Notre mission</a></li>
+                    <li><a class="menu-mobile__sous-lien" href="{{ path('qui_sommes_nous') }}#vision">Notre vision</a></li>
+                    <li><a class="menu-mobile__sous-lien" href="{{ path('qui_sommes_nous') }}#valeurs">Nos valeurs</a></li>
+                    <li><a class="menu-mobile__sous-lien" href="{{ path('qui_sommes_nous') }}#organisation">Notre organisation</a></li>
+                </ul>
+            </li>
+
+        </ul>
+
+        <a class="bouton bouton--profond bouton--large" href="{{ path('admin') }}" style="margin-top:1.5rem">
+            {{ icone('utilisateur', 16) }} Accéder à l'espace admin
+        </a>
+    </div>
+</div>

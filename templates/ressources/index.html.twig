@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Ressources{% endblock %}
+{% block meta_description %}Bibliothèque numérique, FAQ et quiz : toutes les ressources d'information d'Amour&Vie ABMS.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Ressources',
+        chapo: "Documents, réponses à tes questions et quiz : de quoi t'informer à ton rythme, en toute autonomie.",
+        ariane: [{libelle: 'Ressources'}]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+            {% if sections.intro is defined %}
+                <div class="prose" style="max-width:720px;margin-bottom:3rem">
+                    {% if sections.intro.titre %}<h2>{{ sections.intro.titre }}</h2>{% endif %}
+                    {{ sections.intro.contenu|raw }}
+                </div>
+            {% else %}
+                <div class="prose" style="max-width:720px;margin-bottom:3rem">
+                    <p>
+                        Retrouve ici les publications, réponses et outils produits par Amour&Vie pour t'aider à
+                        mieux comprendre ta santé sexuelle et reproductive, tes droits et les services disponibles
+                        près de chez toi.
+                    </p>
+                </div>
+            {% endif %}
+
+            <div class="grille grille--3">
+                <div class="valeur" style="--accent: var(--rose)">
+                    <span class="valeur__icone">{{ icone('livre', 24) }}</span>
+                    <h3 class="valeur__titre">Bibliothèque numérique</h3>
+                    <p class="valeur__texte">
+                        Magazines, guides et rapports à consulter ou télécharger librement.
+                    </p>
+                    <a class="lien-fleche" href="{{ path('publications') }}" style="margin-top:1rem">
+                        Explorer la bibliothèque
+                    </a>
+                </div>
+
+                <div class="valeur" style="--accent: var(--violet)">
+                    <span class="valeur__icone">{{ icone('circle-question', 24) }}</span>
+                    <h3 class="valeur__titre">FAQ</h3>
+                    <p class="valeur__texte">
+                        Les réponses de nos pair-éducateur·rice·s aux questions les plus posées par les jeunes.
+                    </p>
+                    <a class="lien-fleche" href="{{ path('faq') }}" style="margin-top:1rem">
+                        Voir la FAQ
+                    </a>
+                </div>
+
+                <div class="valeur" style="--accent: var(--emeraude)">
+                    <span class="valeur__icone">{{ icone('ampoule', 24) }}</span>
+                    <h3 class="valeur__titre">Quiz</h3>
+                    <p class="valeur__texte">
+                        Des quiz ludiques pour tester (et compléter) tes connaissances, sans rien enregistrer.
+                    </p>
+                    <a class="lien-fleche" href="{{ path('quiz_liste') }}" style="margin-top:1rem">
+                        Faire un quiz
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}FAQ{% endblock %}
+{% block meta_description %}Les réponses de nos pair-éducateur·rice·s aux questions les plus posées par les jeunes.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Questions fréquentes',
+        chapo: "Les réponses de nos pair-éducateur·rice·s aux questions que d'autres jeunes ont déjà posées, sans jugement.",
+        ariane: [{libelle: 'FAQ'}]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+            <div class="entete-section entete-section--repartie entete-section--haut">
+                <div>
+                    <span class="surtitre">Tu ne trouves pas ta réponse ?</span>
+                    <h2 style="margin-bottom:0">Pose ta propre question</h2>
+                </div>
+                <a class="bouton bouton--primaire bouton--petit" href="{{ path('question_anonyme_poser') }}">
+                    {{ icone('envoyer', 15) }} Pose ta question
+                </a>
+            </div>
+
+            {% if thematiques|length > 0 %}
+                <div class="puces" role="navigation" aria-label="Filtrer la FAQ par thématique">
+                    <a class="puce {{ thematiqueActive is null ? 'est-active' }}" href="{{ path('faq') }}">Toutes</a>
+                    {% for thematique in thematiques %}
+                        <a class="puce {{ thematiqueActive == thematique.slug ? 'est-active' }}"
+                           href="{{ path('faq', {thematique: thematique.slug}) }}">{{ thematique.nom }}</a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if questions|length > 0 %}
+                <div>
+                    {% for question in questions %}
+                        <details style="margin-bottom:1rem;padding:1.25rem 1.5rem;background:var(--gris-025);border:1px solid var(--bordure-douce);border-radius:var(--rayon-lg)">
+                            <summary style="cursor:pointer;font-weight:700;color:var(--gris-900)">
+                                {{ question.question }}
+                            </summary>
+                            <div class="prose" style="margin-top:1rem">
+                                {{ question.reponse|nl2br }}
+                            </div>
+                            <p style="margin-top:1rem;font-size:.82rem;color:var(--texte-tres-doux)">
+                                {% if question.repondantLibre %}
+                                    Réponse de {{ question.repondantLibre }}
+                                {% else %}
+                                    Réponse d'un·e pair-éducateur·rice Amour&Vie
+                                {% endif %}
+                                {% if question.thematiques|length > 0 %}
+                                    ·
+                                    {% for thematique in question.thematiques %}
+                                        <span class="badge badge--neutre">{{ thematique.nom }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </p>
+                        </details>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="etat-vide">
+                    <div class="etat-vide__icone" aria-hidden="true">{{ icone('message', 44) }}</div>
+                    <h3>Aucune question ne correspond à cette thématique</h3>
+                    <p>Essaie une autre thématique, ou pose directement ta question à un·e pair-éducateur·rice.</p>
+                    <p style="margin-top:1.5rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
+                        <a class="bouton bouton--contour" href="{{ path('faq') }}">Voir toutes les questions</a>
+                        <a class="bouton bouton--primaire" href="{{ path('question_anonyme_poser') }}">Pose ta question</a>
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}

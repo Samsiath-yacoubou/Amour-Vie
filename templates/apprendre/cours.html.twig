@@ -1,0 +1,161 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}{{ cours.titre }}{% endblock %}
+{% block meta_description %}{{ cours.resume }}{% endblock %}
+
+{% block corps %}
+
+    {{ include('apprendre/_barre_compte.html.twig', {cible: path('apprendre_cours', {slug: cours.slug})}) }}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: cours.titre,
+        chapo: cours.resume,
+        ariane: [
+            {libelle: 'Apprendre', chemin: path('apprendre_catalogue')},
+            {libelle: cours.titre}
+        ]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+            <div class="mise-en-page">
+
+                <div>
+                    {% if cours.description %}
+                        <div class="prose" style="margin-bottom:2.5rem">{{ cours.description|raw }}</div>
+                    {% endif %}
+
+                    <h2 style="margin-bottom:1.25rem">Programme du cours</h2>
+
+                    <ol class="parcours">
+                        {% for module in cours.modules %}
+                            {% set etat = bilan ? bilan.modules[loop.index0] : null %}
+                            <li class="parcours__module {{ etat and etat.valide ? 'est-valide' }}">
+                                <div class="parcours__entete">
+                                    <span class="parcours__numero" aria-hidden="true">
+                                        {% if etat and etat.valide %}{{ icone('valide', 16) }}{% else %}{{ loop.index }}{% endif %}
+                                    </span>
+                                    <div>
+                                        <h3 class="parcours__titre">
+                                            <span class="sr-only">Module {{ loop.index }} : </span>{{ module.titre }}
+                                            {% if etat and etat.valide %}<span class="sr-only">(validé)</span>{% endif %}
+                                        </h3>
+                                        {% if module.description %}<p class="parcours__description">{{ module.description }}</p>{% endif %}
+                                    </div>
+                                </div>
+
+                                <ul class="parcours__etapes">
+                                    {% for lecon in module.lecons %}
+                                        {% set lue = etat ? etat.lecons[loop.index0].terminee : false %}
+                                        <li class="{{ lue ? 'est-fait' }}">
+                                            {{ icone(lue ? 'valide' : 'document', 15) }}
+                                            {% if inscription %}
+                                                <a href="{{ path('apprendre_lecon', {slug: cours.slug, id: lecon.id}) }}">{{ lecon.titre }}</a>
+                                            {% else %}
+                                                <span>{{ lecon.titre }}</span>
+                                            {% endif %}
+                                            <span class="parcours__duree">{{ lecon.dureeMinutes }} min</span>
+                                            {% if lue %}<span class="sr-only">(lue)</span>{% endif %}
+                                        </li>
+                                    {% endfor %}
+
+                                    {% if module.aUnQuiz %}
+                                        {% set quizReussi = etat and etat.quiz and etat.quiz.reussi %}
+                                        <li class="{{ quizReussi ? 'est-fait' }}">
+                                            {{ icone(quizReussi ? 'valide' : 'ampoule', 15) }}
+                                            {% if inscription %}
+                                                <a href="{{ path('apprendre_quiz', {slug: cours.slug, id: module.id}) }}">Quiz du module</a>
+                                            {% else %}
+                                                <span>Quiz du module</span>
+                                            {% endif %}
+                                            <span class="parcours__duree">
+                                                {% if etat and etat.quiz and etat.quiz.meilleur is not null %}meilleur score : {{ etat.quiz.meilleur }} %{% else %}{{ module.quiz.questions|length }} questions{% endif %}
+                                            </span>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                        {% endfor %}
+
+                        {% if cours.aUnExamenFinal %}
+                            {% set examen = bilan ? bilan.examen : null %}
+                            <li class="parcours__module {{ examen and examen.reussi ? 'est-valide' }}">
+                                <div class="parcours__entete">
+                                    <span class="parcours__numero" aria-hidden="true">{{ icone(examen and examen.reussi ? 'valide' : 'etoile', 16) }}</span>
+                                    <div>
+                                        <h3 class="parcours__titre">Examen final
+                                            {% if examen and examen.reussi %}<span class="sr-only">(réussi)</span>{% endif %}</h3>
+                                        <p class="parcours__description">
+                                            {{ cours.examenFinal.questions|length }} questions · réussite à partir de {{ cours.seuilReussite }} %
+                                            · {{ cours.tentativesExamenMax > 0 ? cours.tentativesExamenMax ~ ' tentative' ~ (cours.tentativesExamenMax > 1 ? 's') ~ ' maximum' : 'tentatives illimitées' }}
+                                        </p>
+                                        {% if examen %}
+                                            <p class="parcours__description">
+                                                {% if examen.reussi %}
+                                                    {{ icone('valide', 14) }} Réussi ({{ examen.meilleur }} %)
+                                                {% elseif examen.epuise %}
+                                                    Tentatives épuisées (meilleur score : {{ examen.meilleur }} %). Contacte l'équipe Amour&amp;Vie pour en discuter.
+                                                {% elseif examen.accessible %}
+                                                    <a href="{{ path('apprendre_examen', {slug: cours.slug}) }}">Passer l'examen</a>
+                                                    {% if examen.restantes is not null %}({{ examen.restantes }} tentative{{ examen.restantes > 1 ? 's' }} restante{{ examen.restantes > 1 ? 's' }}){% endif %}
+                                                {% else %}
+                                                    Accessible une fois tous les modules validés.
+                                                {% endif %}
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </li>
+                        {% endif %}
+                    </ol>
+                </div>
+
+                <aside class="mise-en-page__aside">
+                    <div class="encadre">
+                        {% if bilan %}
+                            {{ include('apprendre/_progression.html.twig', {bilan: bilan}) }}
+
+                            {% if bilan.estTermine %}
+                                <p style="margin:1rem 0 0">{{ icone('etoile', 16) }} <strong>Cours terminé</strong>
+                                    le {{ inscription.termineeAt|date('d/m/Y') }}. Bravo !</p>
+
+                                {% if certificat %}
+                                    <a class="bouton bouton--primaire bouton--large" style="margin-top:1.25rem" href="{{ path('apprendre_mes_certificats') }}">
+                                        {{ icone('etoile', 16) }} Voir mon certificat
+                                    </a>
+                                {% else %}
+                                    <a class="bouton bouton--primaire bouton--large" style="margin-top:1.25rem" href="{{ path('apprendre_certificat_obtenir', {slug: cours.slug}) }}">
+                                        {{ icone('etoile', 16) }} Obtenir mon certificat
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        {% else %}
+                            <ul class="encadre__liste">
+                                <li>{{ icone('horloge', 15) }} Environ {{ cours.dureeMinutes }} minutes</li>
+                                <li>{{ icone('livre', 15) }} {{ cours.modules|length }} module{{ cours.modules|length > 1 ? 's' }}</li>
+                                <li>{{ icone('cible', 15) }} Niveau {{ cours.niveauLibelle|lower }}</li>
+                                <li>{{ icone('valide', 15) }} Quiz validé à partir de {{ cours.seuilReussite }} %</li>
+                            </ul>
+                        {% endif %}
+
+                        {% if app.user and 'ROLE_APPRENANT' in app.user.roles %}
+                            {% if not bilan or (not bilan.estTermine and not (bilan.examen and bilan.examen.epuise)) %}
+                                <form method="post" action="{{ path('apprendre_cours_commencer', {slug: cours.slug}) }}" style="margin-top:1.25rem">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('commencer-' ~ cours.id) }}">
+                                    <button type="submit" class="bouton bouton--primaire bouton--large">
+                                        {{ bilan and bilan.estCommence ? 'Reprendre le cours' : 'Commencer le cours' }} {{ icone('fleche-droite', 16) }}
+                                    </button>
+                                </form>
+                            {% endif %}
+                        {% else %}
+                            <p style="margin:1.25rem 0 .75rem;font-size:.92rem">Crée ton compte gratuit pour suivre ce cours et garder ta progression.</p>
+                            <a class="bouton bouton--primaire bouton--large" href="{{ path('apprendre_inscription', {cible: path('apprendre_cours', {slug: cours.slug})}) }}">Créer mon compte</a>
+                            <a class="bouton bouton--contour bouton--large bouton--petit" style="margin-top:.6rem" href="{{ path('apprendre_connexion', {cible: path('apprendre_cours', {slug: cours.slug})}) }}">J'ai déjà un compte</a>
+                        {% endif %}
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

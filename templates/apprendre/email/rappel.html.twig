@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr">
+<body style="margin:0;padding:24px;background:#f6f6f8;font-family:Arial,Helvetica,sans-serif;color:#1f1f29">
+    <div style="max-width:520px;margin:0 auto;background:#ffffff;border-radius:12px;padding:32px">
+        <p style="font-size:20px;font-weight:bold;color:#e3001b;margin:0 0 24px">Amour&amp;Vie</p>
+
+        <p>Bonjour {{ apprenant.prenom }},</p>
+
+        <p>Tu as commencé le cours <strong>« {{ cours.titre }} »</strong> et tu en es à <strong>{{ pourcentage }} %</strong>.
+           Il ne te reste plus beaucoup pour le terminer{% if cours.aUnExamenFinal %} et obtenir ton certificat{% endif %} !</p>
+
+        <p style="margin:28px 0">
+            <a href="{{ lien }}" style="display:inline-block;background:#e3001b;color:#ffffff;text-decoration:none;font-weight:bold;padding:12px 22px;border-radius:999px">
+                Reprendre mon cours
+            </a>
+        </p>
+
+        <p style="font-size:14px;color:#55556a">Tu reçois cet e-mail parce que tu suis un cours en ligne Amour&amp;Vie.
+           Nous ne t'enverrons pas d'autre rappel tant que tu n'auras pas repris le cours.</p>
+    </div>
+</body>
+</html>

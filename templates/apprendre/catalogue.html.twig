@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Apprendre en ligne{% endblock %}
+{% block meta_description %}Des cours gratuits et courts sur la santé sexuelle et reproductive, à suivre sur ton téléphone, à ton rythme, avec Amour&Vie ABMS.{% endblock %}
+
+{% block corps %}
+
+    {{ include('apprendre/_barre_compte.html.twig') }}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Apprendre avec Amour&Vie',
+        chapo: "Des cours courts et gratuits sur ta santé, à suivre sur ton téléphone, à ton rythme. Un quiz à la fin de chaque module pour vérifier ce que tu as retenu.",
+        ariane: [{libelle: 'Apprendre'}]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+            {% if cours|length > 0 %}
+                <div class="grille grille--3">
+                    {% for unCours in cours %}
+                        {{ include('apprendre/_carte_cours.html.twig', {cours: unCours, bilan: progressions[unCours.id] ?? null}) }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="etat-vide">
+                    <div class="etat-vide__icone" aria-hidden="true">{{ icone('formation', 44) }}</div>
+                    <h3>Les premiers cours arrivent bientôt</h3>
+                    <p>L'équipe Amour&amp;Vie prépare des cours pour toi. Reviens très vite !</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="section section--douce">
+        <div class="conteneur">
+            <div class="grille grille--3">
+                <div class="encadre">
+                    <p class="encadre__titre">{{ icone('lecture', 18) }} Sur ton téléphone</p>
+                    <p>Des leçons courtes, lisibles même avec peu de connexion. Les vidéos ne se chargent que si tu le demandes.</p>
+                </div>
+                <div class="encadre">
+                    <p class="encadre__titre">{{ icone('cible', 18) }} À ton rythme</p>
+                    <p>Ta progression est enregistrée : tu reprends exactement là où tu t'es arrêté·e.</p>
+                </div>
+                <div class="encadre">
+                    <p class="encadre__titre">{{ icone('bouclier', 18) }} En toute confiance</p>
+                    <p>Tes réponses aux quiz ne sont jamais conservées : seul ton score l'est, pour valider tes modules.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

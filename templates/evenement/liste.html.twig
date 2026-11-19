@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Agenda{% endblock %}
+{% block meta_description %}Agenda Amour&Vie : ateliers, formations et rencontres à venir.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Agenda',
+        chapo: "Ateliers, formations, dialogues communautaires et rencontres institutionnelles.",
+        ariane: [{libelle: 'Agenda'}]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+
+            <div class="entete-section">
+                <span class="surtitre">{{ icone('calendrier', 14) }} À venir</span>
+                <h2>Prochains événements</h2>
+            </div>
+
+            {% if aVenir|length > 0 %}
+                <div class="grille" style="gap:1.1rem">
+                    {% for evenement in aVenir %}
+                        <article class="evenement">
+                            <div class="evenement__date">
+                                <span class="evenement__jour">{{ evenement.dateDebut|date('d') }}</span>
+                                <span class="evenement__mois">{{ evenement.dateDebut|mois_court }}</span>
+                            </div>
+
+                            <div class="evenement__corps">
+                                <h3 class="evenement__titre">
+                                    <a href="{{ path('evenement_detail', {slug: evenement.slug}) }}"
+                                       style="color:inherit;text-decoration:none">{{ evenement.titre }}</a>
+                                </h3>
+
+                                <div class="evenement__meta" style="margin-bottom:.6rem">
+                                    <span>{{ icone('localisation', 14) }} {{ evenement.lieu }}</span>
+                                    <span>{{ icone('horloge', 14) }} {{ evenement.dateDebut|date('H\\hi') }}</span>
+                                    {% if evenement.programme %}
+                                        <span>{{ icone('dossier', 14) }} {{ evenement.programme.sigle }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <p style="font-size:.93rem;color:var(--texte-doux);margin:0">
+                                    {{ evenement.description|extrait(180) }}
+                                </p>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="etat-vide">
+                    <div class="etat-vide__icone" aria-hidden="true">{{ icone('calendrier', 44) }}</div>
+                    <h3>Aucun événement programmé pour l'instant</h3>
+                    <p>Revenez prochainement ou suivez-nous sur les réseaux sociaux pour ne rien manquer.</p>
+                </div>
+            {% endif %}
+
+            {% if passes|length > 0 %}
+                <div class="entete-section" style="margin-top:4rem">
+                    <span class="surtitre">Archives</span>
+                    <h2>Événements passés</h2>
+                </div>
+
+                <div class="grille" style="gap:1rem">
+                    {% for evenement in passes %}
+                        <article class="evenement" style="opacity:.82">
+                            <div class="evenement__date" style="background:var(--gris-400)">
+                                <span class="evenement__jour">{{ evenement.dateDebut|date('d') }}</span>
+                                <span class="evenement__mois">{{ evenement.dateDebut|mois_court }}</span>
+                            </div>
+                            <div class="evenement__corps">
+                                <h3 class="evenement__titre">
+                                    <a href="{{ path('evenement_detail', {slug: evenement.slug}) }}"
+                                       style="color:inherit;text-decoration:none">{{ evenement.titre }}</a>
+                                </h3>
+                                <div class="evenement__meta">
+                                    <span>{{ icone('localisation', 14) }} {{ evenement.lieu }}</span>
+                                    <span>{{ icone('calendrier', 14) }} {{ evenement.dateDebut|date_fr }}</span>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}

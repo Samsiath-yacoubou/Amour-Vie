@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Plan du site{% endblock %}
+{% block meta_description %}Plan du site Amour&Vie ABMS : accès rapide aux rubriques et contenus publiés.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Plan du site',
+        chapo: "Retrouvez ici l'ensemble des rubriques et des contenus publiés.",
+        ariane: [{libelle: 'Plan du site'}]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+            <div class="grille grille--2">
+
+                <div class="encadre">
+                    <p class="encadre__titre">Rubriques principales</p>
+                    <ul class="encadre__liste">
+                        <li><a href="{{ path('accueil') }}">Accueil</a></li>
+                        <li><a href="{{ path('qui_sommes_nous') }}">Qui sommes-nous ?</a></li>
+                        <li><a href="{{ path('programmes') }}">Nos actions</a></li>
+                        <li><a href="{{ path('centres_jeunes') }}">Centres Jeunes</a></li>
+                        <li><a href="{{ path('emissions') }}">Émissions radio & TV</a></li>
+                        <li><a href="{{ path('actualites') }}">Actualités</a></li>
+                        <li><a href="{{ path('ressources') }}">Ressources</a></li>
+                        <li><a href="{{ path('publications') }}">Publications</a></li>
+                        <li><a href="{{ path('faq') }}">FAQ</a></li>
+                        <li><a href="{{ path('quiz_liste') }}">Quiz</a></li>
+                        <li><a href="{{ path('espace_jeunes') }}">Espace jeunes</a></li>
+                        <li><a href="{{ path('temoignages') }}">Témoignages</a></li>
+                        <li><a href="{{ path('evenements') }}">Agenda</a></li>
+                        <li><a href="{{ path('mediatheque') }}">Médiathèque</a></li>
+                        <li><a href="{{ path('contact') }}">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="encadre">
+                    <p class="encadre__titre">Programmes</p>
+                    <ul class="encadre__liste">
+                        {% for programme in programmes %}
+                            <li>
+                                <a href="{{ path('programme_detail', {slug: programme.slug}) }}">
+                                    {{ programme.sigle }} · {{ programme.nom }}
+                                </a>
+                            </li>
+                        {% else %}
+                            <li style="color:var(--texte-tres-doux)">Aucun programme publié pour le moment.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="encadre">
+                    <p class="encadre__titre">Dernières actualités</p>
+                    <ul class="encadre__liste">
+                        {% for article in articles %}
+                            <li><a href="{{ path('actualite_detail', {slug: article.slug}) }}">{{ article.titre }}</a></li>
+                        {% else %}
+                            <li style="color:var(--texte-tres-doux)">Aucune actualité publiée pour le moment.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="encadre">
+                    <p class="encadre__titre">Dernières publications</p>
+                    <ul class="encadre__liste">
+                        {% for publication in publications %}
+                            <li><a href="{{ path('publication_detail', {slug: publication.slug}) }}">{{ publication.titre }}</a></li>
+                        {% else %}
+                            <li style="color:var(--texte-tres-doux)">Aucune publication pour le moment.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="encadre">
+                    <p class="encadre__titre">Informations légales</p>
+                    <ul class="encadre__liste">
+                        <li><a href="{{ path('page_legale', {page: 'mentions-legales'}) }}">Mentions légales</a></li>
+                        <li><a href="{{ path('page_legale', {page: 'politique-de-confidentialite'}) }}">Politique de confidentialité</a></li>
+                        <li><a href="{{ path('page_legale', {page: 'conditions-utilisation'}) }}">Conditions d'utilisation</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

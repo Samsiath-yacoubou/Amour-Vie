@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Mon certificat · {{ cours.titre }}{% endblock %}
+
+{% block corps %}
+
+    {{ include('apprendre/_barre_compte.html.twig') }}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Bravo, tu as réussi le cours !',
+        chapo: 'Vérifie ton nom : il sera imprimé tel quel sur ton certificat.',
+        ariane: [
+            {libelle: 'Apprendre', chemin: path('apprendre_catalogue')},
+            {libelle: cours.titre, chemin: path('apprendre_cours', {slug: cours.slug})},
+            {libelle: 'Mon certificat'}
+        ]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur compte-apprenant">
+            {% for erreur in erreurs %}
+                <div class="message message--erreur" role="alert">{{ icone('triangle-alerte', 20) }}<div>{{ erreur }}</div></div>
+            {% endfor %}
+
+            <form method="post" action="{{ path('apprendre_certificat_obtenir', {slug: cours.slug}) }}" data-navigation-complete>
+                <input type="hidden" name="_token" value="{{ csrf_token('certificat-' ~ cours.id) }}">
+
+                <div class="grille grille--2" style="gap:0 1.25rem">
+                    <div class="champ">
+                        <label class="champ__label" for="prenom">Prénom</label>
+                        <input type="text" id="prenom" name="prenom" value="{{ prenom }}" required maxlength="100" autocomplete="given-name">
+                    </div>
+                    <div class="champ">
+                        <label class="champ__label" for="nom">Nom</label>
+                        <input type="text" id="nom" name="nom" value="{{ nom }}" required maxlength="100" autocomplete="family-name">
+                    </div>
+                </div>
+
+                <p style="margin:0 0 1.5rem;color:var(--texte-doux)">
+                    Ton certificat portera ce nom, le titre du cours « {{ cours.titre }} », la date du jour et un numéro unique vérifiable.
+                </p>
+
+                <div class="champ champ--case">
+                    <label class="champ__case">
+                        <input type="checkbox" name="confirmation" value="1" required>
+                        <span>J'ai vérifié l'orthographe de mon prénom et de mon nom.</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="bouton bouton--primaire bouton--large">
+                    {{ icone('etoile', 17) }} Obtenir mon certificat
+                </button>
+            </form>
+        </div>
+    </section>
+
+{% endblock %}

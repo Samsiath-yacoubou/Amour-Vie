@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}{{ quiz.titre }}{% endblock %}
+{% block meta_description %}{{ quiz.description ? quiz.description|extrait(160) : 'Teste tes connaissances avec le quiz « ' ~ quiz.titre ~ ' » proposé par Amour&Vie ABMS.' }}{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: quiz.titre,
+        chapo: quiz.description,
+        ariane: [
+            {libelle: 'Quiz', chemin: path('quiz_liste')},
+            {libelle: quiz.titre}
+        ]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur" style="max-width:760px">
+            {% if questionsQuiz|length > 0 %}
+                <p style="font-size:.85rem;color:var(--texte-tres-doux);margin-bottom:2rem">
+                    {{ icone('info', 15) }} Rien n'est enregistré : réponds librement, à ton rythme, et découvre l'explication après chaque réponse.
+                </p>
+
+                {# Îlot Vue (assets/vue/composants/Quiz.js). Le contenu ci-dessous
+                   sert de repli sans JavaScript et reste indexable. #}
+                <div data-vue="quiz" data-props="{{ {questions: questionsQuiz}|json_encode|e('html_attr') }}">
+                    <ol class="quiz__repli">
+                        {% for question in questionsQuiz %}
+                            <li class="quiz__question">
+                                <strong>{{ question.enonce }}</strong>
+                                <ul>
+                                    {% for choix in question.choix %}
+                                        <li>{{ choix.libelle }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                    <noscript><p>Active JavaScript pour répondre au quiz et voir les explications.</p></noscript>
+                </div>
+            {% else %}
+                <div class="etat-vide">
+                    <div class="etat-vide__icone" aria-hidden="true">{{ icone('ampoule', 44) }}</div>
+                    <h3>Ce quiz ne contient pas encore de questions</h3>
+                    <p>Reviens bientôt pour le découvrir.</p>
+                </div>
+            {% endif %}
+
+            <p style="margin-top:1rem">
+                <a class="lien-fleche" href="{{ path('quiz_liste') }}">Tous les quiz</a>
+            </p>
+        </div>
+    </section>
+
+{% endblock %}

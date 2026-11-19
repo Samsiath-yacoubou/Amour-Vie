@@ -1,0 +1,23 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}Redonner les tentatives d'examen{% endblock %}
+
+{% block main %}
+    <div style="max-width:640px">
+        <p>
+            <strong>{{ inscription.apprenant.nomComplet }}</strong>, cours « {{ inscription.cours.titre }} ».<br>
+            Tentatives utilisées : <strong>{{ bilan.examen.tentatives }}</strong>
+            {%- if bilan.examen.max > 0 %} sur {{ bilan.examen.max }}{% endif %}
+            {%- if bilan.examen.meilleur is not null %}, meilleur score : {{ bilan.examen.meilleur }} %{% endif %}.
+        </p>
+
+        <p>Les tentatives enregistrées seront effacées : le jeune pourra repasser l'examen avec le nombre de tentatives
+           prévu par le cours. À utiliser par exemple après un problème technique ou sur décision de l'équipe pédagogique.</p>
+
+        <form method="post">
+            <input type="hidden" name="_token" value="{{ csrf_token('reinitialiser-examen-' ~ inscription.id) }}">
+            <button type="submit" class="btn btn-primary">Effacer les tentatives</button>
+            <a class="btn btn-secondary" href="{{ path('admin_inscription_cours_detail', {entityId: inscription.id}) }}">Annuler</a>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{# Barre de compte de l'e-learning, placée dans <main> pour rester à jour
+   avec la navigation instantanée (l'en-tête du site, lui, ne change pas). #}
+{% set apprenant = app.user is not null and app.user.roles is defined and 'ROLE_APPRENANT' in app.user.roles ? app.user : null %}
+<nav class="apprendre-barre" aria-label="Espace e-learning">
+    <div class="conteneur apprendre-barre__contenu">
+        <a class="apprendre-barre__marque" href="{{ path('apprendre_catalogue') }}">
+            {{ icone('formation', 18) }} Apprendre avec Amour&amp;Vie
+        </a>
+
+        <div class="apprendre-barre__liens">
+            {% if apprenant %}
+                <a href="{{ path('apprendre_mon_espace') }}" {% if app.request.attributes.get('_route') == 'apprendre_mon_espace' %}aria-current="page"{% endif %}>
+                    {{ icone('utilisateur', 16) }} Mes cours
+                </a>
+                <a href="{{ path('apprendre_mes_certificats') }}" {% if app.request.attributes.get('_route') == 'apprendre_mes_certificats' %}aria-current="page"{% endif %}>
+                    {{ icone('etoile', 16) }} Mes certificats
+                </a>
+                <a href="{{ path('apprendre_deconnexion') }}">Se déconnecter</a>
+            {% else %}
+                <a href="{{ path('apprendre_connexion', cible is defined and cible ? {cible: cible} : {}) }}">Se connecter</a>
+                <a class="bouton bouton--primaire bouton--petit" href="{{ path('apprendre_inscription', cible is defined and cible ? {cible: cible} : {}) }}">Créer mon compte</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>

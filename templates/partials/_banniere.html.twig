@@ -1,0 +1,30 @@
+{# Bannière de page intérieure avec fil d'Ariane.
+   Paramètres : titre, chapo (optionnel), ariane = [{libelle, chemin}],
+   action (optionnel, HTML brut — ex. un bouton de filtre) #}
+<div class="banniere">
+    <div class="conteneur banniere__contenu">
+        <nav aria-label="Fil d'Ariane">
+            <ol class="fil-ariane">
+                <li><a href="{{ path('accueil') }}">Accueil</a></li>
+                {% for lien in ariane|default([]) %}
+                    <li>
+                        {% if lien.chemin is defined and not loop.last %}
+                            <a href="{{ lien.chemin }}">{{ lien.libelle }}</a>
+                        {% else %}
+                            <span aria-current="page">{{ lien.libelle }}</span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ol>
+        </nav>
+
+        <h1>{{ titre }}</h1>
+        {% if chapo is defined and chapo %}
+            <p class="banniere__chapo">{{ chapo }}</p>
+        {% endif %}
+
+        {% if action is defined and action %}
+            <div class="banniere__action">{{ action|raw }}</div>
+        {% endif %}
+    </div>
+</div>

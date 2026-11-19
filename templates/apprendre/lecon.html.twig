@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}{{ lecon.titre }} · {{ cours.titre }}{% endblock %}
+{% block meta_description %}Leçon du cours « {{ cours.titre }} » sur Amour&Vie.{% endblock %}
+
+{% block corps %}
+
+    {{ include('apprendre/_barre_compte.html.twig') }}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: lecon.titre,
+        chapo: module.titre,
+        ariane: [
+            {libelle: 'Apprendre', chemin: path('apprendre_catalogue')},
+            {libelle: cours.titre, chemin: path('apprendre_cours', {slug: cours.slug})},
+            {libelle: lecon.titre}
+        ]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur" style="max-width:780px">
+
+            {{ include('apprendre/_progression.html.twig', {bilan: bilan, libelle: 'Progression dans le cours'}) }}
+
+            <p class="lecon__meta">{{ icone('horloge', 14) }} Lecture : {{ lecon.dureeMinutes }} min
+                {% if terminee %}<span class="badge badge--succes">{{ icone('valide', 12) }} Leçon lue</span>{% endif %}</p>
+
+            {% if lecon.videoUrl %}
+                {# Vidéo chargée seulement à la demande : sur un petit forfait, le texte suffit. #}
+                <div class="lecon__video" data-video-differee {% if lecon.videoIntegrable %}data-video-src="{{ lecon.videoIntegrable }}"{% endif %}>
+                    {% if lecon.videoIntegrable %}
+                        <button type="button" class="lecon__video-bouton" data-video-bouton>
+                            {{ icone('video', 28) }}
+                            <span><strong>Regarder la vidéo</strong><br><small>Consomme des données mobiles</small></span>
+                        </button>
+                    {% else %}
+                        <a class="bouton bouton--contour" href="{{ lecon.videoUrl }}" target="_blank" rel="noopener">
+                            {{ icone('video', 16) }} Voir la vidéo {{ icone('lien-externe', 14) }}
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <div class="prose">{{ lecon.contenu|raw }}</div>
+
+            <div class="lecon__actions">
+                {% if not terminee %}
+                    <form method="post" action="{{ path('apprendre_lecon_terminer', {slug: cours.slug, id: lecon.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('terminer-lecon-' ~ lecon.id) }}">
+                        <button type="submit" class="bouton bouton--primaire bouton--large">
+                            {{ icone('valide', 17) }} J'ai terminé cette leçon
+                        </button>
+                    </form>
+                {% elseif voisines.suivante %}
+                    <a class="bouton bouton--primaire bouton--large" href="{{ path('apprendre_lecon', {slug: cours.slug, id: voisines.suivante.id}) }}">
+                        Leçon suivante {{ icone('fleche-droite', 16) }}
+                    </a>
+                {% endif %}
+
+                {% if module.aUnQuiz and terminee and module.lecons|last == lecon %}
+                    <a class="bouton bouton--contour bouton--large" href="{{ path('apprendre_quiz', {slug: cours.slug, id: module.id}) }}">
+                        {{ icone('ampoule', 16) }} Passer le quiz du module
+                    </a>
+                {% endif %}
+            </div>
+
+            <nav class="lecon__navigation" aria-label="Leçons du cours">
+                {% if voisines.precedente %}
+                    <a href="{{ path('apprendre_lecon', {slug: cours.slug, id: voisines.precedente.id}) }}">
+                        {{ icone('fleche-gauche', 14) }} {{ voisines.precedente.titre }}
+                    </a>
+                {% else %}<span></span>{% endif %}
+                <a href="{{ path('apprendre_cours', {slug: cours.slug}) }}">Programme du cours</a>
+                {% if voisines.suivante %}
+                    <a href="{{ path('apprendre_lecon', {slug: cours.slug, id: voisines.suivante.id}) }}">
+                        {{ voisines.suivante.titre }} {{ icone('fleche-droite', 14) }}
+                    </a>
+                {% else %}<span></span>{% endif %}
+            </nav>
+        </div>
+    </section>
+
+{% endblock %}

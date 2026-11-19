@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Créer mon compte · Apprendre{% endblock %}
+{% block meta_description %}Crée ton compte gratuit pour suivre les cours en ligne Amour&Vie et obtenir tes certificats.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Crée ton compte',
+        chapo: 'Gratuit. Il te permet de garder ta progression et, bientôt, de recevoir tes certificats.',
+        ariane: [
+            {libelle: 'Apprendre', chemin: path('apprendre_catalogue')},
+            {libelle: 'Inscription'}
+        ]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur compte-apprenant">
+            {{ form_start(formulaire, {attr: {novalidate: 'novalidate'}}) }}
+                <div class="grille grille--2" style="gap:0 1.25rem">
+                    {{ form_row(formulaire.prenom) }}
+                    {{ form_row(formulaire.nom) }}
+                </div>
+
+                {{ form_row(formulaire.email) }}
+                {{ form_row(formulaire.telephone) }}
+                {{ form_row(formulaire.motDePasse.first) }}
+                {{ form_row(formulaire.motDePasse.second) }}
+                {{ form_row(formulaire.consentement) }}
+                {{ form_row(formulaire.siteWeb) }}
+
+                <p style="font-size:.85rem;color:var(--texte-tres-doux)">
+                    Nous ne conservons que ton nom, ton e-mail, ton téléphone si tu le donnes, et tes scores.
+                    Tes réponses aux quiz ne sont jamais enregistrées. Tu peux demander la suppression de ton compte
+                    à tout moment en contactant l'équipe Amour&amp;Vie.
+                </p>
+
+                <button type="submit" class="bouton bouton--primaire bouton--large" style="margin-top:1rem">
+                    Créer mon compte {{ icone('fleche-droite', 16) }}
+                </button>
+            {{ form_end(formulaire) }}
+
+            <p class="compte-apprenant__liens">
+                <a href="{{ path('apprendre_connexion', cible ? {cible: cible} : {}) }}">J'ai déjà un compte</a>
+            </p>
+        </div>
+    </section>
+
+{% endblock %}

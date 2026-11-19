@@ -1,0 +1,17 @@
+{# Carte d'un Centre Jeune. Paramètre : centre #}
+<article class="centre-carte">
+    <span class="centre-carte__icone" aria-hidden="true">{{ icone('house-medical', 26) }}</span>
+    <div class="centre-carte__corps">
+        <h3 class="centre-carte__titre">
+            <a href="{{ path('centre_jeune_detail', {slug: centre.slug}) }}">{{ centre.nom }}</a>
+        </h3>
+        <div class="centre-carte__meta">
+            <span>{{ icone('localisation', 14) }} {{ centre.ville }}</span>
+            {% if centre.telephone %}<span>{{ icone('telephone', 14) }} {{ centre.telephone }}</span>{% endif %}
+            {% if centre.horaires %}<span>{{ icone('horloge', 14) }} {{ centre.horaires }}</span>{% endif %}
+        </div>
+        {% if centre.description %}
+            <p class="centre-carte__description">{{ centre.description|extrait(140) }}</p>
+        {% endif %}
+    </div>
+</article>

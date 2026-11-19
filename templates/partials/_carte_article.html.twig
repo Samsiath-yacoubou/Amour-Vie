@@ -1,0 +1,36 @@
+{# Carte d'actualité réutilisée sur l'accueil, la liste et les pages programme. #}
+<article class="carte">
+    <div class="carte__media">
+        {% if article.imageName %}
+            <img src="{{ vich_uploader_asset(article, 'imageFile') }}"
+                 alt="{{ article.imageAlt ?: article.titre }}" loading="lazy">
+        {% else %}
+            <div class="carte__media-vide" aria-hidden="true">{{ icone('journal', 34) }}</div>
+        {% endif %}
+
+        <div class="carte__etiquettes">
+            {% if article.type %}<span class="badge">{{ article.type.nom }}</span>{% endif %}
+            {% if article.aLaUne %}<span class="badge badge--jaune">À la une</span>{% endif %}
+        </div>
+    </div>
+
+    <div class="carte__corps">
+        <div class="carte__meta">
+            <span>{{ icone('calendrier', 14) }}<time datetime="{{ article.datePublication|date('Y-m-d') }}">{{ article.datePublication|date_fr }}</time></span>
+            {% if article.programme %}
+                <span>{{ icone('dossier', 14) }}{{ article.programme.sigle }}</span>
+            {% endif %}
+        </div>
+
+        <h3 class="carte__titre">
+            <a href="{{ path('actualite_detail', {slug: article.slug}) }}">{{ article.titre }}</a>
+        </h3>
+
+        <p class="carte__resume">{{ article.resume|extrait(150) }}</p>
+
+        <div class="carte__pied">
+            <span class="lien-fleche">Lire l'article</span>
+            <span style="font-size:.8rem;color:var(--texte-tres-doux)">{{ article.tempsLecture }} min</span>
+        </div>
+    </div>
+</article>

@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Quiz{% endblock %}
+{% block meta_description %}Teste tes connaissances sur la santé sexuelle et reproductive avec les quiz Amour&Vie ABMS.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Teste tes connaissances',
+        chapo: "Des quiz ludiques pour vérifier (et compléter) ce que tu sais déjà. Rien n'est enregistré, joue librement.",
+        ariane: [{libelle: 'Quiz'}]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+            {% if quiz|length > 0 %}
+                <div class="grille grille--3">
+                    {% for unQuiz in quiz %}
+                        <div class="valeur" style="--accent: var(--emeraude)">
+                            <span class="valeur__icone">{{ icone('ampoule', 24) }}</span>
+                            <h3 class="valeur__titre">{{ unQuiz.titre }}</h3>
+                            {% if unQuiz.description %}
+                                <p class="valeur__texte">{{ unQuiz.description|extrait(120) }}</p>
+                            {% endif %}
+                            <p style="font-size:.82rem;color:var(--texte-tres-doux);margin-top:.75rem">
+                                {{ unQuiz.questions|length }} question{{ unQuiz.questions|length > 1 ? 's' : '' }}
+                            </p>
+                            <a class="lien-fleche" href="{{ path('quiz_detail', {slug: unQuiz.slug}) }}" style="margin-top:1rem">
+                                Faire le quiz
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="etat-vide">
+                    <div class="etat-vide__icone" aria-hidden="true">{{ icone('ampoule', 44) }}</div>
+                    <h3>Aucun quiz n'est disponible pour le moment</h3>
+                    <p>Reviens bientôt : de nouveaux quiz seront publiés régulièrement.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}

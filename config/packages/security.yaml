@@ -1,0 +1,102 @@
+security:
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    providers:
+        utilisateurs:
+            entity:
+                class: App\Entity\Utilisateur
+                property: email
+        # Jeunes inscrits à l'e-learning : comptes distincts de l'équipe ABMS.
+        apprenants:
+            entity:
+                class: App\Entity\Apprenant
+                property: email
+
+    # Hiérarchie des rôles du back-office My Amour&Vie.
+    # Chaque niveau hérite des droits du niveau inférieur.
+    role_hierarchy:
+        ROLE_GESTIONNAIRE: [ROLE_CONTRIBUTEUR]
+        ROLE_EDITEUR: [ROLE_GESTIONNAIRE]
+        ROLE_SUPER_ADMIN: [ROLE_EDITEUR, ROLE_ALLOWED_TO_SWITCH]
+
+    firewalls:
+        dev:
+            pattern: ^/(_profiler|_wdt|assets|build)/
+            security: false
+
+        # E-learning (/apprendre) : pare-feu propre, pour qu'un compte jeune ne
+        # puisse jamais ouvrir de session sur le back-office (et inversement).
+        apprendre:
+            pattern: ^/apprendre
+            lazy: true
+            provider: apprenants
+            entry_point: form_login
+            user_checker: App\Security\VerificateurApprenant
+
+            form_login:
+                login_path: apprendre_connexion
+                check_path: apprendre_connexion
+                username_parameter: email
+                password_parameter: motdepasse
+                default_target_path: apprendre_mon_espace
+                enable_csrf: true
+
+            # 5 essais par minute et par adresse e-mail + IP.
+            login_throttling:
+                max_attempts: 5
+                interval: '1 minute'
+
+            logout:
+                path: apprendre_deconnexion
+                target: apprendre_catalogue
+
+            remember_me:
+                secret: '%kernel.secret%'
+                name: REMEMBERME_APPRENDRE
+                lifetime: 2592000 # 30 jours : les jeunes reviennent depuis leur téléphone
+                path: /apprendre
+                secure: auto
+                samesite: lax
+
+        main:
+            lazy: true
+            provider: utilisateurs
+            entry_point: form_login
+
+            form_login:
+                login_path: connexion
+                check_path: connexion
+                username_parameter: email
+                password_parameter: motdepasse
+                default_target_path: admin
+                enable_csrf: true
+
+            logout:
+                path: deconnexion
+                target: accueil
+
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800 # 7 jours
+                path: /
+                secure: auto
+                samesite: lax
+
+    # Note : seule la première règle correspondante s'applique.
+    access_control:
+        - { path: ^/connexion, roles: PUBLIC_ACCESS }
+        # E-learning : catalogue et fiches de cours publics ; tout le reste
+        # (suivi, leçons, quiz) demande un compte apprenant.
+        - { path: ^/apprendre/(connexion|inscription|mot-de-passe), roles: PUBLIC_ACCESS }
+        - { path: ^/apprendre/(mon-espace|mes-certificats|cours/[^/]+/.+), roles: ROLE_APPRENANT }
+        - { path: ^/admin, roles: ROLE_CONTRIBUTEUR }
+
+when@test:
+    security:
+        password_hashers:
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4
+                time_cost: 3
+                memory_cost: 10

@@ -1,0 +1,11 @@
+{# Barre de progression d'un cours. Paramètres : bilan (App\Elearning\BilanCours), libelle (optionnel). #}
+<div class="progression-cours">
+    <div class="progression-cours__texte">
+        <span>{{ libelle|default('Ta progression') }}</span>
+        <strong>{{ bilan.pourcentage }} %</strong>
+    </div>
+    <div class="progression-cours__barre" role="progressbar" aria-valuenow="{{ bilan.pourcentage }}"
+         aria-valuemin="0" aria-valuemax="100" aria-label="{{ libelle|default('Ta progression') }}">
+        <span style="width: {{ bilan.pourcentage }}%"></span>
+    </div>
+</div>

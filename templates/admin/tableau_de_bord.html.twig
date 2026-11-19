@@ -1,0 +1,159 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}Tableau de bord{% endblock %}
+
+{% block main %}
+    <style>
+        .tb-grille { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:1rem; margin-bottom:2rem; }
+        .tb-tuile { padding:1.35rem; border-radius:12px; background:#fff; border:1px solid #e9edf2;
+                    border-top:4px solid var(--accent,#E3001B); }
+        .tb-tuile__valeur { font-size:2.1rem; font-weight:800; line-height:1; color:#242d38; letter-spacing:-.03em; }
+        .tb-tuile__libelle { margin:.45rem 0 0; font-size:.87rem; color:#6b7a8d; }
+        .tb-tuile a { text-decoration:none; }
+        .tb-colonnes { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:1.5rem; }
+        .tb-bloc { background:#fff; border:1px solid #e9edf2; border-radius:12px; padding:1.5rem; }
+        .tb-bloc h2 { font-size:1.05rem; font-weight:700; margin:0 0 1.1rem; }
+        .tb-liste { list-style:none; margin:0; padding:0; }
+        .tb-liste li { padding:.7rem 0; border-bottom:1px solid #f4f6f9; display:flex;
+                       justify-content:space-between; gap:1rem; align-items:flex-start; }
+        .tb-liste li:last-child { border-bottom:0; }
+        .tb-liste a { color:#242d38; font-weight:600; text-decoration:none; }
+        .tb-liste a:hover { color:#aa0014; }
+        .tb-meta { font-size:.8rem; color:#94a2b3; white-space:nowrap; }
+        .tb-vide { color:#94a2b3; font-size:.9rem; padding:1rem 0; }
+    </style>
+
+    <p style="color:#6b7a8d;margin-bottom:1.75rem">
+        Bienvenue{% if app.user %}, {{ app.user.prenom }}{% endif %}. Voici l'état des contenus du site.
+    </p>
+
+    {# ------------------------------------------------------- Indicateurs #}
+    <div class="tb-grille">
+        <div class="tb-tuile" style="--accent:#E3001B">
+            <p class="tb-tuile__valeur">{{ indicateurs.articles }}</p>
+            <p class="tb-tuile__libelle">Articles au total</p>
+        </div>
+        <div class="tb-tuile" style="--accent:#2E9E5B">
+            <p class="tb-tuile__valeur">{{ indicateurs.articlesPublies }}</p>
+            <p class="tb-tuile__libelle">Articles publiés</p>
+        </div>
+        <div class="tb-tuile" style="--accent:#1E9E6D">
+            <p class="tb-tuile__valeur">{{ indicateurs.articlesEnAttente }}</p>
+            <p class="tb-tuile__libelle">En attente de validation</p>
+        </div>
+        <div class="tb-tuile" style="--accent:#94a2b3">
+            <p class="tb-tuile__valeur">{{ indicateurs.articlesBrouillons }}</p>
+            <p class="tb-tuile__libelle">Brouillons</p>
+        </div>
+        <div class="tb-tuile" style="--accent:#8B5CF6">
+            <p class="tb-tuile__valeur">{{ indicateurs.publications }}</p>
+            <p class="tb-tuile__libelle">Publications</p>
+        </div>
+        <div class="tb-tuile" style="--accent:#E3001B">
+            <p class="tb-tuile__valeur">{{ indicateurs.programmes }}</p>
+            <p class="tb-tuile__libelle">Programmes actifs</p>
+        </div>
+        <div class="tb-tuile" style="--accent:#8B5CF6">
+            <p class="tb-tuile__valeur">{{ indicateurs.membres }}</p>
+            <p class="tb-tuile__libelle">Membres de l'équipe</p>
+        </div>
+        <div class="tb-tuile" style="--accent:#E3001B">
+            <p class="tb-tuile__valeur">{{ indicateurs.partenaires }}</p>
+            <p class="tb-tuile__libelle">Partenaires</p>
+        </div>
+        <div class="tb-tuile" style="--accent:#2E9E5B">
+            <p class="tb-tuile__valeur">{{ indicateurs.evenements }}</p>
+            <p class="tb-tuile__libelle">Événements à venir</p>
+        </div>
+        <div class="tb-tuile" style="--accent:#D6293E">
+            <p class="tb-tuile__valeur">{{ indicateurs.messagesNonLus }}</p>
+            <p class="tb-tuile__libelle">Messages non lus</p>
+        </div>
+        <div class="tb-tuile" style="--accent:#E3001B">
+            <p class="tb-tuile__valeur">{{ indicateurs.temoignagesEnAttente }}</p>
+            <p class="tb-tuile__libelle">Témoignages en attente</p>
+        </div>
+        <div class="tb-tuile" style="--accent:#8B5CF6">
+            <p class="tb-tuile__valeur">{{ indicateurs.questionsEnAttente }}</p>
+            <p class="tb-tuile__libelle">Questions en attente</p>
+        </div>
+        <div class="tb-tuile" style="--accent:#1E9E6D">
+            <p class="tb-tuile__valeur">{{ indicateurs.abonnesNewsletter }}</p>
+            <p class="tb-tuile__libelle">Abonnés newsletter</p>
+        </div>
+    </div>
+
+    {# --------------------------------------------------------- Activité #}
+    <div class="tb-colonnes">
+
+        <div class="tb-bloc">
+            <h2>Activité récente</h2>
+            {% if derniersArticles|length > 0 %}
+                <ul class="tb-liste">
+                    {% for article in derniersArticles %}
+                        <li>
+                            <span>
+                                <a href="{{ ea_url().setController('App\\Controller\\Admin\\ArticleCrudController').setAction('edit').setEntityId(article.id) }}">
+                                    {{ article.titre|extrait(60) }}
+                                </a>
+                                <span class="badge badge-{{ article.statut.couleur }}" style="margin-left:.4rem">
+                                    {{ article.statut.libelle }}
+                                </span>
+                            </span>
+                            <span class="tb-meta">
+                                {{ (article.updatedAt ?: article.datePublication)|date('d/m/Y') }}
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="tb-vide">Aucun article pour le moment.</p>
+            {% endif %}
+        </div>
+
+        <div class="tb-bloc">
+            <h2>Derniers messages reçus</h2>
+            {% if derniersMessages|length > 0 %}
+                <ul class="tb-liste">
+                    {% for message in derniersMessages %}
+                        <li>
+                            <span>
+                                <a href="{{ ea_url().setController('App\\Controller\\Admin\\MessageContactCrudController').setAction('detail').setEntityId(message.id) }}">
+                                    {{ message.sujet|extrait(50) }}
+                                </a>
+                                <span style="display:block;font-size:.82rem;color:#94a2b3">
+                                    {{ message.nomComplet }}{% if not message.lu %} · <strong style="color:#D6293E">Non lu</strong>{% endif %}
+                                </span>
+                            </span>
+                            <span class="tb-meta">{{ message.createdAt|date('d/m/Y') }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="tb-vide">Aucun message reçu.</p>
+            {% endif %}
+        </div>
+
+        <div class="tb-bloc">
+            <h2>Prochains événements</h2>
+            {% if prochainsEvenements|length > 0 %}
+                <ul class="tb-liste">
+                    {% for evenement in prochainsEvenements %}
+                        <li>
+                            <span>
+                                <a href="{{ ea_url().setController('App\\Controller\\Admin\\EvenementCrudController').setAction('edit').setEntityId(evenement.id) }}">
+                                    {{ evenement.titre|extrait(55) }}
+                                </a>
+                                <span style="display:block;font-size:.82rem;color:#94a2b3">{{ evenement.lieu }}</span>
+                            </span>
+                            <span class="tb-meta">{{ evenement.dateDebut|date('d/m/Y') }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="tb-vide">Aucun événement programmé.</p>
+            {% endif %}
+        </div>
+
+    </div>
+{% endblock %}

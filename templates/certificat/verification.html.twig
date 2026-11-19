@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Vérifier un certificat{% endblock %}
+{% block meta_description %}Vérifiez l'authenticité d'un certificat délivré par la plateforme e-learning Amour&Vie.{% endblock %}
+
+{% block feuilles_de_style %}
+    {# Pages de vérification : pas d'indexation des noms des titulaires. #}
+    <meta name="robots" content="noindex, nofollow">
+    {{ parent() }}
+{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Vérifier un certificat',
+        chapo: "Saisissez le numéro inscrit sur le certificat (ou scannez son QR code) pour contrôler qu'il a bien été délivré par Amour&Vie.",
+        ariane: [
+            {libelle: 'Apprendre', chemin: path('apprendre_catalogue')},
+            {libelle: 'Vérifier un certificat'}
+        ]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur compte-apprenant">
+
+            {% if numero %}
+                {% if certificat and certificat.estValide %}
+                    <div class="verification verification--valide" role="status">
+                        <p class="verification__statut">{{ icone('valide', 22) }} Certificat authentique</p>
+                        <dl class="verification__details">
+                            <dt>Délivré à</dt><dd>{{ certificat.nomTitulaire }}</dd>
+                            <dt>Cours</dt><dd>{{ certificat.titreCours }}</dd>
+                            <dt>Date</dt><dd>{{ certificat.delivreLe|date('d/m/Y') }}{% if certificat.reemisLe %} (réémis le {{ certificat.reemisLe|date('d/m/Y') }}){% endif %}</dd>
+                            {% if certificat.scoreExamen is not null %}<dt>Examen final</dt><dd>{{ certificat.scoreExamen }} %</dd>{% endif %}
+                            <dt>Numéro</dt><dd><code>{{ certificat.numero }}</code></dd>
+                        </dl>
+                    </div>
+                {% elseif certificat %}
+                    <div class="verification verification--revoque" role="alert">
+                        <p class="verification__statut">{{ icone('triangle-alerte', 22) }} Certificat révoqué</p>
+                        <p>Le certificat n° <code>{{ certificat.numero }}</code> a été révoqué le {{ certificat.revoqueLe|date('d/m/Y') }}.
+                           Il n'est plus valable.</p>
+                    </div>
+                {% else %}
+                    <div class="verification verification--inconnu" role="alert">
+                        <p class="verification__statut">{{ icone('triangle-alerte', 22) }} Certificat introuvable</p>
+                        <p>Aucun certificat ne porte le numéro <code>{{ numero }}</code>. Vérifiez la saisie : le numéro a la forme
+                           <code>AV-XXXX-XXXX-XXXX</code>.</p>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <form method="get" action="{{ path('certificat_verification') }}" style="margin-top:2rem">
+                <div class="champ">
+                    <label class="champ__label" for="numero">Numéro du certificat</label>
+                    <input type="text" id="numero" name="numero" class="controle" required
+                           placeholder="AV-XXXX-XXXX-XXXX" autocomplete="off" autocapitalize="characters" spellcheck="false">
+                </div>
+                <button type="submit" class="bouton bouton--primaire bouton--large">
+                    {{ icone('recherche', 17) }} Vérifier
+                </button>
+            </form>
+        </div>
+    </section>
+
+{% endblock %}

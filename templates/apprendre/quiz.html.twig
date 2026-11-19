@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Quiz · {{ module.titre }}{% endblock %}
+{% block meta_description %}Quiz du module « {{ module.titre }} » du cours « {{ cours.titre }} ».{% endblock %}
+
+{% block corps %}
+
+    {{ include('apprendre/_barre_compte.html.twig') }}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Quiz : ' ~ module.titre,
+        chapo: 'Réponds à toutes les questions, puis valide. Il faut ' ~ cours.seuilReussite ~ ' % de bonnes réponses pour valider le module. Tu peux recommencer autant que tu veux.',
+        ariane: [
+            {libelle: 'Apprendre', chemin: path('apprendre_catalogue')},
+            {libelle: cours.titre, chemin: path('apprendre_cours', {slug: cours.slug})},
+            {libelle: 'Quiz'}
+        ]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur" style="max-width:760px">
+            {{ include('apprendre/_progression.html.twig', {bilan: bilan, libelle: 'Progression dans le cours'}) }}
+
+            {# Îlot Vue (assets/vue/composants/QuizModule.js) : correction côté serveur. #}
+            <div data-vue="quiz-module" data-props="{{ {
+                questions: questions,
+                urlCorrection: path('apprendre_quiz_corriger', {slug: cours.slug, id: module.id}),
+                jetonCsrf: csrf_token('quiz-module-' ~ module.id),
+                seuil: cours.seuilReussite,
+                urlCours: path('apprendre_cours', {slug: cours.slug}),
+            }|json_encode|e('html_attr') }}">
+                <ol class="quiz__repli">
+                    {% for question in questions %}
+                        <li class="quiz__question"><strong>{{ question.enonce }}</strong></li>
+                    {% endfor %}
+                </ol>
+                <noscript><p>Active JavaScript pour répondre au quiz.</p></noscript>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

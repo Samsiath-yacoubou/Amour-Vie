@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Actualités{% endblock %}
+{% block meta_description %}Actualités, témoignages et initiatives du programme Amour&Vie ABMS.{% endblock %}
+
+{% block corps %}
+
+    {% set filtresActifs = filtres|filter(v => v is not null and v != '')|length %}
+    {% set actionFiltres %}
+        <button type="button" class="bouton bouton--contour-clair bouton--petit filtres__bouton"
+                data-bascule-filtres aria-expanded="false" aria-controls="filtres-corps-actualites">
+            {{ icone('filtre', 15) }} Filtrer
+            {% if filtresActifs > 0 %}<span class="filtres__badge">{{ filtresActifs }}</span>{% endif %}
+        </button>
+    {% endset %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Actualités',
+        chapo: "Suivez les actions, témoignages et opportunités proposées par Amour&Vie.",
+        ariane: [{libelle: 'Actualités'}],
+        action: actionFiltres
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+
+            {# ------------------------------------------------------ Filtres #}
+            {# .filtres--discret : pas de résumé affiché ici, donc pas de carte
+               visible tant que le panneau de filtres n'est pas ouvert. #}
+            <form class="filtres filtres--discret" method="get" action="{{ path('actualites') }}" data-filtre-auto
+                  aria-labelledby="titre-filtres">
+                <h2 id="titre-filtres" class="sr-only">Filtrer les actualités</h2>
+
+                <div class="filtres__corps" id="filtres-corps-actualites" data-filtres-corps hidden>
+                    <div class="filtres__grille">
+                        <div class="champ" style="margin:0">
+                            <label class="champ__label" for="filtre-q">Rechercher</label>
+                            <input type="search" id="filtre-q" name="q" class="controle"
+                                   value="{{ filtres.recherche }}" placeholder="Mot-clé…">
+                        </div>
+
+                        <div class="champ" style="margin:0">
+                            <label class="champ__label" for="filtre-programme">Programme</label>
+                            <select id="filtre-programme" name="programme" class="controle">
+                                <option value="">Tous les programmes</option>
+                                {% for programme in programmes %}
+                                    <option value="{{ programme.slug }}" {{ filtres.programme == programme.slug ? 'selected' }}>
+                                        {{ programme.sigle }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="champ" style="margin:0">
+                            <label class="champ__label" for="filtre-thematique">Thématique</label>
+                            <select id="filtre-thematique" name="thematique" class="controle">
+                                <option value="">Toutes les thématiques</option>
+                                {% for thematique in thematiques %}
+                                    <option value="{{ thematique.slug }}" {{ filtres.thematique == thematique.slug ? 'selected' }}>
+                                        {{ thematique.nom }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="champ" style="margin:0">
+                            <label class="champ__label" for="filtre-type">Type</label>
+                            <select id="filtre-type" name="type" class="controle">
+                                <option value="">Tous les types</option>
+                                {% for type in types %}
+                                    <option value="{{ type.slug }}" {{ filtres.type == type.slug ? 'selected' }}>
+                                        {{ type.nom }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="champ" style="margin:0">
+                            <label class="champ__label" for="filtre-annee">Année</label>
+                            <select id="filtre-annee" name="annee" class="controle">
+                                <option value="">Toutes les années</option>
+                                {% for annee in annees %}
+                                    <option value="{{ annee }}" {{ filtres.annee == annee ? 'selected' }}>{{ annee }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="filtres__actions">
+                        <button type="submit" class="bouton bouton--primaire bouton--petit">
+                            {{ icone('filtre', 15) }} Appliquer
+                        </button>
+                        {% if filtresActifs > 0 %}
+                            <a class="bouton bouton--neutre bouton--petit" href="{{ path('actualites') }}">Réinitialiser</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+
+            {# ----------------------------------------------------- Résultats #}
+            {% if total > 0 %}
+                <div class="grille grille--3">
+                    {% for article in articles %}
+                        {{ include('partials/_carte_article.html.twig') }}
+                    {% endfor %}
+                </div>
+
+                {{ include('partials/_pagination.html.twig', {
+                    route: 'actualites',
+                    parametres: {
+                        q: filtres.recherche,
+                        programme: filtres.programme,
+                        thematique: filtres.thematique,
+                        type: filtres.type,
+                        annee: filtres.annee
+                    }
+                }) }}
+            {% else %}
+                <div class="etat-vide">
+                    <div class="etat-vide__icone" aria-hidden="true">{{ icone('journal', 44) }}</div>
+                    <h3>Aucune actualité ne correspond à votre recherche</h3>
+                    <p>Essayez d'élargir vos critères ou de réinitialiser les filtres.</p>
+                    <p style="margin-top:1.5rem">
+                        <a class="bouton bouton--contour" href="{{ path('actualites') }}">Voir toutes les actualités</a>
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}

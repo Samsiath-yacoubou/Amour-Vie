@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Pose ta question{% endblock %}
+{% block meta_description %}Pose ta question à un·e pair-éducateur·rice, en toute confidentialité et sans jugement.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Pose ta question',
+        chapo: "Un espace confidentiel, sans jugement, pour toi. Aucune information permettant de t'identifier n'est demandée.",
+        ariane: [
+            {libelle: 'Espace jeunes', chemin: path('espace_jeunes')},
+            {libelle: 'Pose ta question'}
+        ]
+    }) }}
+
+    <section class="section">
+        <div class="conteneur">
+            <div class="mise-en-page">
+
+                {# --------------------------------------------------- Formulaire #}
+                <div>
+                    <div class="entete-section" style="margin-bottom:2rem">
+                        <span class="surtitre">100 % anonyme</span>
+                        <h2>Ta question</h2>
+                        <p class="chapo">
+                            Sexualité, contraception, relations, émotions… pose-nous la question que tu n'oses pas
+                            poser ailleurs. Un·e pair-éducateur·rice te répondra avec bienveillance.
+                        </p>
+                    </div>
+
+                    {{ form_start(formulaire, {attr: {novalidate: 'novalidate'}}) }}
+                        {{ form_row(formulaire.pseudonyme) }}
+                        {{ form_row(formulaire.question) }}
+                        {{ form_row(formulaire.siteWeb) }}
+
+                        <p style="font-size:.85rem;color:var(--texte-tres-doux)">
+                            Aucune adresse e-mail ni aucune donnée permettant de t'identifier ne t'est demandée : ta
+                            question est totalement anonyme.
+                        </p>
+
+                        <button type="submit" class="bouton bouton--primaire" style="margin-top:1rem">
+                            {{ icone('envoyer', 17) }} Envoyer ma question
+                        </button>
+                    {{ form_end(formulaire) }}
+                </div>
+
+                {# ---------------------------------------------------- Repères #}
+                <aside class="mise-en-page__aside">
+                    <div class="encadre">
+                        <p class="encadre__titre">Bon à savoir</p>
+                        <ul class="encadre__liste">
+                            <li>{{ icone('bouclier', 15) }} Aucune information permettant de t'identifier n'est demandée.</li>
+                            <li>{{ icone('utilisateurs', 15) }} Ta question est traitée par des pair-éducateur·rice·s formé·e·s.</li>
+                            <li>{{ icone('valide', 15) }} Les réponses les plus utiles rejoignent notre FAQ, toujours anonymement.</li>
+                        </ul>
+
+                        <a class="bouton bouton--contour bouton--large bouton--petit" href="{{ path('faq') }}" style="margin-top:1rem">
+                            {{ icone('message', 15) }} Consulter la FAQ
+                        </a>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

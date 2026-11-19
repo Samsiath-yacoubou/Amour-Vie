@@ -1,0 +1,119 @@
+{%- set parametres = site.parametres -%}
+{%- set programmes = site.programmes -%}
+
+<footer class="pied">
+    <div class="conteneur">
+        <div class="pied__grille">
+
+            {# ---------------------------------------------------- Marque #}
+            <div class="pied__marque">
+                <a class="pied__logo" href="{{ path('accueil') }}">
+                    {% if parametres.logoName %}
+                        <img src="{{ vich_uploader_asset(parametres, 'logoFile') }}" alt="{{ parametres.nomSite }}">
+                    {% elseif parametres.logoBlancName %}
+                        <img src="{{ vich_uploader_asset(parametres, 'logoBlancFile') }}" alt="{{ parametres.nomSite }}">
+                    {% else %}
+                        <span class="logo__marque" aria-hidden="true">A&V</span>
+                        <span class="pied__logo-texte">{{ parametres.nomSite }}</span>
+                    {% endif %}
+                </a>
+
+                <div class="pied__coordonnees">
+                    {% if parametres.adresse %}
+                        <p class="pied__adresse">
+                            {{ icone('localisation', 14) }}
+                            <span>{{ parametres.adresse|nl2br }}</span>
+                        </p>
+                    {% endif %}
+                    {% if parametres.telephone %}
+                        <p class="pied__telephone">
+                            <a href="tel:{{ parametres.telephone|replace({' ': '', '.': ''}) }}">
+                                {{ icone('telephone', 14) }} {{ parametres.telephone }}
+                            </a>
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# ------------------------------------------------ Navigation #}
+            <nav aria-labelledby="pied-navigation">
+                <p class="pied__titre" id="pied-navigation">Navigation</p>
+                <ul class="pied__liste">
+                    <li><a href="{{ path('qui_sommes_nous') }}">Qui sommes-nous ?</a></li>
+                    <li><a href="{{ path('espace_jeunes') }}">Espace jeunes</a></li>
+                    <li><a href="{{ path('temoignages') }}">Témoignages</a></li>
+                    <li><a href="{{ path('contact') }}">Contact</a></li>
+                </ul>
+            </nav>
+
+            {# ------------------------------------------------ Nos actions #}
+            <nav aria-labelledby="pied-programmes">
+                <p class="pied__titre" id="pied-programmes">Nos actions</p>
+                <ul class="pied__liste">
+                    <li><a href="{{ path('centres_jeunes') }}">Centres Jeunes</a></li>
+                    <li><a href="{{ path('emissions') }}">Émissions radio & TV</a></li>
+                    {% for programme in programmes|slice(0, 3) %}
+                        <li>
+                            <a href="{{ path('programme_detail', {slug: programme.slug}) }}">{{ programme.nom }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+
+            {# ------------------------------------------------ Actualités #}
+            <nav aria-labelledby="pied-actualites">
+                <p class="pied__titre" id="pied-actualites">Actualités</p>
+                <ul class="pied__liste">
+                    <li><a href="{{ path('actualites') }}">Toutes les actualités</a></li>
+                    <li><a href="{{ path('evenements') }}">Agenda</a></li>
+                    <li><a href="{{ path('mediatheque') }}">Médiathèque</a></li>
+                </ul>
+            </nav>
+
+            {# ------------------------------------------------- Ressources #}
+            <nav aria-labelledby="pied-ressources">
+                <p class="pied__titre" id="pied-ressources">Ressources</p>
+                <ul class="pied__liste">
+                    <li><a href="{{ path('publications') }}">Bibliothèque numérique</a></li>
+                    <li><a href="{{ path('faq') }}">FAQ</a></li>
+                    <li><a href="{{ path('quiz_liste') }}">Quiz</a></li>
+                    <li><a href="{{ path('plan_du_site') }}">Plan du site</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="pied__ligne-basse">
+            <p class="pied__langue">
+                {{ icone('globe', 16) }} Français
+            </p>
+
+            <div class="pied__reseaux">
+                {% for reseau, url in {
+                    'facebook': parametres.facebook,
+                    'instagram': parametres.instagram,
+                    'tiktok': parametres.tiktok,
+                    'youtube': parametres.youtube,
+                    'twitter': parametres.twitter
+                } %}
+                    {% if url %}
+                        <a class="pied__reseau" href="{{ url }}" target="_blank" rel="noopener noreferrer"
+                           aria-label="{{ reseau|capitalize }} (nouvelle fenêtre)">
+                            {{ icone(reseau, 18) }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="pied__bas">
+        <div class="conteneur pied__bas-interieur">
+            <p class="pied__copyright">{{ parametres.copyright ?: '© ' ~ site.annee ~ ' ' ~ parametres.nomSite ~ '. Tous droits réservés.' }}</p>
+            <ul class="pied__legal">
+                <li><a href="{{ path('page_legale', {page: 'conditions-utilisation'}) }}">Conditions d'utilisation</a></li>
+                <li><a href="{{ path('page_legale', {page: 'politique-de-confidentialite'}) }}">Politique de confidentialité</a></li>
+                <li><a href="{{ path('page_legale', {page: 'mentions-legales'}) }}">Mentions légales</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>

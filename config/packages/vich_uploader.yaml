@@ -1,0 +1,110 @@
+vich_uploader:
+    db_driver: orm
+    metadata:
+        type: attribute
+
+    mappings:
+        article_image:
+            uri_prefix: /uploads/articles
+            upload_destination: '%kernel.project_dir%/public/uploads/articles'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        programme_logo:
+            uri_prefix: /uploads/programmes
+            upload_destination: '%kernel.project_dir%/public/uploads/programmes'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        programme_image:
+            uri_prefix: /uploads/programmes
+            upload_destination: '%kernel.project_dir%/public/uploads/programmes'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        publication_fichier:
+            uri_prefix: /uploads/publications
+            upload_destination: '%kernel.project_dir%/public/uploads/publications'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        publication_couverture:
+            uri_prefix: /uploads/publications/couvertures
+            upload_destination: '%kernel.project_dir%/public/uploads/publications/couvertures'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        membre_photo:
+            uri_prefix: /uploads/equipe
+            upload_destination: '%kernel.project_dir%/public/uploads/equipe'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        partenaire_logo:
+            uri_prefix: /uploads/partenaires
+            upload_destination: '%kernel.project_dir%/public/uploads/partenaires'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        evenement_image:
+            uri_prefix: /uploads/evenements
+            upload_destination: '%kernel.project_dir%/public/uploads/evenements'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        media_fichier:
+            uri_prefix: /uploads/mediatheque
+            upload_destination: '%kernel.project_dir%/public/uploads/mediatheque'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        page_section_image:
+            uri_prefix: /uploads/pages
+            upload_destination: '%kernel.project_dir%/public/uploads/pages'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        parametre_fichier:
+            uri_prefix: /uploads/parametres
+            upload_destination: '%kernel.project_dir%/public/uploads/parametres'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        centre_jeune_image:
+            uri_prefix: /uploads/centres-jeunes
+            upload_destination: '%kernel.project_dir%/public/uploads/centres-jeunes'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        emission_image:
+            uri_prefix: /uploads/emissions
+            upload_destination: '%kernel.project_dir%/public/uploads/emissions'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        emission_audio:
+            uri_prefix: /uploads/emissions/audio
+            upload_destination: '%kernel.project_dir%/public/uploads/emissions/audio'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        cours_image:
+            uri_prefix: /uploads/cours
+            upload_destination: '%kernel.project_dir%/public/uploads/cours'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true

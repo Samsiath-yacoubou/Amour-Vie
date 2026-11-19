@@ -1,0 +1,196 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Qui sommes-nous ?{% endblock %}
+{% block meta_description %}Découvrez l'histoire, la mission et l'équipe du programme Amour&Vie ABMS.{% endblock %}
+
+{% block corps %}
+
+    {{ include('partials/_banniere.html.twig', {
+        titre: 'Qui sommes-nous ?',
+        chapo: "Amour&Vie est un programme animé par les jeunes et pour les jeunes. Découvrez notre histoire, notre mission et notre équipe.",
+        ariane: [{libelle: 'Qui sommes-nous ?'}]
+    }) }}
+
+    {# ------------------------------------------------------- Notre histoire #}
+    {% if sections.histoire is defined %}
+        {% set histoire = sections.histoire %}
+        <section class="section" id="histoire" aria-labelledby="titre-histoire">
+            <div class="conteneur">
+                <div class="duo">
+                    <div>
+                        <span class="surtitre">Nos origines</span>
+                        <h2 id="titre-histoire">{{ histoire.titre }}</h2>
+                        {% if histoire.sousTitre %}<p class="chapo" style="margin-bottom:1.5rem">{{ histoire.sousTitre }}</p>{% endif %}
+                        <div class="prose">{{ histoire.contenu|raw }}</div>
+                    </div>
+                    <div class="duo__media">
+                        {% if histoire.imageName %}
+                            <img src="{{ vich_uploader_asset(histoire, 'imageFile') }}"
+                                 alt="{{ histoire.imageAlt ?: histoire.titre }}" loading="lazy">
+                        {% else %}
+                            <div class="duo__media-vide" aria-hidden="true">{{ icone('livre', 56) }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    {# --------------------------------------------------- Mission et vision #}
+    {% if sections.mission is defined or sections.vision is defined %}
+        <section class="section section--teinte">
+            <div class="conteneur">
+                <div class="grille grille--2">
+                    {% if sections.mission is defined %}
+                        <div class="valeur" id="mission" style="--accent: var(--rose); padding:2.5rem 2rem">
+                            <span class="valeur__icone">{{ icone('cible', 26) }}</span>
+                            <h2 style="font-size:1.5rem">{{ sections.mission.titre }}</h2>
+                            <div class="prose" style="font-size:1rem">{{ sections.mission.contenu|raw }}</div>
+                        </div>
+                    {% endif %}
+
+                    {% if sections.vision is defined %}
+                        <div class="valeur" id="vision" style="--accent: var(--violet); padding:2.5rem 2rem">
+                            <span class="valeur__icone">{{ icone('oeil', 26) }}</span>
+                            <h2 style="font-size:1.5rem">{{ sections.vision.titre }}</h2>
+                            <div class="prose" style="font-size:1rem">{{ sections.vision.contenu|raw }}</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    {# ------------------------------------------------------- Chiffres clés #}
+    {% if chiffres|length > 0 %}
+        <section class="section section--compacte">
+            <div class="conteneur">
+                <div class="chiffres">
+                    {% for chiffre in chiffres %}
+                        <div class="chiffre">
+                            <span class="chiffre__icone">{{ icone(chiffre.icone, 22) }}</span>
+                            <p class="chiffre__valeur">
+                                <span data-compteur="{{ chiffre.valeur }}">0</span><span class="suffixe">{{ chiffre.suffixe }}</span>
+                            </p>
+                            <p class="chiffre__libelle">{{ chiffre.libelle }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    {# ---------------------------------------------------------- Nos valeurs #}
+    {% if valeurs|length > 0 %}
+        <section class="section" id="valeurs" aria-labelledby="titre-valeurs">
+            <div class="conteneur">
+                <div class="entete-section entete-section--centre">
+                    <span class="surtitre">Ce qui nous guide</span>
+                    <h2 id="titre-valeurs">Nos valeurs</h2>
+                </div>
+
+                <div class="grille grille--3">
+                    {% for valeur in valeurs %}
+                        <div class="valeur" style="--accent: {{ valeur.couleur ?: '#E3001B' }}">
+                            <span class="valeur__icone">{{ icone(valeur.icone, 24) }}</span>
+                            <h3 class="valeur__titre">{{ valeur.titre }}</h3>
+                            <p class="valeur__texte">{{ valeur.description }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    {# ------------------------------------------------------ Notre organisation #}
+    {% if equipes|length > 0 %}
+        <section class="section section--teinte" id="organisation" aria-labelledby="titre-organisation">
+            <div class="conteneur">
+                <div class="entete-section entete-section--centre">
+                    <span class="surtitre">Gouvernance et équipe</span>
+                    <h2 id="titre-organisation">Notre organisation</h2>
+                    <p class="chapo">
+                        Une gouvernance associative et une équipe technique au service des communautés.
+                    </p>
+                </div>
+
+                {% set libelles = {
+                    'conseil_administration': "Conseil d'administration",
+                    'coordination': 'Coordination',
+                    'equipe_technique': 'Équipe technique'
+                } %}
+
+                {% for categorie, membres in equipes %}
+                    <div style="margin-bottom:3.5rem">
+                        <h3 style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.75rem">
+                            <span style="width:34px;height:3px;background:var(--emeraude);border-radius:99px" aria-hidden="true"></span>
+                            {{ libelles[categorie] ?? categorie }}
+                        </h3>
+
+                        <div class="grille grille--4">
+                            {% for membre in membres %}
+                                <div class="carte-membre">
+                                    <div class="carte-membre__photo">
+                                        {% if membre.photoName %}
+                                            <img src="{{ vich_uploader_asset(membre, 'photoFile') }}"
+                                                 alt="Portrait de {{ membre.nomComplet }}" loading="lazy">
+                                        {% else %}
+                                            <span class="carte-membre__initiales" aria-hidden="true">{{ membre.initiales }}</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <p class="carte-membre__nom">{{ membre.nomComplet }}</p>
+                                    <p class="carte-membre__fonction">{{ membre.fonction }}</p>
+                                    {% if membre.departement %}
+                                        <p class="carte-membre__departement">{{ membre.departement }}</p>
+                                    {% endif %}
+                                    {% if membre.biographie %}
+                                        <p class="carte-membre__bio">{{ membre.biographie|extrait(130) }}</p>
+                                    {% endif %}
+
+                                    {% if membre.email or membre.linkedin %}
+                                        <div class="carte-membre__liens">
+                                            {% if membre.email %}
+                                                <a class="bouton-icone" href="mailto:{{ membre.email }}"
+                                                   aria-label="Écrire à {{ membre.nomComplet }}">{{ icone('enveloppe', 16) }}</a>
+                                            {% endif %}
+                                            {% if membre.linkedin %}
+                                                <a class="bouton-icone" href="{{ membre.linkedin }}" target="_blank" rel="noopener noreferrer"
+                                                   aria-label="{{ membre.nomComplet }} sur LinkedIn (nouvelle fenêtre)">{{ icone('linkedin', 16) }}</a>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    {# ---------------------------------------------------------- Partenaires #}
+    {% if partenaires|length > 0 %}
+        <section class="section" aria-labelledby="titre-partenaires">
+            <div class="conteneur">
+                <div class="entete-section entete-section--centre">
+                    <span class="surtitre">Ils nous accompagnent</span>
+                    <h2 id="titre-partenaires">Nos partenaires</h2>
+                </div>
+
+                <div class="partenaires">
+                    {% for partenaire in partenaires %}
+                        <div class="partenaire" title="{{ partenaire.nom }}">
+                            {% if partenaire.logoName %}
+                                <img src="{{ vich_uploader_asset(partenaire, 'logoFile') }}" alt="{{ partenaire.nom }}" loading="lazy">
+                            {% else %}
+                                <span class="partenaire__nom">{{ partenaire.nom }}</span>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+{% endblock %}
