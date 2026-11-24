@@ -203,7 +203,7 @@
         --bordure: var(--gris-700);
         --bordure-douce: var(--gris-800);
         --support-logo: #ffffff;
-        --support-logo-marge: 8px 14px;
+        --support-logo-marge: 10px 20px;
         --texte-fort: var(--gris-025);
         --surface-douce: #221b18;
         --surface-creuse: #2f2622;
@@ -241,7 +241,7 @@
     --bordure: var(--gris-700);
     --bordure-douce: var(--gris-800);
     --support-logo: #ffffff;
-    --support-logo-marge: 8px 14px;
+    --support-logo-marge: 10px 20px;
     --texte-fort: var(--gris-025);
     --surface-douce: #221b18;
     --surface-creuse: #2f2622;
@@ -856,23 +856,31 @@ hr {
     padding-inline: 1.25rem;
 }
 
-/* Même taille et même point de départ que le logo du pied de page
-   (.pied__logo ci-dessous) : les deux doivent rester strictement identiques. */
+/* Hauteur du logo dans la bande de l'en-tête. Le pied de page le rend un peu
+   plus grand (64 px, voir .pied__logo) : sa colonne de marque est large, alors
+   que la bande doit laisser respirer la navigation à côté du logo. */
 .entete__ligne .logo img { max-height: 58px; }
 
-/* Repli si aucun « logo pour fond sombre » n'est configuré côté admin :
-   la bande restant rouge, on redonne un support blanc au logo couleur pour
-   qu'il reste lisible (le pied de page, lui, est redevenu clair et n'en a plus besoin).
-   Même hauteur d'image que la règle ci-dessus (64px) : seul le support blanc
-   ajoute un peu de marge autour, la taille du logo lui-même ne change pas. */
+/* Repli si aucun « logo pour fond sombre » n'est configuré côté admin : la
+   bande restant rouge de marque et le lettrage du logo étant sombre, le logo
+   couleur a besoin d'une plaque claire pour rester lisible.
+
+   Trois réglages séparent le cartouche de l'autocollant :
+   1. box-sizing: content-box — en border-box le padding rognait la hauteur de
+      l'image (56 px de boîte − 18 px de padding = 38 px de logo réel) ;
+   2. le rayon des cartes (--rayon), au lieu des 6 px qui donnaient un
+      rectangle aux angles écornés ;
+   3. pas d'ombre portée : sur un aplat de couleur, elle fait flotter la plaque
+      au lieu de l'asseoir dans la bande.
+   Support blanc franc dans les deux thèmes : la bande de l'en-tête reste rouge
+   de marque (--surface basculerait en gris très sombre). */
 .entete__ligne .logo img.logo--secours {
-    max-height: 56px;
-    /* Support blanc franc, dans les deux thèmes : la bande de l'en-tête reste
-       rouge de marque (--surface basculerait en gris très sombre). */
+    box-sizing: content-box;
+    max-height: 44px;
     background: #fff;
-    padding: 9px 16px;
-    border-radius: var(--rayon-xs);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+    padding: 10px 20px;
+    border-radius: var(--rayon);
+    box-shadow: none;
 }
 
 .entete__ligne .logo__nom { color: #fff; }
@@ -3235,17 +3243,15 @@ select.controle,
     text-decoration: none;
 }
 
-/* Même taille et même point de départ que le logo de la bande rouge de
-   l'en-tête (.entete__ligne .logo ci-dessus) : les deux doivent rester
-   strictement identiques, colonnes alignées sur la même largeur de conteneur. */
+/* Le logo du pied de page garde sa taille (64 px) : la colonne de marque est
+   large, il y occupe la place. Même plaque claire que dans l'en-tête en thème
+   sombre — le lettrage du logo est sombre —, et pas de plaque du tout en thème
+   clair (--support-logo vaut transparent sur fond clair). */
 .pied__logo img {
     max-height: 64px;
-    /* Le logo couleur a un lettrage sombre : sur le pied de page devenu sombre
-       il disparaissait. Même traitement que dans l'en-tête, mais piloté par le
-       thème (voir --support-logo). */
     background: var(--support-logo);
     padding: var(--support-logo-marge);
-    border-radius: var(--rayon-xs);
+    border-radius: var(--rayon);
     box-sizing: content-box;
 }
 
@@ -3447,6 +3453,14 @@ select.controle,
 
 @media (max-width: 640px) {
     .entete__coordonnees { display: none; }
+
+    /* Sur un écran de téléphone, la plaque du logo à sa taille de bureau
+       occupait la moitié de la largeur et collait le bouton Contact : on
+       réduit le logo et les marges de la plaque d'un cran. */
+    .entete__ligne .logo img.logo--secours {
+        max-height: 36px;
+        padding: 8px 16px;
+    }
 }
 
 @media (max-width: 960px) {
