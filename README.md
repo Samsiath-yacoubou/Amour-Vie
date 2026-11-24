@@ -82,7 +82,8 @@ mais le `VirtualHost` reste préférable.
 
 ## 3. Accès au back-office
 
-Le back-office **My Amour&Vie** est accessible sur `/admin`, la connexion sur `/connexion`.
+Le back-office **My Amour&Vie** est accessible sur `/mastering` (connexion sur `/mastering/connexion`).
+Aucun lien public n'y mène : l'adresse se communique à l'équipe.
 
 ### Comptes de démonstration
 

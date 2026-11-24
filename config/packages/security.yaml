@@ -85,12 +85,12 @@ security:
 
     # Note : seule la première règle correspondante s'applique.
     access_control:
-        - { path: ^/connexion, roles: PUBLIC_ACCESS }
+        - { path: ^/mastering/connexion, roles: PUBLIC_ACCESS }
         # E-learning : catalogue et fiches de cours publics ; tout le reste
         # (suivi, leçons, quiz) demande un compte apprenant.
         - { path: ^/apprendre/(connexion|inscription|mot-de-passe), roles: PUBLIC_ACCESS }
         - { path: ^/apprendre/(mon-espace|mes-certificats|cours/[^/]+/.+), roles: ROLE_APPRENANT }
-        - { path: ^/admin, roles: ROLE_CONTRIBUTEUR }
+        - { path: ^/mastering, roles: ROLE_CONTRIBUTEUR }
 
 when@test:
     security:

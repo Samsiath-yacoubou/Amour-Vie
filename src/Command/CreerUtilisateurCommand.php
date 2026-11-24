@@ -148,7 +148,7 @@ class CreerUtilisateurCommand extends Command
             $roles[$cleRole]->libelle(),
         ));
 
-        $io->note('Connexion au back-office : /connexion');
+        $io->note('Connexion au back-office : /mastering');
 
         return Command::SUCCESS;
     }

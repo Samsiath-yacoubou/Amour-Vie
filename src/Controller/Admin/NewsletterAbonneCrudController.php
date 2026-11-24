@@ -70,7 +70,7 @@ class NewsletterAbonneCrudController extends AbstractCrudController
         yield BooleanField::new('actif', 'Actif');
     }
 
-    #[Route('/admin/newsletter/export.csv', name: 'admin_newsletter_export', methods: ['GET'])]
+    #[Route('/mastering/newsletter/export.csv', name: 'admin_newsletter_export', methods: ['GET'])]
     #[IsGranted('ROLE_GESTIONNAIRE')]
     public function exporterCsv(NewsletterAbonneRepository $newsletterAbonneRepository): StreamedResponse
     {

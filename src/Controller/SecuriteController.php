@@ -14,7 +14,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
  */
 class SecuriteController extends AbstractController
 {
-    #[Route('/connexion', name: 'connexion', methods: ['GET', 'POST'])]
+    #[Route('/mastering/connexion', name: 'connexion', methods: ['GET', 'POST'])]
     public function connexion(AuthenticationUtils $authenticationUtils): Response
     {
         // Un utilisateur déjà connecté n'a rien à faire sur l'écran de connexion.
@@ -28,7 +28,7 @@ class SecuriteController extends AbstractController
         ]);
     }
 
-    #[Route('/deconnexion', name: 'deconnexion', methods: ['GET'])]
+    #[Route('/mastering/deconnexion', name: 'deconnexion', methods: ['GET'])]
     public function deconnexion(): never
     {
         // Interceptée par le pare-feu Symfony : ce corps n'est jamais exécuté.

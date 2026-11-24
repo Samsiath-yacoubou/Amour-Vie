@@ -29,7 +29,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * Back-office « My Amour&Vie ».
  */
-#[AdminDashboard(routePath: '/admin', routeName: 'admin')]
+#[AdminDashboard(routePath: '/mastering', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
     public function __construct(
