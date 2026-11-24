@@ -38,9 +38,9 @@
       <div class="entete__ligne-interieur">
         <a class="logo" href="{{ path('accueil') }}">
             {% if parametres.logoBlancName %}
-                <img src="{{ vich_uploader_asset(parametres, 'logoBlancFile') }}" alt="{{ parametres.nomSite }}">
+                <img src="{{ asset(vich_uploader_asset(parametres, 'logoBlancFile')) }}" alt="{{ parametres.nomSite }}">
             {% elseif parametres.logoName %}
-                <img class="logo--secours" src="{{ vich_uploader_asset(parametres, 'logoFile') }}" alt="{{ parametres.nomSite }}">
+                <img class="logo--secours" src="{{ asset(vich_uploader_asset(parametres, 'logoFile')) }}" alt="{{ parametres.nomSite }}">
             {% else %}
                 <span class="logo__marque" aria-hidden="true">A&V</span>
                 <span class="logo__texte">

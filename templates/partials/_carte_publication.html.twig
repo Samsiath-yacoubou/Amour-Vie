@@ -2,7 +2,7 @@
 <article class="carte-publication">
     <div class="carte-publication__vignette">
         {% if publication.couvertureName %}
-            <img src="{{ vich_uploader_asset(publication, 'couvertureFile') }}"
+            <img src="{{ asset(vich_uploader_asset(publication, 'couvertureFile')) }}"
                  alt="Couverture de « {{ publication.titre }} »" loading="lazy">
         {% else %}
             {{ icone(publication.type ? publication.type.icone : 'document', 30) }}

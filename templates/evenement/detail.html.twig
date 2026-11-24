@@ -3,7 +3,7 @@
 {% block titre %}{{ evenement.titre }}{% endblock %}
 {% block meta_description %}{{ evenement.description|extrait(200) }}{% endblock %}
 {% block og_type %}event{% endblock %}
-{% block og_image %}{{ evenement.imageName ? vich_uploader_asset(evenement, 'imageFile') : '' }}{% endblock %}
+{% block og_image %}{{ evenement.imageName ? asset(vich_uploader_asset(evenement, 'imageFile')) : '' }}{% endblock %}
 
 {% block corps %}
 
@@ -20,7 +20,7 @@
             <div>
                 {% if evenement.imageName %}
                     <figure class="article-image">
-                        <img src="{{ vich_uploader_asset(evenement, 'imageFile') }}" alt="{{ evenement.titre }}">
+                        <img src="{{ asset(vich_uploader_asset(evenement, 'imageFile')) }}" alt="{{ evenement.titre }}">
                     </figure>
                 {% endif %}
 

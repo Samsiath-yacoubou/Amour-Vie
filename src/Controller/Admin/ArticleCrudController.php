@@ -122,7 +122,7 @@ class ArticleCrudController extends AbstractCrudController
         yield FormField::addTab('Média')->setIcon('fa fa-image');
 
         yield ImageField::new('imageName', 'Image')
-            ->setBasePath('/uploads/articles')
+            ->setBasePath('uploads/articles')
             ->onlyOnIndex();
 
         yield TextField::new('imageFile', 'Image principale')

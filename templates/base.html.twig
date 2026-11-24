@@ -30,12 +30,14 @@
     <meta property="og:locale" content="fr_FR">
     {%- set og_image = block('og_image') is defined and block('og_image') is not empty
         ? block('og_image')
-        : (parametres.imagePartageName ? vich_uploader_asset(parametres, 'imagePartageFile') : null) -%}
+        : (parametres.imagePartageName ? asset(vich_uploader_asset(parametres, 'imagePartageFile')) : null) -%}
     {% if og_image %}<meta property="og:image" content="{{ app.request.schemeAndHttpHost ~ og_image }}">{% endif %}
     <meta name="twitter:card" content="summary_large_image">
 
     {% if parametres.faviconName %}
-        <link rel="icon" href="{{ vich_uploader_asset(parametres, 'faviconFile') }}">
+        <link rel="icon" href="{{ asset(vich_uploader_asset(parametres, 'faviconFile')) }}">
+    {% elseif parametres.logoName %}
+        <link rel="icon" type="image/png" href="{{ asset(vich_uploader_asset(parametres, 'logoFile')) }}">
     {% else %}
         <link rel="icon" href="data:image/svg+xml,{{ '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="%23E3001B"/><text x="16" y="22" font-family="Arial" font-size="15" font-weight="bold" fill="white" text-anchor="middle">A</text></svg>'|url_encode }}">
     {% endif %}

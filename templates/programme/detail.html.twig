@@ -3,7 +3,7 @@
 {% block titre %}{{ programme.sigle }} · {{ programme.nom }}{% endblock %}
 {% block meta_titre %}{{ programme.seoTitre ?: programme.sigle ~ ' · ' ~ programme.nom }}{% endblock %}
 {% block meta_description %}{{ programme.seoDescription ?: programme.descriptionCourte }}{% endblock %}
-{% block og_image %}{{ programme.imageName ? vich_uploader_asset(programme, 'imageFile') : '' }}{% endblock %}
+{% block og_image %}{{ programme.imageName ? asset(vich_uploader_asset(programme, 'imageFile')) : '' }}{% endblock %}
 
 {% block corps %}
 
@@ -21,7 +21,7 @@
             <div>
                 {% if programme.imageName %}
                     <figure class="article-image">
-                        <img src="{{ vich_uploader_asset(programme, 'imageFile') }}" alt="{{ programme.nom }}">
+                        <img src="{{ asset(vich_uploader_asset(programme, 'imageFile')) }}" alt="{{ programme.nom }}">
                     </figure>
                 {% endif %}
 
@@ -70,7 +70,7 @@
                         <div class="grille grille--3" style="gap:1rem">
                             {% for media in programme.galerie %}
                                 {% if media.fichierName %}
-                                    <img src="{{ vich_uploader_asset(media, 'fichierFile') }}"
+                                    <img src="{{ asset(vich_uploader_asset(media, 'fichierFile')) }}"
                                          alt="{{ media.alt ?: media.nom }}" loading="lazy"
                                          style="border-radius:var(--rayon);width:100%;aspect-ratio:4/3;object-fit:cover">
                                 {% endif %}

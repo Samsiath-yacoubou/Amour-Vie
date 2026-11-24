@@ -80,7 +80,7 @@ class EvenementCrudController extends AbstractCrudController
         yield FormField::addFieldset('Visuel et diffusion')->setIcon('fa fa-share-nodes');
 
         yield ImageField::new('imageName', 'Image')
-            ->setBasePath('/uploads/evenements')
+            ->setBasePath('uploads/evenements')
             ->onlyOnIndex();
 
         yield TextField::new('imageFile', 'Image de l\'événement')

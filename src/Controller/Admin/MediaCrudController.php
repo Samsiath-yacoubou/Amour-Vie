@@ -54,7 +54,7 @@ class MediaCrudController extends AbstractCrudController
         yield FormField::addFieldset('Fichier')->setIcon('fa fa-photo-film');
 
         yield ImageField::new('fichierName', 'Aperçu')
-            ->setBasePath('/uploads/mediatheque')
+            ->setBasePath('uploads/mediatheque')
             ->onlyOnIndex();
 
         yield TextField::new('nom', 'Nom du média')->setColumns(8);

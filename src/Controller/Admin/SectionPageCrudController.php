@@ -87,7 +87,7 @@ class SectionPageCrudController extends AbstractCrudController
         yield FormField::addFieldset('Illustration')->setIcon('fa fa-image');
 
         yield ImageField::new('imageName', 'Image')
-            ->setBasePath('/uploads/pages')
+            ->setBasePath('uploads/pages')
             ->onlyOnIndex();
 
         yield TextField::new('imageFile', 'Image')

@@ -9,9 +9,9 @@
             <div class="pied__marque">
                 <a class="pied__logo" href="{{ path('accueil') }}">
                     {% if parametres.logoName %}
-                        <img src="{{ vich_uploader_asset(parametres, 'logoFile') }}" alt="{{ parametres.nomSite }}">
+                        <img src="{{ asset(vich_uploader_asset(parametres, 'logoFile')) }}" alt="{{ parametres.nomSite }}">
                     {% elseif parametres.logoBlancName %}
-                        <img src="{{ vich_uploader_asset(parametres, 'logoBlancFile') }}" alt="{{ parametres.nomSite }}">
+                        <img src="{{ asset(vich_uploader_asset(parametres, 'logoBlancFile')) }}" alt="{{ parametres.nomSite }}">
                     {% else %}
                         <span class="logo__marque" aria-hidden="true">A&V</span>
                         <span class="pied__logo-texte">{{ parametres.nomSite }}</span>

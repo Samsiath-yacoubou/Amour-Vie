@@ -57,7 +57,7 @@ class MembreCrudController extends AbstractCrudController
         yield FormField::addFieldset('Identité')->setIcon('fa fa-user');
 
         yield ImageField::new('photoName', 'Photo')
-            ->setBasePath('/uploads/equipe')
+            ->setBasePath('uploads/equipe')
             ->onlyOnIndex();
 
         yield TextField::new('prenom', 'Prénom')->setColumns(6);

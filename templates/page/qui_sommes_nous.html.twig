@@ -25,7 +25,7 @@
                     </div>
                     <div class="duo__media">
                         {% if histoire.imageName %}
-                            <img src="{{ vich_uploader_asset(histoire, 'imageFile') }}"
+                            <img src="{{ asset(vich_uploader_asset(histoire, 'imageFile')) }}"
                                  alt="{{ histoire.imageAlt ?: histoire.titre }}" loading="lazy">
                         {% else %}
                             <div class="duo__media-vide" aria-hidden="true">{{ icone('livre', 56) }}</div>
@@ -132,7 +132,7 @@
                                 <div class="carte-membre">
                                     <div class="carte-membre__photo">
                                         {% if membre.photoName %}
-                                            <img src="{{ vich_uploader_asset(membre, 'photoFile') }}"
+                                            <img src="{{ asset(vich_uploader_asset(membre, 'photoFile')) }}"
                                                  alt="Portrait de {{ membre.nomComplet }}" loading="lazy">
                                         {% else %}
                                             <span class="carte-membre__initiales" aria-hidden="true">{{ membre.initiales }}</span>
@@ -182,7 +182,7 @@
                     {% for partenaire in partenaires %}
                         <div class="partenaire" title="{{ partenaire.nom }}">
                             {% if partenaire.logoName %}
-                                <img src="{{ vich_uploader_asset(partenaire, 'logoFile') }}" alt="{{ partenaire.nom }}" loading="lazy">
+                                <img src="{{ asset(vich_uploader_asset(partenaire, 'logoFile')) }}" alt="{{ partenaire.nom }}" loading="lazy">
                             {% else %}
                                 <span class="partenaire__nom">{{ partenaire.nom }}</span>
                             {% endif %}

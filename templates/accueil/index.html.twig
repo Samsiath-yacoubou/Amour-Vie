@@ -23,7 +23,7 @@
                          aria-hidden="{{ loop.first ? 'false' : 'true' }}">
                         <div class="hero__media">
                             {% if article.imageName %}
-                                <img src="{{ vich_uploader_asset(article, 'imageFile') }}" alt="" aria-hidden="true" loading="{{ loop.first ? 'eager' : 'lazy' }}">
+                                <img src="{{ asset(vich_uploader_asset(article, 'imageFile')) }}" alt="" aria-hidden="true" loading="{{ loop.first ? 'eager' : 'lazy' }}">
                             {% endif %}
                         </div>
 
@@ -71,11 +71,11 @@
             <div class="hero__media">
                 {% if parametres.heroVideoUrl %}
                     <video autoplay muted loop playsinline
-                           {% if parametres.heroImageName %}poster="{{ vich_uploader_asset(parametres, 'heroImageFile') }}"{% endif %}>
+                           {% if parametres.heroImageName %}poster="{{ asset(vich_uploader_asset(parametres, 'heroImageFile')) }}"{% endif %}>
                         <source src="{{ parametres.heroVideoUrl }}" type="video/mp4">
                     </video>
                 {% elseif parametres.heroImageName %}
-                    <img src="{{ vich_uploader_asset(parametres, 'heroImageFile') }}" alt="" aria-hidden="true">
+                    <img src="{{ asset(vich_uploader_asset(parametres, 'heroImageFile')) }}" alt="" aria-hidden="true">
                 {% endif %}
             </div>
 
@@ -128,7 +128,7 @@
                     <article class="actualite-une">
                         <a class="actualite-une__media" href="{{ path('actualite_detail', {slug: une.slug}) }}">
                             {% if une.imageName %}
-                                <img src="{{ vich_uploader_asset(une, 'imageFile') }}"
+                                <img src="{{ asset(vich_uploader_asset(une, 'imageFile')) }}"
                                      alt="{{ une.imageAlt ?: une.titre }}" loading="lazy">
                             {% else %}
                                 <div class="actualite-une__media-vide" aria-hidden="true">{{ icone('journal', 40) }}</div>
@@ -160,7 +160,7 @@
                                 </div>
                                 <a class="actualite-ligne__media" href="{{ path('actualite_detail', {slug: article.slug}) }}">
                                     {% if article.imageName %}
-                                        <img src="{{ vich_uploader_asset(article, 'imageFile') }}"
+                                        <img src="{{ asset(vich_uploader_asset(article, 'imageFile')) }}"
                                              alt="" loading="lazy">
                                     {% else %}
                                         <div class="actualite-ligne__media-vide" aria-hidden="true">{{ icone('journal', 18) }}</div>
@@ -238,7 +238,7 @@
                     <div>
                         {% if dernierMagazine.couvertureName %}
                             <div style="max-width:320px;margin-inline:auto">
-                                <img src="{{ vich_uploader_asset(dernierMagazine, 'couvertureFile') }}"
+                                <img src="{{ asset(vich_uploader_asset(dernierMagazine, 'couvertureFile')) }}"
                                      alt="Couverture du magazine Amour&Vie : {{ dernierMagazine.titre }}"
                                      style="width:100%;border-radius:var(--rayon-lg);box-shadow:var(--ombre-lg)" loading="lazy">
                             </div>

@@ -4,7 +4,7 @@
 {% block meta_titre %}{{ article.seoTitre ?: article.titre }}{% endblock %}
 {% block meta_description %}{{ article.seoDescription ?: article.resume }}{% endblock %}
 {% block og_type %}article{% endblock %}
-{% block og_image %}{{ article.imageName ? vich_uploader_asset(article, 'imageFile') : '' }}{% endblock %}
+{% block og_image %}{{ article.imageName ? asset(vich_uploader_asset(article, 'imageFile')) : '' }}{% endblock %}
 
 {% block donnees_structurees %}
     <script type="application/ld+json">
@@ -57,7 +57,7 @@
 
                 {% if article.imageName %}
                     <figure class="article-image">
-                        <img src="{{ vich_uploader_asset(article, 'imageFile') }}"
+                        <img src="{{ asset(vich_uploader_asset(article, 'imageFile')) }}"
                              alt="{{ article.imageAlt ?: article.titre }}">
                     </figure>
                 {% endif %}
@@ -74,7 +74,7 @@
                             {% for media in article.galerie %}
                                 {% if media.fichierName %}
                                     <figure style="margin:0">
-                                        <img src="{{ vich_uploader_asset(media, 'fichierFile') }}"
+                                        <img src="{{ asset(vich_uploader_asset(media, 'fichierFile')) }}"
                                              alt="{{ media.alt ?: media.nom }}" loading="lazy"
                                              style="border-radius:var(--rayon);width:100%;aspect-ratio:4/3;object-fit:cover">
                                         {% if media.legende %}

@@ -10,7 +10,7 @@
         <button type="button" class="lecteur-audio__poster" data-lecteur-audio-bouton
                 aria-label="Écouter « {{ emission.titre }} »">
             {% if emission.imageName %}
-                <img src="{{ vich_uploader_asset(emission, 'imageFile') }}" alt="" loading="lazy">
+                <img src="{{ asset(vich_uploader_asset(emission, 'imageFile')) }}" alt="" loading="lazy">
             {% else %}
                 <span class="lecteur-audio__poster-vide" aria-hidden="true">{{ icone('audio', 48) }}</span>
             {% endif %}
@@ -18,7 +18,7 @@
         </button>
 
         <audio class="lecteur-audio__element" controls preload="none" data-lecteur-audio-element hidden>
-            <source src="{{ vich_uploader_asset(emission, 'fichierAudioFile') }}">
+            <source src="{{ asset(vich_uploader_asset(emission, 'fichierAudioFile')) }}">
             Ton navigateur ne prend pas en charge la lecture audio. Utilise le lien de téléchargement ci-dessous.
         </audio>
     </div>
@@ -26,7 +26,7 @@
     <a class="lecteur-video" href="{{ emission.urlExterne }}" target="_blank" rel="noopener noreferrer"
        aria-label="Regarder « {{ emission.titre }} » sur YouTube (nouvelle fenêtre)">
         {% if emission.imageName %}
-            <img src="{{ vich_uploader_asset(emission, 'imageFile') }}" alt="" loading="lazy">
+            <img src="{{ asset(vich_uploader_asset(emission, 'imageFile')) }}" alt="" loading="lazy">
         {% else %}
             <span class="lecteur-video__vide" aria-hidden="true">{{ icone('video', 48) }}</span>
         {% endif %}
@@ -36,7 +36,7 @@
 {%- elseif emission.urlExterne -%}
     {% if emission.imageName %}
         <figure class="article-image" style="margin-bottom:1.5rem">
-            <img src="{{ vich_uploader_asset(emission, 'imageFile') }}" alt="">
+            <img src="{{ asset(vich_uploader_asset(emission, 'imageFile')) }}" alt="">
         </figure>
     {% endif %}
     <p style="margin:0">
@@ -46,7 +46,7 @@
     </p>
 {%- elseif emission.imageName -%}
     <figure class="article-image" style="margin-bottom:0">
-        <img src="{{ vich_uploader_asset(emission, 'imageFile') }}" alt="">
+        <img src="{{ asset(vich_uploader_asset(emission, 'imageFile')) }}" alt="">
     </figure>
 {%- else -%}
     <div class="duo__media" style="aspect-ratio:16/9">

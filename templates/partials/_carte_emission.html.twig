@@ -2,7 +2,7 @@
 <article class="carte">
     <a class="carte__media" href="{{ path('emission_detail', {slug: emission.slug}) }}">
         {% if emission.imageName %}
-            <img src="{{ vich_uploader_asset(emission, 'imageFile') }}" alt="" loading="lazy">
+            <img src="{{ asset(vich_uploader_asset(emission, 'imageFile')) }}" alt="" loading="lazy">
         {% else %}
             <span class="carte__media-vide" aria-hidden="true">{{ icone(emission.type.value == 'tv' ? 'video' : 'audio', 34) }}</span>
         {% endif %}

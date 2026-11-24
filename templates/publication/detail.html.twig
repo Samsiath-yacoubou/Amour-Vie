@@ -2,7 +2,7 @@
 
 {% block titre %}{{ publication.titre }}{% endblock %}
 {% block meta_description %}{{ publication.description ?: publication.titre }}{% endblock %}
-{% block og_image %}{{ publication.couvertureName ? vich_uploader_asset(publication, 'couvertureFile') : '' }}{% endblock %}
+{% block og_image %}{{ publication.couvertureName ? asset(vich_uploader_asset(publication, 'couvertureFile')) : '' }}{% endblock %}
 
 {% block corps %}
 
@@ -60,7 +60,7 @@
             <aside class="mise-en-page__aside">
                 <div class="encadre">
                     {% if publication.couvertureName %}
-                        <img src="{{ vich_uploader_asset(publication, 'couvertureFile') }}"
+                        <img src="{{ asset(vich_uploader_asset(publication, 'couvertureFile')) }}"
                              alt="Couverture de « {{ publication.titre }} »"
                              style="width:100%;border-radius:var(--rayon);margin-bottom:1.25rem;box-shadow:var(--ombre-sm)">
                     {% endif %}

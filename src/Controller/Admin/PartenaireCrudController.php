@@ -40,7 +40,7 @@ class PartenaireCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield ImageField::new('logoName', 'Logo')
-            ->setBasePath('/uploads/partenaires')
+            ->setBasePath('uploads/partenaires')
             ->onlyOnIndex();
 
         yield TextField::new('nom', 'Nom du partenaire')->setColumns(8);

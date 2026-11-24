@@ -2,7 +2,7 @@
 <article class="carte">
     <div class="carte__media">
         {% if cours.imageName %}
-            <img src="{{ vich_uploader_asset(cours, 'imageFile') }}" alt="" loading="lazy">
+            <img src="{{ asset(vich_uploader_asset(cours, 'imageFile')) }}" alt="" loading="lazy">
         {% else %}
             <div class="carte__media-vide" aria-hidden="true">{{ icone('formation', 34) }}</div>
         {% endif %}

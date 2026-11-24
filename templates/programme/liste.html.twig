@@ -20,7 +20,7 @@
                             <div style="display:flex;align-items:flex-start;gap:1.25rem">
                                 <span class="carte-programme__logo" style="margin-bottom:0;flex-shrink:0">
                                     {% if programme.logoName %}
-                                        <img src="{{ vich_uploader_asset(programme, 'logoFile') }}" alt="" loading="lazy">
+                                        <img src="{{ asset(vich_uploader_asset(programme, 'logoFile')) }}" alt="" loading="lazy">
                                     {% else %}
                                         {{ programme.sigle|slice(0, 4) }}
                                     {% endif %}

@@ -104,7 +104,7 @@ class PublicationCrudController extends AbstractCrudController
             ->setHelp('Formats acceptés : PDF ou Word. Taille maximale : 64 Mo.');
 
         yield ImageField::new('couvertureName', 'Couverture')
-            ->setBasePath('/uploads/publications/couvertures')
+            ->setBasePath('uploads/publications/couvertures')
             ->onlyOnIndex();
 
         yield TextField::new('couvertureFile', 'Image de couverture')

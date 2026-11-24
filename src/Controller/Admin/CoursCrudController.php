@@ -82,7 +82,7 @@ class CoursCrudController extends AbstractCrudController
             ->setHelp('Image légère conseillée (moins de 300 Ko) : beaucoup de jeunes ont un petit forfait.');
 
         yield ImageField::new('imageName', 'Image')
-            ->setBasePath('/uploads/cours')
+            ->setBasePath('uploads/cours')
             ->onlyOnIndex();
 
         yield FormField::addTab('Réglages')->setIcon('fa fa-sliders');

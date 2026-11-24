@@ -2,7 +2,7 @@
 
 {% block titre %}{{ emission.titre }}{% endblock %}
 {% block meta_description %}{{ emission.description ? emission.description|extrait(160) : 'Émission ' ~ emission.type.libelle ~ ' produite par Amour&Vie ABMS.' }}{% endblock %}
-{% block og_image %}{{ emission.imageName ? vich_uploader_asset(emission, 'imageFile') : '' }}{% endblock %}
+{% block og_image %}{{ emission.imageName ? asset(vich_uploader_asset(emission, 'imageFile')) : '' }}{% endblock %}
 
 {% block corps %}
 

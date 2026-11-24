@@ -85,7 +85,7 @@ class ProgrammeCrudController extends AbstractCrudController
         yield FormField::addTab('Visuels')->setIcon('fa fa-image');
 
         yield ImageField::new('logoName', 'Logo')
-            ->setBasePath('/uploads/programmes')
+            ->setBasePath('uploads/programmes')
             ->onlyOnIndex();
 
         yield TextField::new('logoFile', 'Logo du programme')
