@@ -296,7 +296,7 @@ hr {
 
 .conteneur--etroit { max-width: 900px; }
 
-.section { padding-block: clamp(3.5rem, 2.2rem + 5vw, 6.5rem); }
+.section { padding-block: clamp(3rem, 2rem + 4vw, 5.5rem); }
 .section--douce { background: var(--fond-doux); }
 .section--teinte { background: var(--teinte-rose); }
 .section--teinte-profond { background: var(--teinte-neutre); }
@@ -775,7 +775,7 @@ hr {
 
 /* Même taille et même point de départ que le logo du pied de page
    (.pied__logo ci-dessous) : les deux doivent rester strictement identiques. */
-.entete__ligne .logo img { max-height: 64px; }
+.entete__ligne .logo img { max-height: 58px; }
 
 /* Repli si aucun « logo pour fond sombre » n'est configuré côté admin :
    la bande restant rouge, on redonne un support blanc au logo couleur pour
@@ -783,10 +783,11 @@ hr {
    Même hauteur d'image que la règle ci-dessus (64px) : seul le support blanc
    ajoute un peu de marge autour, la taille du logo lui-même ne change pas. */
 .entete__ligne .logo img.logo--secours {
-    max-height: 64px;
+    max-height: 56px;
     background: #fff;
-    padding: 8px 14px;
-    border-radius: var(--rayon-sm);
+    padding: 9px 16px;
+    border-radius: var(--rayon-xs);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
 }
 
 .entete__ligne .logo__nom { color: #fff; }
@@ -1139,10 +1140,12 @@ hr {
 
 .hero {
     position: relative;
-    height: clamp(460px, 72vh, 680px);
+    height: clamp(440px, 62vh, 600px);
     color: #fff;
     overflow: hidden;
-    background: var(--gris-900);
+    background:
+        radial-gradient(120% 100% at 82% 0%, rgba(227, 0, 27, 0.5) 0%, transparent 58%),
+        linear-gradient(150deg, #26030a 0%, #56050f 56%, #8b0016 100%);
 }
 
 /* -- Bandeau statique de repli (pas de carrousel) ------------------------ */
@@ -1161,7 +1164,10 @@ hr {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(105deg, rgba(18, 4, 6, 0.7) 0%, rgba(90, 4, 12, 0.4) 40%, rgba(227, 0, 27, 0.12) 100%);
+    background:
+        radial-gradient(closest-side at 86% 22%, rgba(30, 158, 109, 0.22), transparent 72%),
+        repeating-linear-gradient(112deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 16px),
+        linear-gradient(105deg, rgba(24, 4, 7, 0.92) 0%, rgba(92, 4, 13, 0.62) 46%, rgba(227, 0, 27, 0.3) 100%);
 }
 
 /* -- Carrousel ------------------------------------------------------------ */
@@ -1193,7 +1199,10 @@ hr {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(105deg, rgba(18, 4, 6, 0.7) 0%, rgba(90, 4, 12, 0.4) 40%, rgba(227, 0, 27, 0.12) 100%);
+    background:
+        radial-gradient(closest-side at 86% 22%, rgba(30, 158, 109, 0.22), transparent 72%),
+        repeating-linear-gradient(112deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 16px),
+        linear-gradient(105deg, rgba(24, 4, 7, 0.92) 0%, rgba(92, 4, 13, 0.62) 46%, rgba(227, 0, 27, 0.3) 100%);
 }
 
 .hero__diapo > .conteneur { width: 100%; }
@@ -1208,8 +1217,8 @@ hr {
 }
 
 .hero__contenu {
-    max-width: 720px;
-    padding-block: 4rem;
+    max-width: 640px;
+    padding-block: 3rem;
 }
 
 .hero__surtitre {
@@ -1217,17 +1226,27 @@ hr {
     align-items: center;
     gap: 0.6rem;
     margin-bottom: 1.25rem;
-    color: var(--emeraude);
-    font-size: 0.85rem;
+    padding: 0.4rem 0.9rem 0.4rem 0.8rem;
+    border: 1px solid rgba(30, 158, 109, 0.45);
+    border-radius: var(--rayon-rond);
+    background: rgba(30, 158, 109, 0.16);
+    backdrop-filter: blur(6px);
+    color: color-mix(in srgb, var(--emeraude) 55%, #fff);
+    font-size: 0.73rem;
     font-weight: 800;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
 }
 
 .hero__titre {
     color: #fff;
-    margin-bottom: 1.2rem;
-    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.25);
+    margin-bottom: 1.35rem;
+    max-width: 18ch;
+    font-size: clamp(2.15rem, 1.35rem + 3.2vw, 3.9rem);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.3);
 }
 
 .hero__titre .accent {
@@ -1261,8 +1280,9 @@ hr {
 }
 
 .hero__puce {
-    width: 9px;
-    height: 9px;
+    position: relative;
+    width: 10px;
+    height: 10px;
     padding: 0;
     border: 0;
     border-radius: var(--rayon-rond);
@@ -1271,10 +1291,13 @@ hr {
     transition: all var(--transition);
 }
 
+/* Zone cliquable élargie : une puce de 10 px est une cible trop petite. */
+.hero__puce::after { content: ""; position: absolute; inset: -12px; border-radius: inherit; }
+
 .hero__puce:hover { background: rgba(255, 255, 255, 0.75); }
 
 .hero__puce.est-active {
-    width: 26px;
+    width: 34px;
     background: var(--emeraude);
 }
 
@@ -1478,16 +1501,49 @@ hr {
 
 .carte:hover .carte__media img { transform: scale(1.05); }
 
+/* Vignette absente : ce n'est pas un trou, c'est une illustration de repli. */
 .carte__media-vide {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, var(--rose-clair) 0%, var(--violet-clair) 100%);
-    color: var(--rose);
-    font-size: 2rem;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 80% 16%, rgba(227, 0, 27, 0.26) 0%, transparent 60%),
+        linear-gradient(140deg, var(--teinte-rose) 0%, var(--teinte-violet) 100%);
+    color: color-mix(in srgb, var(--rose-sombre) 70%, #fff);
 }
+
+.carte__media-vide::before,
+.actualite-une__media-vide::before,
+.actualite-ligne__media-vide::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(125, 0, 15, 0.2) 1px, transparent 1px);
+    background-size: 16px 16px;
+    -webkit-mask-image: radial-gradient(130% 130% at 15% 100%, #000 0%, transparent 72%);
+    mask-image: radial-gradient(130% 130% at 15% 100%, #000 0%, transparent 72%);
+}
+
+.carte__media-vide::after {
+    content: "A&V";
+    position: absolute;
+    right: -0.4rem;
+    bottom: -0.6rem;
+    font-family: var(--police-titre);
+    font-weight: 800;
+    font-size: clamp(2.2rem, 1.4rem + 2.6vw, 4rem);
+    line-height: 0.8;
+    letter-spacing: -0.05em;
+    color: rgba(125, 0, 15, 0.1);
+    pointer-events: none;
+}
+
+.carte__media-vide > * { position: relative; z-index: 1; }
+.carte__media-vide svg { opacity: 0.6; }
 
 .carte__etiquettes {
     position: absolute;
@@ -1859,8 +1915,15 @@ hr {
     flex-direction: column;
     background: var(--surface);
     border: 1px solid var(--bordure-douce);
-    border-radius: var(--rayon-sm);
+    border-radius: var(--rayon);
     overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.actualite-une:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--ombre);
+    border-color: var(--bordure);
 }
 
 .actualite-une__media {
@@ -1872,13 +1935,34 @@ hr {
 .actualite-une__media img { width: 100%; height: 100%; object-fit: cover; }
 
 .actualite-une__media-vide {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100%;
-    background: linear-gradient(135deg, var(--teinte-rose), var(--teinte-violet));
-    color: var(--rose);
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 80% 16%, rgba(227, 0, 27, 0.26) 0%, transparent 60%),
+        linear-gradient(140deg, var(--teinte-rose) 0%, var(--teinte-violet) 100%);
+    color: color-mix(in srgb, var(--rose-sombre) 70%, #fff);
 }
+
+.actualite-une__media-vide::after {
+    content: "A&V";
+    position: absolute;
+    right: -0.5rem;
+    bottom: -1rem;
+    font-family: var(--police-titre);
+    font-weight: 800;
+    font-size: clamp(3rem, 2rem + 4vw, 5.2rem);
+    line-height: 0.8;
+    letter-spacing: -0.05em;
+    color: rgba(125, 0, 15, 0.1);
+    pointer-events: none;
+}
+
+.actualite-une__media-vide > * { position: relative; z-index: 1; }
+.actualite-une__media-vide svg { opacity: 0.6; }
 
 .actualite-une__corps { padding: 1.4rem 1.5rem 1.6rem; }
 
@@ -1948,13 +2032,17 @@ hr {
 .actualite-ligne__media img { width: 100%; height: 100%; object-fit: cover; }
 
 .actualite-ligne__media-vide {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100%;
-    background: var(--teinte-rose);
-    color: var(--rose);
+    overflow: hidden;
+    background: linear-gradient(140deg, var(--teinte-rose) 0%, var(--teinte-violet) 100%);
+    color: color-mix(in srgb, var(--rose-sombre) 65%, #fff);
 }
+
+.actualite-ligne__media-vide svg { opacity: 0.55; }
 
 /* Bande partenaires */
 
@@ -2758,14 +2846,30 @@ select.controle,
 .duo__media img { width: 100%; height: 100%; object-fit: cover; }
 
 .duo__media-vide {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100%;
-    background: linear-gradient(135deg, var(--rose-clair), var(--violet-clair));
-    color: var(--rose);
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 78% 18%, rgba(227, 0, 27, 0.22) 0%, transparent 58%),
+        linear-gradient(140deg, var(--teinte-rose) 0%, var(--teinte-violet) 100%);
+    color: color-mix(in srgb, var(--rose-sombre) 65%, #fff);
     font-size: 3rem;
 }
+
+.duo__media-vide::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(125, 0, 15, 0.18) 1px, transparent 1px);
+    background-size: 18px 18px;
+    -webkit-mask-image: radial-gradient(130% 130% at 20% 100%, #000 0%, transparent 74%);
+    mask-image: radial-gradient(130% 130% at 20% 100%, #000 0%, transparent 74%);
+}
+
+.duo__media-vide svg { opacity: 0.6; }
 
 /* --------------------------------------------- Lecteur audio/vidéo émission */
 /* Couverture cliquable : radio -> lecteur natif révélé au clic,
