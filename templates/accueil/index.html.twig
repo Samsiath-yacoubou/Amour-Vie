@@ -112,8 +112,10 @@
 
     {# ================================================ D. Actualités récentes #}
     {% if articles|length > 0 %}
-        {% set une = articles|first %}
-        {% set liste = articles|slice(1, 4) %}
+        {# Le carrousel a déjà pris les quatre premiers : la vitrine commence
+           après, sinon le hero et la carte « à la une » montrent la même photo. #}
+        {% set une = articles|length > 1 ? articles[1] : articles|first %}
+        {% set liste = articles|slice(2, 4) %}
         <section class="section" aria-labelledby="titre-actualites">
             <div class="conteneur">
                 <div class="entete-section entete-section--repartie entete-section--haut">

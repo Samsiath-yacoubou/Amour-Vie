@@ -1,6 +1,13 @@
 {# Carte d'un Centre Jeune. Paramètre : centre #}
-<article class="centre-carte">
-    <span class="centre-carte__icone" aria-hidden="true">{{ icone('house-medical', 26) }}</span>
+<article class="centre-carte{{ centre.imageName ? ' centre-carte--photo' }}">
+    {% if centre.imageName %}
+        <a class="centre-carte__vignette" href="{{ path('centre_jeune_detail', {slug: centre.slug}) }}"
+           tabindex="-1" aria-hidden="true">
+            <img src="{{ asset(vich_uploader_asset(centre, 'imageFile')) }}" alt="" loading="lazy">
+        </a>
+    {% else %}
+        <span class="centre-carte__icone" aria-hidden="true">{{ icone('house-medical', 26) }}</span>
+    {% endif %}
     <div class="centre-carte__corps">
         <h3 class="centre-carte__titre">
             <a href="{{ path('centre_jeune_detail', {slug: centre.slug}) }}">{{ centre.nom }}</a>

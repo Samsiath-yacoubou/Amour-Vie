@@ -1164,10 +1164,17 @@ hr {
     position: absolute;
     inset: 0;
     z-index: -1;
+    /* Voile de lisibilité : dense à gauche (le texte), quasi transparent à
+       droite pour laisser respirer la photo. Pas de hachures : elles se lisent
+       comme des rayures sur l'image. */
     background:
-        radial-gradient(closest-side at 86% 22%, rgba(30, 158, 109, 0.22), transparent 72%),
-        repeating-linear-gradient(112deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 16px),
-        linear-gradient(105deg, rgba(24, 4, 7, 0.92) 0%, rgba(92, 4, 13, 0.62) 46%, rgba(227, 0, 27, 0.3) 100%);
+        radial-gradient(closest-side at 88% 12%, rgba(30, 158, 109, 0.16), transparent 70%),
+        linear-gradient(100deg,
+            rgba(10, 2, 4, 0.90) 0%,
+            rgba(14, 2, 5, 0.72) 34%,
+            rgba(20, 3, 6, 0.34) 62%,
+            rgba(20, 3, 6, 0.16) 100%),
+        linear-gradient(165deg, rgba(227, 0, 27, 0.20) 0%, transparent 52%);
 }
 
 /* -- Carrousel ------------------------------------------------------------ */
@@ -1199,10 +1206,17 @@ hr {
     position: absolute;
     inset: 0;
     z-index: -1;
+    /* Voile de lisibilité : dense à gauche (le texte), quasi transparent à
+       droite pour laisser respirer la photo. Pas de hachures : elles se lisent
+       comme des rayures sur l'image. */
     background:
-        radial-gradient(closest-side at 86% 22%, rgba(30, 158, 109, 0.22), transparent 72%),
-        repeating-linear-gradient(112deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 16px),
-        linear-gradient(105deg, rgba(24, 4, 7, 0.92) 0%, rgba(92, 4, 13, 0.62) 46%, rgba(227, 0, 27, 0.3) 100%);
+        radial-gradient(closest-side at 88% 12%, rgba(30, 158, 109, 0.16), transparent 70%),
+        linear-gradient(100deg,
+            rgba(10, 2, 4, 0.90) 0%,
+            rgba(14, 2, 5, 0.72) 34%,
+            rgba(20, 3, 6, 0.34) 62%,
+            rgba(20, 3, 6, 0.16) 100%),
+        linear-gradient(165deg, rgba(227, 0, 27, 0.20) 0%, transparent 52%);
 }
 
 .hero__diapo > .conteneur { width: 100%; }
@@ -2140,6 +2154,29 @@ hr {
     color: var(--texte-doux);
     margin-bottom: 0.5rem;
 }
+
+/* Variante avec photo : la vignette prend la largeur de la carte et le texte
+   passe dessous (une vignette en colonne écraserait la colonne de texte dans
+   une grille à trois cartes). */
+.centre-carte--photo { flex-direction: column; gap: 0.9rem; }
+
+.centre-carte__vignette {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--rayon);
+    background: var(--teinte-rose);
+}
+
+.centre-carte__vignette img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition);
+}
+
+.centre-carte--photo:hover .centre-carte__vignette img { transform: scale(1.04); }
 
 /* Cartographie */
 
