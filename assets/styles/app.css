@@ -125,10 +125,33 @@
        Distincte de --fond pour pouvoir l'assombrir séparément en mode sombre. */
     --surface: var(--gris-000);
     --texte: var(--gris-800);
+    --texte-fort: var(--gris-900);
     --texte-doux: var(--gris-600);
-    --texte-tres-doux: var(--gris-500);
+    /* Un demi-cran plus sombre que --gris-500 : sur les surfaces creusées
+       (--surface-creuse), --gris-500 tombait à 4,18:1, sous le seuil AA. */
+    --texte-tres-doux: #6b5c56;
     --bordure: var(--gris-200);
     --bordure-douce: var(--gris-100);
+
+    /* Surfaces secondaires. Distinctes de --fond / --surface pour pouvoir
+       s'assombrir par paliers en mode sombre (bloc discret, bloc creusé). */
+    --surface-douce: var(--gris-025);
+    --surface-creuse: var(--gris-100);
+
+    /* Accents de TEXTE. Les couleurs de marque (--rose, --rose-fonce…) sont
+       calibrées pour un fond clair ; employées telles quelles sur le fond
+       sombre elles tombent sous 3:1. Ces alias portent le rôle « texte
+       accentué » et s'éclaircissent avec le thème. Les fonds, bordures et
+       dégradés continuent d'utiliser les jetons de marque bruts. */
+    --lien: var(--rose-fonce);
+    --lien-fort: var(--rose-sombre);
+    /* Un cran plus sombre que --emeraude-fonce : ce rôle doit tenir 4,5:1 non
+       seulement sur blanc mais aussi sur les fonds pastel (rose-clair). */
+    --texte-emeraude: #14714e;
+    --texte-violet: var(--violet-fonce);
+    --texte-succes: #1d6b3c;
+    --texte-attention: #8a5200;
+    --texte-danger: #a01d2e;
 
     /* Typographie */
     --police: "Poppins", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
@@ -152,13 +175,23 @@
 
     --entete-hauteur: 96px;
     --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Support clair derrière le logo couleur (lettrage sombre) quand il est posé
+       sur le fond de page et non sur un aplat de marque. Transparent en thème
+       clair, blanc en thème sombre. */
+    --support-logo: transparent;
+    --support-logo-marge: 0;
 }
 
-/* Mode sombre : ne redéfinit que les alias sémantiques (fond, texte,
-   bordures), jamais les couleurs de marque — boutons et accents restent
-   identiques dans les deux thèmes. S'active soit via la préférence système
-   (aucun choix explicite mémorisé), soit via [data-theme] posé par le
-   bouton bascule de l'en-tête (voir initTheme() dans app.js). */
+/* Mode sombre. Deux familles de jetons changent :
+   1. les rôles sémantiques (fond, surfaces, texte, bordures, accents de texte) ;
+   2. les teintes pastel et les variantes -clair, qui sont des FONDS clairs
+      dérivés des couleurs de marque : conservées telles quelles, elles
+      donnaient du texte clair sur fond pastel clair (1,2:1).
+   Les couleurs de marque brutes (--rose, --emeraude…) ne bougent pas : elles
+   restent les fonds des boutons et des aplats, avec du texte blanc.
+   S'active via la préférence système (aucun choix mémorisé) ou via [data-theme]
+   posé par le bouton bascule de l'en-tête (voir initTheme() dans app.js). */
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
         --fond: var(--gris-900);
@@ -169,6 +202,28 @@
         --texte-tres-doux: var(--gris-300);
         --bordure: var(--gris-700);
         --bordure-douce: var(--gris-800);
+        --support-logo: #ffffff;
+        --support-logo-marge: 8px 14px;
+        --texte-fort: var(--gris-025);
+        --surface-douce: #221b18;
+        --surface-creuse: #2f2622;
+        --lien: #ff909b;
+        --lien-fort: #ffb3bc;
+        --texte-emeraude: #6fdaa9;
+        --texte-violet: #c4abff;
+        --texte-succes: #6fdaa9;
+        --texte-attention: #f2bb6a;
+        --texte-danger: #ff9aa5;
+        --teinte-rose: #3a1c22;
+        --teinte-violet: #272041;
+        --teinte-emeraude: #14302a;
+        --teinte-neutre: #221b18;
+        --rose-clair: #472029;
+        --violet-clair: #302748;
+        --emeraude-clair: #17392e;
+        --succes-clair: #16331f;
+        --alerte-clair: #3d1a1f;
+        --attention-clair: #3a2a15;
         --ombre-xs: 0 1px 2px rgba(0, 0, 0, 0.35);
         --ombre-sm: 0 4px 14px rgba(0, 0, 0, 0.4);
         --ombre: 0 10px 30px rgba(0, 0, 0, 0.45);
@@ -185,22 +240,44 @@
     --texte-tres-doux: var(--gris-300);
     --bordure: var(--gris-700);
     --bordure-douce: var(--gris-800);
+    --support-logo: #ffffff;
+    --support-logo-marge: 8px 14px;
+    --texte-fort: var(--gris-025);
+    --surface-douce: #221b18;
+    --surface-creuse: #2f2622;
+    --lien: #ff909b;
+    --lien-fort: #ffb3bc;
+    --texte-emeraude: #6fdaa9;
+    --texte-violet: #c4abff;
+    --texte-succes: #6fdaa9;
+    --texte-attention: #f2bb6a;
+    --texte-danger: #ff9aa5;
+    --teinte-rose: #3a1c22;
+    --teinte-violet: #272041;
+    --teinte-emeraude: #14302a;
+    --teinte-neutre: #221b18;
+    --rose-clair: #472029;
+    --violet-clair: #302748;
+    --emeraude-clair: #17392e;
+    --succes-clair: #16331f;
+    --alerte-clair: #3d1a1f;
+    --attention-clair: #3a2a15;
     --ombre-xs: 0 1px 2px rgba(0, 0, 0, 0.35);
     --ombre-sm: 0 4px 14px rgba(0, 0, 0, 0.4);
     --ombre: 0 10px 30px rgba(0, 0, 0, 0.45);
     --ombre-lg: 0 22px 54px rgba(0, 0, 0, 0.55);
 }
 
-/* Cartes/entêtes/etc. codent #fff en dur pour un fond de carte blanc quel
-   que soit le thème de section : en mode sombre on bascule ce blanc vers un
-   gris très sombre pour ne pas produire de cartes blanches sur fond noir. */
-:root[data-theme="dark"],
-:root:not([data-theme="light"]) {
-    color-scheme: dark;
-}
+/* color-scheme suit le thème réellement appliqué. Auparavant il était posé en
+   sombre pour quiconque n'avait pas explicitement choisi « clair » — y compris
+   sur un système en thème clair : champs de formulaire, barres de défilement et
+   menus natifs s'affichaient alors en sombre sur une page blanche. */
+:root { color-scheme: light; }
 
-@media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]) { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { color-scheme: dark; }
 }
 
 /* ----------------------------------------------------------------- 2. Base */
@@ -230,7 +307,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--police-titre);
     line-height: 1.18;
-    color: var(--gris-900);
+    color: var(--texte-fort);
     margin: 0 0 0.6em;
     font-weight: 800;
     letter-spacing: -0.02em;
@@ -245,13 +322,13 @@ p { margin: 0 0 1.1em; }
 p:last-child { margin-bottom: 0; }
 
 a {
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;
     transition: color var(--transition);
 }
 
-a:hover { color: var(--rose-sombre); }
+a:hover { color: var(--lien-fort); }
 
 img {
     max-width: 100%;
@@ -296,14 +373,17 @@ hr {
 
 .conteneur--etroit { max-width: 900px; }
 
-.section { padding-block: clamp(3rem, 2rem + 4vw, 5.5rem); }
+/* Rythme vertical. Deux sections consécutives cumulaient 2 × 88 px de vide,
+   d'où l'impression de blocs qui flottent ; on garde de l'air mais on ramène
+   le maximum à 64 px. */
+.section { padding-block: clamp(2.25rem, 1.5rem + 2.6vw, 4rem); }
 .section--douce { background: var(--fond-doux); }
 .section--teinte { background: var(--teinte-rose); }
 .section--teinte-profond { background: var(--teinte-neutre); }
 /* Jaune transparent plutôt que plein : le aplat saturé écrasait la section. */
 .section--emeraude { background: rgba(251, 208, 21, 0.14); }
 .section--emeraude .surtitre::before { background: var(--violet); }
-.section--compacte { padding-block: clamp(2.25rem, 1.6rem + 2.4vw, 4rem); }
+.section--compacte { padding-block: clamp(1.75rem, 1.2rem + 1.8vw, 3rem); }
 
 /* Masqué visuellement mais lu par les lecteurs d'écran. */
 .sr-only {
@@ -340,7 +420,7 @@ hr {
 
 .grille {
     display: grid;
-    gap: 2rem;
+    gap: 1.5rem;
 }
 
 .grille--2 { grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); }
@@ -350,7 +430,7 @@ hr {
 
 .entete-section {
     max-width: 760px;
-    margin-bottom: 3.25rem;
+    margin-bottom: 2rem;
 }
 
 .entete-section--centre {
@@ -457,7 +537,7 @@ hr {
 
 .centre-puce__nom {
     font-weight: 700;
-    color: var(--gris-800);
+    color: var(--texte);
     font-size: 0.92rem;
 }
 
@@ -483,7 +563,7 @@ hr {
 .entete-section--haut { align-items: flex-start; }
 
 /* Titre coloré dans le rouge de marque plutôt qu'en gris quasi noir. */
-.titre-accent { color: var(--rose-sombre); }
+.titre-accent { color: var(--lien-fort); }
 
 .surtitre {
     display: inline-flex;
@@ -493,7 +573,7 @@ hr {
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
     margin-bottom: 0.85rem;
 }
 
@@ -561,6 +641,9 @@ hr {
 
 .bouton--emeraude {
     background: var(--emeraude);
+    /* Texte posé sur l'aplat vert de la marque : on garde le gris très sombre
+       dans les deux thèmes (5,3:1), le rôle --texte-fort basculerait en clair
+       sur le vert et tomberait à 3,3:1. */
     color: var(--gris-900);
 }
 
@@ -571,7 +654,7 @@ hr {
 
 .bouton--contour {
     border-color: var(--rose);
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
     background: transparent;
 }
 
@@ -588,17 +671,17 @@ hr {
 
 .bouton--fantome-clair:hover {
     background: var(--surface);
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
 }
 
 .bouton--neutre {
-    background: var(--gris-100);
-    color: var(--gris-700);
+    background: var(--surface-creuse);
+    color: var(--texte-doux);
 }
 
 .bouton--neutre:hover {
-    background: var(--gris-200);
-    color: var(--gris-900);
+    background: var(--bordure);
+    color: var(--texte-fort);
 }
 
 .bouton--petit {
@@ -631,7 +714,7 @@ hr {
 
 .bouton--contour-clair:hover {
     background: var(--surface);
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
 }
 
 .bouton[disabled],
@@ -650,7 +733,7 @@ hr {
     letter-spacing: 0.03em;
     text-transform: uppercase;
     text-decoration: none;
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
 }
 
 .lien-fleche::after {
@@ -676,17 +759,17 @@ hr {
     letter-spacing: 0.02em;
     text-transform: uppercase;
     background: var(--rose-clair);
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
     text-decoration: none;
     white-space: nowrap;
 }
 
-.badge--emeraude { background: var(--emeraude-clair); color: #8a6d00; }
-.badge--profond { background: var(--violet-clair); color: var(--violet); }
-.badge--neutre { background: var(--gris-100); color: var(--gris-600); }
-.badge--succes { background: var(--succes-clair); color: #1d6b3c; }
-.badge--attention { background: var(--attention-clair); color: #9a5400; }
-.badge--danger { background: var(--alerte-clair); color: #a01d2e; }
+.badge--emeraude { background: var(--emeraude-clair); color: var(--texte-emeraude); }
+.badge--profond { background: var(--violet-clair); color: var(--texte-violet); }
+.badge--neutre { background: var(--surface-creuse); color: var(--texte-doux); }
+.badge--succes { background: var(--succes-clair); color: var(--texte-succes); }
+.badge--attention { background: var(--attention-clair); color: var(--texte-attention); }
+.badge--danger { background: var(--alerte-clair); color: var(--texte-danger); }
 
 .badge--pastille::before {
     content: "";
@@ -749,15 +832,15 @@ hr {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    color: var(--gris-700);
+    color: var(--texte-doux);
     font-weight: 600;
     text-decoration: none;
     opacity: 0.95;
 }
 
-.entete__coord-lien:hover { color: var(--rose-sombre); text-decoration: underline; opacity: 1; }
+.entete__coord-lien:hover { color: var(--lien-fort); text-decoration: underline; opacity: 1; }
 
-.entete__coord-separateur { opacity: 0.55; margin-inline: -0.5rem; }
+.entete__coord-separateur { color: var(--texte-tres-doux); margin-inline: -0.5rem; }
 
 /* Bande principale, en rouge, pleine largeur ; le contenu reste centré via
    .entete__ligne-interieur (même schéma que .entete__topbar-interieur). */
@@ -784,6 +867,8 @@ hr {
    ajoute un peu de marge autour, la taille du logo lui-même ne change pas. */
 .entete__ligne .logo img.logo--secours {
     max-height: 56px;
+    /* Support blanc franc, dans les deux thèmes : la bande de l'en-tête reste
+       rouge de marque (--surface basculerait en gris très sombre). */
     background: #fff;
     padding: 9px 16px;
     border-radius: var(--rayon-xs);
@@ -836,7 +921,7 @@ hr {
     font-family: "Baloo 2", var(--police-titre);
     font-weight: 700;
     font-size: 1.7rem;
-    color: var(--rose);
+    color: var(--lien);
     line-height: 1.1;
     letter-spacing: 0.01em;
     text-transform: uppercase;
@@ -889,7 +974,7 @@ hr {
     font-weight: 700;
     letter-spacing: 0.03em;
     text-transform: uppercase;
-    color: var(--gris-700);
+    color: var(--texte-doux);
     text-decoration: none;
     white-space: nowrap;
     background: none;
@@ -901,11 +986,11 @@ hr {
 
 .nav__lien:hover,
 .nav__lien[aria-expanded="true"] {
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
 }
 
 .nav__lien.est-actif {
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
 }
 
 .nav__chevron {
@@ -952,14 +1037,14 @@ hr {
     border-radius: var(--rayon-sm);
     font-size: 0.92rem;
     font-weight: 500;
-    color: var(--gris-700);
+    color: var(--texte-doux);
     text-decoration: none;
     transition: background var(--transition), color var(--transition);
 }
 
 .sous-menu__lien:hover {
     background: var(--rose-clair);
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
 }
 
 .bouton-icone {
@@ -970,15 +1055,15 @@ hr {
     height: 38px;
     border: 0;
     border-radius: 50%;
-    background: var(--gris-050);
-    color: var(--gris-700);
+    background: var(--fond-doux);
+    color: var(--texte-doux);
     cursor: pointer;
     transition: background var(--transition), color var(--transition);
 }
 
 .bouton-icone:hover {
     background: var(--rose-clair);
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
 }
 
 .bouton-burger { display: none; }
@@ -1105,7 +1190,7 @@ hr {
     font-family: inherit;
     font-size: 1rem;
     font-weight: 600;
-    color: var(--gris-800);
+    color: var(--texte);
     text-align: left;
     text-decoration: none;
     cursor: pointer;
@@ -1124,11 +1209,11 @@ hr {
     display: block;
     padding: 0.6rem 0.5rem;
     font-size: 0.93rem;
-    color: var(--gris-600);
+    color: var(--texte-doux);
     text-decoration: none;
 }
 
-.menu-mobile__sous-lien:hover { color: var(--rose-sombre); }
+.menu-mobile__sous-lien:hover { color: var(--lien-fort); }
 
 /* ----------------------------------------------------------------- 8. Hero */
 
@@ -1319,14 +1404,14 @@ hr {
 
 .banniere {
     position: relative;
-    padding-block: clamp(3rem, 2.2rem + 3.2vw, 4.75rem);
+    padding-block: clamp(2rem, 1.4rem + 2vw, 3.25rem);
     background: var(--rose-clair);
-    color: var(--gris-900);
+    color: var(--texte-fort);
 }
 
 .banniere__contenu { position: relative; }
 
-.banniere h1 { color: var(--gris-900); margin-bottom: 0.5rem; }
+.banniere h1 { color: var(--texte-fort); margin-bottom: 0.5rem; }
 
 .banniere__chapo {
     color: var(--texte-doux);
@@ -1341,7 +1426,7 @@ hr {
    ex. le hero) devient un contour foncé dans ce contexte. */
 .banniere .bouton--contour-clair {
     border-color: var(--rose-sombre);
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
 }
 
 .banniere .bouton--contour-clair:hover {
@@ -1364,9 +1449,9 @@ hr {
 
 .fil-ariane li { margin: 0; display: flex; align-items: center; gap: 0.5rem; }
 .fil-ariane li + li::before { content: "›"; opacity: 0.55; }
-.fil-ariane a { color: var(--gris-600); text-decoration: none; }
-.fil-ariane a:hover { color: var(--rose-sombre); text-decoration: underline; }
-.fil-ariane [aria-current="page"] { color: var(--rose-sombre); font-weight: 600; }
+.fil-ariane a { color: var(--texte-doux); text-decoration: none; }
+.fil-ariane a:hover { color: var(--lien-fort); text-decoration: underline; }
+.fil-ariane [aria-current="page"] { color: var(--lien-fort); font-weight: 600; }
 
 /* --------------------------------------------------------- 9. Chiffres clés */
 
@@ -1402,7 +1487,7 @@ hr {
     margin-bottom: 1.1rem;
     border-radius: var(--rayon);
     background: var(--surface);
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
     font-size: 1.25rem;
     box-shadow: var(--ombre-xs);
 }
@@ -1411,11 +1496,11 @@ hr {
     font-size: clamp(2.1rem, 1.6rem + 2vw, 3rem);
     font-weight: 800;
     line-height: 1;
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
     letter-spacing: -0.03em;
 }
 
-.chiffre__valeur .suffixe { color: var(--emeraude-fonce); }
+.chiffre__valeur .suffixe { color: var(--texte-emeraude); }
 
 .chiffre__libelle {
     margin: 0.6rem 0 0;
@@ -1440,7 +1525,7 @@ hr {
 }
 
 .mission__titre {
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
     margin-bottom: 1.1rem;
 }
 
@@ -1469,7 +1554,7 @@ hr {
     font-size: clamp(1.15rem, 0.9rem + 1vw, 1.55rem);
     font-weight: 800;
     line-height: 1;
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
     letter-spacing: -0.02em;
     white-space: nowrap;
 }
@@ -1502,7 +1587,7 @@ hr {
 .carte__media {
     position: relative;
     aspect-ratio: 16 / 10;
-    background: var(--gris-100);
+    background: var(--surface-creuse);
     overflow: hidden;
 }
 
@@ -1570,6 +1655,8 @@ hr {
 
 .carte__etiquettes .badge {
     background: rgba(255, 255, 255, 0.94);
+    /* La puce garde un fond blanc quel que soit le thème (elle est posée sur
+       une photo) : le texte doit donc rester le rouge sombre de la marque. */
     color: var(--rose-sombre);
     box-shadow: var(--ombre-xs);
 }
@@ -1616,7 +1703,7 @@ hr {
 
 .carte { position: relative; }
 
-.carte__titre a:hover { color: var(--rose-sombre); }
+.carte__titre a:hover { color: var(--lien-fort); }
 
 .carte__resume {
     color: var(--texte-doux);
@@ -1667,8 +1754,8 @@ hr {
     height: 66px;
     margin-bottom: 1.15rem;
     border-radius: var(--rayon);
-    background: color-mix(in srgb, var(--accent, var(--rose)) 12%, #fff);
-    color: var(--accent, var(--rose));
+    background: color-mix(in srgb, var(--accent, var(--rose)) 12%, var(--surface));
+    color: color-mix(in srgb, var(--accent, var(--rose)) 70%, var(--texte-fort));
     font-weight: 800;
     font-size: 1rem;
     overflow: hidden;
@@ -1684,7 +1771,7 @@ hr {
 .carte-programme__sigle {
     font-size: 1.35rem;
     font-weight: 800;
-    color: var(--gris-900);
+    color: var(--texte-fort);
     margin-bottom: 0.15rem;
     letter-spacing: -0.02em;
 }
@@ -1692,7 +1779,7 @@ hr {
 .carte-programme__nom {
     font-size: 0.87rem;
     font-weight: 600;
-    color: var(--accent, var(--rose-sombre));
+    color: color-mix(in srgb, var(--accent, var(--rose-sombre)) 70%, var(--texte-fort));
     margin-bottom: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -1714,7 +1801,7 @@ hr {
 
 .carte-programme--vitrine .carte-programme__media {
     aspect-ratio: 4 / 3;
-    background: color-mix(in srgb, var(--accent, var(--rose)) 12%, #fff);
+    background: color-mix(in srgb, var(--accent, var(--rose)) 12%, var(--surface));
 }
 
 .carte-programme--vitrine .carte-programme__media img {
@@ -1728,7 +1815,7 @@ hr {
     align-items: center;
     justify-content: center;
     height: 100%;
-    color: var(--accent, var(--rose));
+    color: color-mix(in srgb, var(--accent, var(--rose)) 70%, var(--texte-fort));
     font-weight: 800;
     font-size: 1.3rem;
     letter-spacing: -0.02em;
@@ -1747,8 +1834,8 @@ hr {
     padding: 0.3rem 0.75rem;
     margin-bottom: 0.9rem;
     border-radius: var(--rayon-rond);
-    background: color-mix(in srgb, var(--accent, var(--rose)) 14%, #fff);
-    color: var(--accent, var(--rose-sombre));
+    background: color-mix(in srgb, var(--accent, var(--rose)) 14%, var(--surface));
+    color: color-mix(in srgb, var(--accent, var(--rose-sombre)) 70%, var(--texte-fort));
     font-size: 0.72rem;
     font-weight: 800;
     letter-spacing: 0.04em;
@@ -1758,7 +1845,7 @@ hr {
 .carte-programme--vitrine .carte-programme__nom {
     font-size: 1.05rem;
     font-weight: 700;
-    color: var(--gris-900);
+    color: var(--texte-fort);
     text-transform: none;
     letter-spacing: normal;
     margin-bottom: 0.6rem;
@@ -1812,7 +1899,7 @@ hr {
 .carte-membre__initiales {
     font-size: 2rem;
     font-weight: 800;
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
     letter-spacing: -0.02em;
 }
 
@@ -1824,7 +1911,7 @@ hr {
 
 .carte-membre__fonction {
     font-size: 0.88rem;
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
@@ -1899,7 +1986,7 @@ hr {
 }
 
 .carte-publication__titre a { color: inherit; text-decoration: none; }
-.carte-publication__titre a:hover { color: var(--rose-sombre); }
+.carte-publication__titre a:hover { color: var(--lien-fort); }
 
 .carte-publication__meta {
     display: flex;
@@ -1943,7 +2030,7 @@ hr {
 .actualite-une__media {
     display: block;
     aspect-ratio: 16 / 10;
-    background: var(--gris-100);
+    background: var(--surface-creuse);
 }
 
 .actualite-une__media img { width: 100%; height: 100%; object-fit: cover; }
@@ -1983,8 +2070,8 @@ hr {
 .actualite-une__corps .badge { margin-bottom: 1rem; }
 
 .actualite-une__titre { font-size: 1.3rem; margin-bottom: 0.6rem; }
-.actualite-une__titre a { color: var(--gris-900); text-decoration: none; }
-.actualite-une__titre a:hover { color: var(--rose-sombre); }
+.actualite-une__titre a { color: var(--texte-fort); text-decoration: none; }
+.actualite-une__titre a:hover { color: var(--lien-fort); }
 
 .actualite-une__resume {
     color: var(--texte-doux);
@@ -2033,14 +2120,14 @@ hr {
     margin-bottom: 0.6rem;
 }
 
-.actualite-ligne__titre a { color: var(--gris-900); text-decoration: none; }
-.actualite-ligne__titre a:hover { color: var(--rose-sombre); }
+.actualite-ligne__titre a { color: var(--texte-fort); text-decoration: none; }
+.actualite-ligne__titre a:hover { color: var(--lien-fort); }
 
 .actualite-ligne__media {
     flex-shrink: 0;
     display: block;
     width: 100px;
-    background: var(--gris-100);
+    background: var(--surface-creuse);
 }
 
 .actualite-ligne__media img { width: 100%; height: 100%; object-fit: cover; }
@@ -2100,7 +2187,7 @@ hr {
 
 .partenaire__nom {
     font-weight: 700;
-    color: var(--gris-600);
+    color: var(--texte-doux);
     text-align: center;
     font-size: 0.9rem;
 }
@@ -2129,7 +2216,7 @@ hr {
     height: 66px;
     border-radius: var(--rayon);
     background: var(--teinte-rose);
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
     font-size: 1.35rem;
 }
 
@@ -2185,7 +2272,7 @@ hr {
     border-radius: var(--rayon-lg);
     overflow: hidden;
     border: 1px solid var(--bordure);
-    background: var(--gris-050);
+    background: var(--fond-doux);
 }
 
 .carte-geo__legende {
@@ -2232,7 +2319,7 @@ hr {
     cursor: pointer;
     font-weight: 600;
     font-size: 0.92rem;
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
 }
 
 .carte-centres__liste {
@@ -2290,8 +2377,8 @@ hr {
     height: 18px;
     padding: 0 0.3rem;
     border-radius: 999px;
-    background: #fff;
-    color: var(--rose-sombre);
+    background: var(--surface);
+    color: var(--lien-fort);
     font-size: 0.7rem;
     font-weight: 800;
 }
@@ -2345,7 +2432,7 @@ hr {
     color: var(--texte-doux);
 }
 
-.filtres__resume strong { color: var(--gris-900); }
+.filtres__resume strong { color: var(--texte-fort); }
 
 .puces {
     display: flex;
@@ -2364,7 +2451,7 @@ hr {
     background: var(--surface);
     font-size: 0.88rem;
     font-weight: 600;
-    color: var(--gris-600);
+    color: var(--texte-doux);
     text-decoration: none;
     cursor: pointer;
     transition: all var(--transition);
@@ -2372,7 +2459,7 @@ hr {
 
 .puce:hover {
     border-color: var(--rose);
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
 }
 
 .puce.est-active {
@@ -2449,7 +2536,7 @@ hr {
 .quiz__score {
     font-size: 2.5rem;
     font-weight: 800;
-    color: var(--rose);
+    color: var(--lien);
     margin-bottom: 0.25rem;
 }
 
@@ -2458,13 +2545,13 @@ hr {
 .puce.puce--correct {
     background: var(--emeraude-clair);
     border-color: var(--emeraude);
-    color: var(--emeraude-fonce);
+    color: var(--texte-emeraude);
 }
 
 .puce.puce--incorrect {
     background: var(--rose-clair);
     border-color: var(--rose);
-    color: var(--rose-fonce);
+    color: var(--lien);
 }
 
 .puce:disabled {
@@ -2480,10 +2567,10 @@ hr {
     margin-bottom: 0.45rem;
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--gris-700);
+    color: var(--texte-doux);
 }
 
-.champ__requis { color: var(--alerte); margin-left: 0.15rem; }
+.champ__requis { color: var(--texte-danger); margin-left: 0.15rem; }
 
 .champ__aide {
     margin: 0.35rem 0 0;
@@ -2494,7 +2581,7 @@ hr {
 .champ__erreur {
     margin: 0.4rem 0 0;
     font-size: 0.85rem;
-    color: var(--alerte);
+    color: var(--texte-danger);
     font-weight: 500;
 }
 
@@ -2571,25 +2658,25 @@ select.controle,
 .message--succes {
     background: var(--succes-clair);
     border-color: #b7e3c8;
-    color: #1d6b3c;
+    color: var(--texte-succes);
 }
 
 .message--erreur {
     background: var(--alerte-clair);
     border-color: #f4c2c8;
-    color: #a01d2e;
+    color: var(--texte-danger);
 }
 
 .message--info {
     background: var(--rose-clair);
     border-color: #b6e6f7;
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
 }
 
 .message--attention {
     background: var(--attention-clair);
     border-color: #f7d9ac;
-    color: #9a5400;
+    color: var(--texte-attention);
 }
 
 /* État vide */
@@ -2597,14 +2684,14 @@ select.controle,
 .etat-vide {
     text-align: center;
     padding: 4rem 1.5rem;
-    background: var(--gris-025);
+    background: var(--surface-douce);
     border: 1px dashed var(--bordure);
     border-radius: var(--rayon-lg);
 }
 
 .etat-vide__icone {
     font-size: 2.75rem;
-    color: var(--gris-300);
+    color: var(--texte-tres-doux);
     margin-bottom: 1rem;
 }
 
@@ -2643,7 +2730,7 @@ select.controle,
     border-radius: var(--rayon-sm);
     font-size: 0.92rem;
     font-weight: 600;
-    color: var(--gris-600);
+    color: var(--texte-doux);
     background: var(--surface);
     text-decoration: none;
     transition: all var(--transition);
@@ -2651,7 +2738,7 @@ select.controle,
 
 .pagination a:hover {
     border-color: var(--rose);
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
     background: var(--rose-clair);
 }
 
@@ -2663,7 +2750,7 @@ select.controle,
 
 .pagination .est-desactive span {
     opacity: 0.45;
-    background: var(--gris-050);
+    background: var(--fond-doux);
 }
 
 /* ------------------------------------------------------------ 16. Article */
@@ -2698,7 +2785,7 @@ select.controle,
     border-radius: var(--rayon-lg);
     overflow: hidden;
     margin-bottom: 2.5rem;
-    background: var(--gris-100);
+    background: var(--surface-creuse);
 }
 
 .article-image img { width: 100%; }
@@ -2707,7 +2794,7 @@ select.controle,
     padding: 0.75rem 1rem;
     font-size: 0.85rem;
     color: var(--texte-tres-doux);
-    background: var(--gris-025);
+    background: var(--surface-douce);
 }
 
 /* Contenu riche saisi via l'éditeur du back-office */
@@ -2716,7 +2803,7 @@ select.controle,
     max-width: var(--largeur-texte);
     font-size: 1.06rem;
     line-height: 1.78;
-    color: var(--gris-700);
+    color: var(--texte-doux);
 }
 
 .prose > * + * { margin-top: 1.25em; }
@@ -2741,11 +2828,11 @@ select.controle,
     margin: 2em 0;
     padding: 1.35rem 1.75rem;
     border-left: 4px solid var(--emeraude);
-    background: var(--gris-025);
+    background: var(--surface-douce);
     border-radius: 0 var(--rayon) var(--rayon) 0;
     font-size: 1.08rem;
     font-style: italic;
-    color: var(--gris-700);
+    color: var(--texte-doux);
 }
 
 .prose blockquote p:last-child { margin-bottom: 0; }
@@ -2754,7 +2841,7 @@ select.controle,
 .prose li { margin-bottom: 0.5em; }
 
 .prose a {
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
     font-weight: 500;
 }
 
@@ -2771,7 +2858,7 @@ select.controle,
 }
 
 .prose th {
-    background: var(--gris-050);
+    background: var(--fond-doux);
     font-weight: 700;
 }
 
@@ -2807,8 +2894,8 @@ select.controle,
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: var(--gris-050);
-    color: var(--gris-600);
+    background: var(--fond-doux);
+    color: var(--texte-doux);
     text-decoration: none;
     transition: all var(--transition);
 }
@@ -2822,7 +2909,7 @@ select.controle,
 
 .encadre {
     padding: 1.5rem;
-    background: var(--gris-025);
+    background: var(--surface-douce);
     border: 1px solid var(--bordure-douce);
     border-radius: var(--rayon-lg);
 }
@@ -2832,7 +2919,7 @@ select.controle,
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
     margin-bottom: 1rem;
 }
 
@@ -2855,7 +2942,7 @@ select.controle,
 .mise-en-page {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 320px;
-    gap: 3rem;
+    gap: 2.25rem;
     align-items: start;
 }
 
@@ -2866,7 +2953,7 @@ select.controle,
 .duo {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: clamp(2rem, 1rem + 4vw, 4rem);
+    gap: clamp(1.5rem, 1rem + 2.4vw, 3rem);
     align-items: center;
 }
 
@@ -2876,7 +2963,7 @@ select.controle,
     border-radius: var(--rayon-lg);
     overflow: hidden;
     box-shadow: var(--ombre);
-    background: var(--gris-100);
+    background: var(--surface-creuse);
     aspect-ratio: 4 / 3;
 }
 
@@ -2944,7 +3031,7 @@ select.controle,
     align-items: center;
     justify-content: center;
     height: 100%;
-    color: var(--rose);
+    color: var(--lien);
 }
 
 .lecteur-media__bouton-lecture {
@@ -2960,7 +3047,7 @@ select.controle,
     padding-left: 4px; /* optique : recentre le triangle de lecture */
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.92);
-    color: var(--rose);
+    color: var(--lien);
     box-shadow: var(--ombre);
     transition: transform var(--transition), background var(--transition);
 }
@@ -2968,7 +3055,7 @@ select.controle,
 .lecteur-audio__poster:hover .lecteur-media__bouton-lecture,
 .lecteur-video:hover .lecteur-media__bouton-lecture {
     transform: translate(-50%, -50%) scale(1.08);
-    background: #fff;
+    background: var(--surface);
 }
 
 .lecteur-audio__element {
@@ -3016,8 +3103,8 @@ select.controle,
     height: 56px;
     margin-bottom: 1.1rem;
     border-radius: 16px;
-    background: color-mix(in srgb, var(--accent, var(--rose)) 12%, #fff);
-    color: var(--accent, var(--rose));
+    background: color-mix(in srgb, var(--accent, var(--rose)) 12%, var(--surface));
+    color: color-mix(in srgb, var(--accent, var(--rose)) 70%, var(--texte-fort));
     font-size: 1.35rem;
 }
 
@@ -3042,6 +3129,16 @@ select.controle,
 }
 
 .evenement:hover { box-shadow: var(--ombre-sm); }
+
+/* Événement archivé. Auparavant la carte entière portait opacity:.82, ce qui
+   ramenait son texte à 4,19:1 : l'atténuation passe désormais par le cadre et
+   la saturation de la vignette, jamais par l'opacité du texte. */
+.evenement--passe {
+    background: var(--surface-douce);
+    border-style: dashed;
+}
+
+.evenement--passe .evenement__date { filter: saturate(0.55); }
 
 .evenement__date {
     flex-shrink: 0;
@@ -3085,16 +3182,16 @@ select.controle,
 
 .cta {
     position: relative;
-    padding: clamp(2.75rem, 2.1rem + 3.2vw, 4.5rem);
+    padding: clamp(2rem, 1.5rem + 2.2vw, 3.25rem);
     border-radius: var(--rayon-xl);
     background: var(--rose-clair);
-    color: var(--gris-900);
+    color: var(--texte-fort);
     text-align: center;
 }
 
 .cta__contenu { position: relative; max-width: 640px; margin-inline: auto; }
 
-.cta h2 { color: var(--gris-900); }
+.cta h2 { color: var(--texte-fort); }
 
 .cta p {
     color: var(--texte-doux);
@@ -3114,10 +3211,10 @@ select.controle,
    le contenu clair du site — thème d'origine, sobre et lisible. */
 
 .pied {
-    background: var(--gris-050);
+    background: var(--fond-doux);
     border-top: 1px solid var(--bordure-douce);
     color: var(--texte-doux);
-    padding-block: 4.5rem 0;
+    padding-block: 3.5rem 0;
     font-size: 0.93rem;
 }
 
@@ -3126,7 +3223,7 @@ select.controle,
 .pied__grille {
     display: grid;
     grid-template-columns: 1.2fr repeat(4, 1fr);
-    gap: 2.5rem;
+    gap: 2rem;
     padding-bottom: 2.5rem;
 }
 
@@ -3141,12 +3238,21 @@ select.controle,
 /* Même taille et même point de départ que le logo de la bande rouge de
    l'en-tête (.entete__ligne .logo ci-dessus) : les deux doivent rester
    strictement identiques, colonnes alignées sur la même largeur de conteneur. */
-.pied__logo img { max-height: 64px; }
+.pied__logo img {
+    max-height: 64px;
+    /* Le logo couleur a un lettrage sombre : sur le pied de page devenu sombre
+       il disparaissait. Même traitement que dans l'en-tête, mais piloté par le
+       thème (voir --support-logo). */
+    background: var(--support-logo);
+    padding: var(--support-logo-marge);
+    border-radius: var(--rayon-xs);
+    box-sizing: content-box;
+}
 
 .pied__logo-texte {
     font-size: 1.3rem;
     font-weight: 800;
-    color: var(--rose-sombre);
+    color: var(--lien-fort);
     letter-spacing: -0.02em;
 }
 
@@ -3155,7 +3261,7 @@ select.controle,
     font-weight: 800;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    color: var(--gris-900);
+    color: var(--texte-fort);
     margin-bottom: 1.1rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--bordure-douce);
@@ -3175,7 +3281,7 @@ select.controle,
     transition: color var(--transition);
 }
 
-.pied__liste a:hover { color: var(--rose-sombre); }
+.pied__liste a:hover { color: var(--lien-fort); }
 
 .pied__reseaux {
     display: flex;
@@ -3191,8 +3297,8 @@ select.controle,
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: var(--gris-100);
-    color: var(--gris-700);
+    background: var(--surface-creuse);
+    color: var(--texte-doux);
     text-decoration: none;
     transition: background var(--transition), color var(--transition), transform var(--transition);
 }
@@ -3222,7 +3328,7 @@ select.controle,
     text-decoration: none;
 }
 
-.pied__telephone a:hover { color: var(--rose-sombre); }
+.pied__telephone a:hover { color: var(--lien-fort); }
 .pied__telephone .icone { opacity: 0.6; }
 
 /* Ligne du sélecteur de langue et des réseaux sociaux, alignés de part et
@@ -3248,7 +3354,7 @@ select.controle,
 .pied__copyright { margin: 0; }
 
 /* Bande de bas de page pleine largeur, sur un gris légèrement plus soutenu. */
-.pied__bas { background: var(--gris-100); }
+.pied__bas { background: var(--surface-creuse); }
 
 .pied__bas-interieur {
     display: flex;
@@ -3275,7 +3381,7 @@ select.controle,
     text-decoration: none;
 }
 
-.pied__legal a:hover { color: var(--rose-sombre); }
+.pied__legal a:hover { color: var(--lien-fort); }
 
 /* Retour en haut */
 
@@ -3469,7 +3575,7 @@ html.navigation-en-cours { cursor: progress; }
 }
 
 .apprendre-barre__liens a[aria-current="page"],
-.apprendre-barre__liens a:not(.bouton):hover { color: var(--rose); }
+.apprendre-barre__liens a:not(.bouton):hover { color: var(--lien); }
 
 .progression-cours { margin-bottom: 1.5rem; }
 
@@ -3533,14 +3639,14 @@ html.navigation-en-cours { cursor: progress; }
     height: 2rem;
     border-radius: 50%;
     background: var(--rose-clair);
-    color: var(--rose-fonce);
+    color: var(--lien);
     font-weight: 800;
     font-size: 0.9rem;
 }
 
 .est-valide .parcours__numero {
     background: var(--emeraude-clair);
-    color: var(--emeraude-fonce);
+    color: var(--texte-emeraude);
 }
 
 .parcours__titre { font-size: 1.05rem; margin: 0.25rem 0 0; }
@@ -3605,7 +3711,7 @@ html.navigation-en-cours { cursor: progress; }
 }
 
 .lecon__video-bouton:hover { border-color: var(--rose); }
-.lecon__video-bouton .icone { color: var(--rose); flex: none; }
+.lecon__video-bouton .icone { color: var(--lien); flex: none; }
 .lecon__video-bouton small { color: var(--texte-doux); }
 
 .lecon__video iframe {

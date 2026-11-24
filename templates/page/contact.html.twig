@@ -56,9 +56,9 @@
                         <ul style="list-style:none;margin:0;padding:0">
                             {% if parametres.adresse %}
                                 <li style="display:flex;gap:.85rem;margin-bottom:1.25rem">
-                                    <span style="color:var(--rose);flex-shrink:0;margin-top:.15rem">{{ icone('localisation', 19) }}</span>
+                                    <span style="color:var(--lien);flex-shrink:0;margin-top:.15rem">{{ icone('localisation', 19) }}</span>
                                     <span>
-                                        <strong style="display:block;font-size:.85rem;color:var(--gris-900)">Adresse</strong>
+                                        <strong style="display:block;font-size:.85rem;color:var(--texte-fort)">Adresse</strong>
                                         {{ parametres.adresse|nl2br }}
                                     </span>
                                 </li>
@@ -66,9 +66,9 @@
 
                             {% if parametres.telephone %}
                                 <li style="display:flex;gap:.85rem;margin-bottom:1.25rem">
-                                    <span style="color:var(--rose);flex-shrink:0;margin-top:.15rem">{{ icone('telephone', 19) }}</span>
+                                    <span style="color:var(--lien);flex-shrink:0;margin-top:.15rem">{{ icone('telephone', 19) }}</span>
                                     <span>
-                                        <strong style="display:block;font-size:.85rem;color:var(--gris-900)">Téléphone</strong>
+                                        <strong style="display:block;font-size:.85rem;color:var(--texte-fort)">Téléphone</strong>
                                         <a href="tel:{{ parametres.telephone|replace({' ': '', '.': ''}) }}">{{ parametres.telephone }}</a>
                                         {% if parametres.telephoneSecondaire %}
                                             <br><a href="tel:{{ parametres.telephoneSecondaire|replace({' ': '', '.': ''}) }}">{{ parametres.telephoneSecondaire }}</a>
@@ -79,9 +79,9 @@
 
                             {% if parametres.email %}
                                 <li style="display:flex;gap:.85rem;margin-bottom:1.25rem">
-                                    <span style="color:var(--rose);flex-shrink:0;margin-top:.15rem">{{ icone('enveloppe', 19) }}</span>
+                                    <span style="color:var(--lien);flex-shrink:0;margin-top:.15rem">{{ icone('enveloppe', 19) }}</span>
                                     <span>
-                                        <strong style="display:block;font-size:.85rem;color:var(--gris-900)">E-mail</strong>
+                                        <strong style="display:block;font-size:.85rem;color:var(--texte-fort)">E-mail</strong>
                                         <a href="mailto:{{ parametres.email }}">{{ parametres.email }}</a>
                                     </span>
                                 </li>
@@ -89,9 +89,9 @@
 
                             {% if parametres.horaires %}
                                 <li style="display:flex;gap:.85rem">
-                                    <span style="color:var(--rose);flex-shrink:0;margin-top:.15rem">{{ icone('horloge', 19) }}</span>
+                                    <span style="color:var(--lien);flex-shrink:0;margin-top:.15rem">{{ icone('horloge', 19) }}</span>
                                     <span>
-                                        <strong style="display:block;font-size:.85rem;color:var(--gris-900)">Horaires</strong>
+                                        <strong style="display:block;font-size:.85rem;color:var(--texte-fort)">Horaires</strong>
                                         {{ parametres.horaires }}
                                     </span>
                                 </li>

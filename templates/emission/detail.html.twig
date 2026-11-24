@@ -39,20 +39,20 @@
 
                     <ul style="list-style:none;margin:0;padding:0">
                         <li style="display:flex;gap:.85rem;margin-bottom:1.25rem">
-                            <span style="color:var(--rose);flex-shrink:0;margin-top:.15rem">
+                            <span style="color:var(--lien);flex-shrink:0;margin-top:.15rem">
                                 {{ icone(emission.type.value == 'tv' ? 'video' : 'audio', 19) }}
                             </span>
                             <span>
-                                <strong style="display:block;font-size:.85rem;color:var(--gris-900)">Type</strong>
+                                <strong style="display:block;font-size:.85rem;color:var(--texte-fort)">Type</strong>
                                 {{ emission.type.libelle }}
                             </span>
                         </li>
 
                         {% if emission.dateDiffusion %}
                             <li style="display:flex;gap:.85rem;margin-bottom:1.25rem">
-                                <span style="color:var(--rose);flex-shrink:0;margin-top:.15rem">{{ icone('calendrier', 19) }}</span>
+                                <span style="color:var(--lien);flex-shrink:0;margin-top:.15rem">{{ icone('calendrier', 19) }}</span>
                                 <span>
-                                    <strong style="display:block;font-size:.85rem;color:var(--gris-900)">Date de diffusion</strong>
+                                    <strong style="display:block;font-size:.85rem;color:var(--texte-fort)">Date de diffusion</strong>
                                     <time datetime="{{ emission.dateDiffusion|date('Y-m-d') }}">{{ emission.dateDiffusion|date_fr }}</time>
                                 </span>
                             </li>
@@ -60,9 +60,9 @@
 
                         {% if emission.animateurs %}
                             <li style="display:flex;gap:.85rem;margin-bottom:1.25rem">
-                                <span style="color:var(--rose);flex-shrink:0;margin-top:.15rem">{{ icone('utilisateur', 19) }}</span>
+                                <span style="color:var(--lien);flex-shrink:0;margin-top:.15rem">{{ icone('utilisateur', 19) }}</span>
                                 <span>
-                                    <strong style="display:block;font-size:.85rem;color:var(--gris-900)">Animation</strong>
+                                    <strong style="display:block;font-size:.85rem;color:var(--texte-fort)">Animation</strong>
                                     {{ emission.animateurs }}
                                 </span>
                             </li>
@@ -70,9 +70,9 @@
 
                         {% if emission.programme %}
                             <li style="display:flex;gap:.85rem">
-                                <span style="color:var(--rose);flex-shrink:0;margin-top:.15rem">{{ icone('dossier', 19) }}</span>
+                                <span style="color:var(--lien);flex-shrink:0;margin-top:.15rem">{{ icone('dossier', 19) }}</span>
                                 <span>
-                                    <strong style="display:block;font-size:.85rem;color:var(--gris-900)">Programme</strong>
+                                    <strong style="display:block;font-size:.85rem;color:var(--texte-fort)">Programme</strong>
                                     <a href="{{ path('programme_detail', {slug: emission.programme.slug}) }}">{{ emission.programme.nom }}</a>
                                 </span>
                             </li>

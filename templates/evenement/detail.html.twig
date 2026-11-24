@@ -74,7 +74,7 @@
                             {% for autre in autres %}
                                 <li>
                                     <a href="{{ path('evenement_detail', {slug: autre.slug}) }}"
-                                       style="text-decoration:none;color:var(--gris-800);font-weight:600;display:block">
+                                       style="text-decoration:none;color:var(--texte);font-weight:600;display:block">
                                         {{ autre.titre|extrait(60) }}
                                     </a>
                                     <span style="font-size:.8rem;color:var(--texte-tres-doux)">{{ autre.dateDebut|date_fr }}</span>

@@ -65,8 +65,8 @@
 
                 <div class="grille" style="gap:1rem">
                     {% for evenement in passes %}
-                        <article class="evenement" style="opacity:.82">
-                            <div class="evenement__date" style="background:var(--gris-400)">
+                        <article class="evenement evenement--passe">
+                            <div class="evenement__date" style="background:var(--rose-fonce)">
                                 <span class="evenement__jour">{{ evenement.dateDebut|date('d') }}</span>
                                 <span class="evenement__mois">{{ evenement.dateDebut|mois_court }}</span>
                             </div>

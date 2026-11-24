@@ -1,6 +1,8 @@
 when@dev:
     web_profiler:
-        toolbar: true
+        # La barre flottante masquait le contenu des pages en prévisualisation.
+        # Le profileur reste consultable sur /_profiler.
+        toolbar: false
 
     framework:
         profiler:

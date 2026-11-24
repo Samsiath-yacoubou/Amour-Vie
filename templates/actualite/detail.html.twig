@@ -148,7 +148,7 @@
                             {% for autre in similaires %}
                                 <li>
                                     <a href="{{ path('actualite_detail', {slug: autre.slug}) }}"
-                                       style="text-decoration:none;color:var(--gris-800);font-weight:600;display:block">
+                                       style="text-decoration:none;color:var(--texte);font-weight:600;display:block">
                                         {{ autre.titre|extrait(72) }}
                                     </a>
                                     <span style="font-size:.8rem;color:var(--texte-tres-doux)">{{ autre.datePublication|date_fr }}</span>

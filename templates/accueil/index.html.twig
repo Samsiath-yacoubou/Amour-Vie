@@ -323,7 +323,7 @@
                                 {% for chiffre in chiffres|slice(0, 3) %}
                                     <div class="mission__chiffre">
                                         <p class="mission__chiffre-valeur">
-                                            <span data-compteur="{{ chiffre.valeur }}">0</span>{{ chiffre.suffixe }}
+                                            <span data-compteur="{{ chiffre.valeur }}">{{ chiffre.valeur }}</span>{{ chiffre.suffixe }}
                                         </p>
                                         <p class="mission__chiffre-libelle">{{ chiffre.libelle }}</p>
                                     </div>
