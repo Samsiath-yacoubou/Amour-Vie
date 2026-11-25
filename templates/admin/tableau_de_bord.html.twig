@@ -3,27 +3,8 @@
 {% block content_title %}Tableau de bord{% endblock %}
 
 {% block main %}
-    <style>
-        .tb-grille { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:1rem; margin-bottom:2rem; }
-        .tb-tuile { padding:1.35rem; border-radius:12px; background:#fff; border:1px solid #e9edf2;
-                    border-top:4px solid var(--accent,#E3001B); }
-        .tb-tuile__valeur { font-size:2.1rem; font-weight:800; line-height:1; color:#242d38; letter-spacing:-.03em; }
-        .tb-tuile__libelle { margin:.45rem 0 0; font-size:.87rem; color:#6b7a8d; }
-        .tb-tuile a { text-decoration:none; }
-        .tb-colonnes { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:1.5rem; }
-        .tb-bloc { background:#fff; border:1px solid #e9edf2; border-radius:12px; padding:1.5rem; }
-        .tb-bloc h2 { font-size:1.05rem; font-weight:700; margin:0 0 1.1rem; }
-        .tb-liste { list-style:none; margin:0; padding:0; }
-        .tb-liste li { padding:.7rem 0; border-bottom:1px solid #f4f6f9; display:flex;
-                       justify-content:space-between; gap:1rem; align-items:flex-start; }
-        .tb-liste li:last-child { border-bottom:0; }
-        .tb-liste a { color:#242d38; font-weight:600; text-decoration:none; }
-        .tb-liste a:hover { color:#aa0014; }
-        .tb-meta { font-size:.8rem; color:#94a2b3; white-space:nowrap; }
-        .tb-vide { color:#94a2b3; font-size:.9rem; padding:1rem 0; }
-    </style>
 
-    <p style="color:#6b7a8d;margin-bottom:1.75rem">
+    <p class="tb-intro">
         Bienvenue{% if app.user %}, {{ app.user.prenom }}{% endif %}. Voici l'état des contenus du site.
     </p>
 
@@ -121,8 +102,8 @@
                                 <a href="{{ ea_url().setController('App\\Controller\\Admin\\MessageContactCrudController').setAction('detail').setEntityId(message.id) }}">
                                     {{ message.sujet|extrait(50) }}
                                 </a>
-                                <span style="display:block;font-size:.82rem;color:#94a2b3">
-                                    {{ message.nomComplet }}{% if not message.lu %} · <strong style="color:#D6293E">Non lu</strong>{% endif %}
+                                <span class="tb-sous-ligne">
+                                    {{ message.nomComplet }}{% if not message.lu %} · <strong class="tb-alerte">Non lu</strong>{% endif %}
                                 </span>
                             </span>
                             <span class="tb-meta">{{ message.createdAt|date('d/m/Y') }}</span>
@@ -144,7 +125,7 @@
                                 <a href="{{ ea_url().setController('App\\Controller\\Admin\\EvenementCrudController').setAction('edit').setEntityId(evenement.id) }}">
                                     {{ evenement.titre|extrait(55) }}
                                 </a>
-                                <span style="display:block;font-size:.82rem;color:#94a2b3">{{ evenement.lieu }}</span>
+                                <span class="tb-sous-ligne">{{ evenement.lieu }}</span>
                             </span>
                             <span class="tb-meta">{{ evenement.dateDebut|date('d/m/Y') }}</span>
                         </li>

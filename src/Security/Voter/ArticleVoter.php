@@ -29,7 +29,10 @@ class ArticleVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return self::MODIFIER === $attribute && $subject instanceof Article;
+        // Sujet null : page « Ajouter » d'EasyAdmin, qui vérifie la permission
+        // d'entité avant que l'article n'existe. Sans ce cas, le voter
+        // s'abstenait et Symfony refusait l'accès à TOUT le monde (403).
+        return self::MODIFIER === $attribute && (null === $subject || $subject instanceof Article);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -38,6 +41,13 @@ class ArticleVoter extends Voter
 
         if (!$utilisateur instanceof Utilisateur) {
             return false;
+        }
+
+        // Création : tout membre de l'équipe peut rédiger un article (le
+        // contributeur ne pourra que l'enregistrer en brouillon ou le
+        // soumettre, voir ArticleCrudController).
+        if (null === $subject) {
+            return true;
         }
 
         // Éditeurs et super administrateurs accèdent à tous les articles.

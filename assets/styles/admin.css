@@ -59,20 +59,153 @@ body {
     font-family: "Poppins", "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 
-/* Barre latérale et en-tête : violet de la charte plutôt que le
-   dégradé par défaut, pour ancrer visuellement le back-office au site. */
-.main-sidebar,
-.main-header {
-    background: #6d3fd1 !important;
-}
-
-.main-header .navbar-brand,
-.main-header .navbar-brand:hover {
-    color: #fff !important;
-}
-
-/* Élément de menu actif : vert émeraude de la charte, cohérent avec le site public. */
-.sidebar-item.active > .sidebar-item-link,
-.content-panel-switcher .nav-link.active {
+/* Élément de menu actif : filet vert émeraude de la charte, cohérent avec
+   le site public. (Les anciennes règles .main-sidebar / .sidebar-item
+   visaient les classes d'EasyAdmin 4 et ne s'appliquaient plus.) */
+.ea-sidebar-item.is-active > .ea-sidebar-item-link {
     box-shadow: inset 3px 0 0 #1e9e6d;
 }
+
+/* -------------------------------------------------------------------------
+   Tableau de bord et statistiques e-learning (gabarits maison)
+   ---------------------------------------------------------------------
+   Ces écrans avaient leurs couleurs écrites en dur (fond #fff, gris
+   #6b7a8d et #94a2b3) : en thème sombre, tuiles et blocs restaient blancs
+   et les titres de bloc, blanc sur blanc, disparaissaient ; les gris
+   tombaient à 2,6:1 en thème clair. Tout passe par les jetons ci-dessous,
+   redéfinis pour le thème sombre d'EasyAdmin (.ea-dark-scheme sur <body>).
+   Ratios mesurés : texte doux ≥ 5,5:1, texte discret ≥ 4,6:1, dans les
+   deux thèmes.
+   ------------------------------------------------------------------------- */
+
+:root {
+    --av-carte: #fff;
+    --av-carte-bordure: #e3e8ee;
+    --av-separateur: #eef1f5;
+    --av-texte: #242d38;
+    --av-texte-doux: #4f5b6a;     /* 7,3:1 sur blanc */
+    --av-texte-discret: #5f6b7a;  /* 5,6:1 sur blanc */
+    --av-alerte: #b3122a;         /* 6,6:1 sur blanc */
+    --av-lien-survol: #aa0014;
+    --av-piste: #e9edf2;
+}
+
+.ea-dark-scheme {
+    --av-carte: color-mix(in oklab, #fff 6%, var(--body-bg));
+    --av-carte-bordure: color-mix(in oklab, #fff 12%, var(--body-bg));
+    --av-separateur: color-mix(in oklab, #fff 9%, var(--body-bg));
+    --av-texte: #eef0f3;
+    --av-texte-doux: #c3c9d1;     /* ≈ 10:1 sur la carte sombre */
+    --av-texte-discret: #a9b1bc;  /* ≈ 7,5:1 */
+    --av-alerte: #ff8a98;         /* ≈ 6,8:1 */
+    --av-lien-survol: #ff8a98;
+    --av-piste: color-mix(in oklab, #fff 14%, var(--body-bg));
+}
+
+.tb-intro { color: var(--av-texte-doux); margin-bottom: 1.75rem; }
+
+.tb-grille, .st-grille {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.tb-tuile, .st-tuile {
+    padding: 1.35rem;
+    border-radius: 12px;
+    background: var(--av-carte);
+    border: 1px solid var(--av-carte-bordure);
+    border-top: 4px solid var(--accent, #e3001b);
+}
+
+.tb-tuile__valeur, .st-tuile__valeur {
+    font-size: 2.1rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--av-texte);
+    letter-spacing: -0.03em;
+}
+
+.tb-tuile__libelle, .st-tuile__libelle {
+    margin: 0.45rem 0 0;
+    font-size: 0.87rem;
+    color: var(--av-texte-doux);
+}
+
+.tb-tuile a { text-decoration: none; }
+
+.tb-colonnes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 1.5rem;
+}
+
+.tb-bloc, .st-bloc {
+    background: var(--av-carte);
+    border: 1px solid var(--av-carte-bordure);
+    border-radius: 12px;
+    padding: 1.5rem;
+    color: var(--av-texte);
+}
+
+.st-bloc { margin-bottom: 1.5rem; }
+
+.tb-bloc h2, .st-bloc h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0 0 1.1rem;
+    color: var(--av-texte);
+}
+
+.tb-liste { list-style: none; margin: 0; padding: 0; }
+
+.tb-liste li {
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--av-separateur);
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.tb-liste li:last-child { border-bottom: 0; }
+.tb-liste a { color: var(--av-texte); font-weight: 600; text-decoration: none; }
+.tb-liste a:hover { color: var(--av-lien-survol); text-decoration: underline; }
+
+.tb-meta { font-size: 0.8rem; color: var(--av-texte-discret); white-space: nowrap; }
+.tb-sous-ligne { display: block; font-size: 0.82rem; color: var(--av-texte-discret); }
+.tb-alerte { color: var(--av-alerte); }
+.tb-vide { color: var(--av-texte-discret); font-size: 0.9rem; padding: 1rem 0; }
+
+.st-barre__piste {
+    height: 10px;
+    border-radius: 999px;
+    background: var(--av-piste);
+    overflow: hidden;
+}
+
+.st-barre__piste span {
+    display: block;
+    height: 100%;
+    background: #1e9e6d;
+    border-radius: inherit;
+}
+
+.st-note { color: var(--av-texte-discret); font-size: 0.85rem; }
+
+/* -------------------------------------------------------------------------
+   Contraste des éléments natifs d'EasyAdmin (thème clair uniquement : le
+   thème sombre d'origine passe déjà partout, mesuré à 0 échec).
+   ------------------------------------------------------------------------- */
+
+/* Titres de groupe du menu (« CONTENUS ÉDITORIAUX »…) : gris 2,5:1 → 6,3:1. */
+.ea-light-scheme .ea-sidebar-group-label-text { color: #5c6470; }
+
+/* Entrée de menu active : rouge #e3001b sur fond gris, 4,2:1 → 6,1:1. */
+.ea-light-scheme .ea-sidebar-item.is-active > .ea-sidebar-item-link,
+.ea-light-scheme .ea-sidebar-item.is-active > .ea-sidebar-item-link .ea-sidebar-item-label,
+.ea-light-scheme .ea-sidebar-item.is-active > .ea-sidebar-item-link .ea-sidebar-item-icon { color: #b3001a; }
+
+/* « × » de retrait dans les sélections multiples (TomSelect) : 4,35:1 → 7:1. */
+.ea-light-scheme .ts-wrapper .item .remove { color: #4f5b6a; }
