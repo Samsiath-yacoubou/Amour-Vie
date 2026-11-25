@@ -17,7 +17,10 @@
         }
         .connexion__boite {
             width: min(460px, 100%);
-            background: #fff;
+            /* Fond et texte suivent le thème du site : avec un fond #fff écrit
+               en dur, le mode sombre donnait des libellés clairs sur blanc. */
+            background: var(--surface);
+            color: var(--texte);
             border-radius: var(--rayon-xl);
             box-shadow: var(--ombre-lg);
             padding: clamp(2rem, 1.5rem + 2vw, 3rem);
