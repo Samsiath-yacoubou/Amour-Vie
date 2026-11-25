@@ -92,7 +92,7 @@ class AppExtension extends AbstractExtension
 
     /** Symboles réellement présents dans templates/partials/_sprite.html.twig. */
     private const SYMBOLES = [
-        'recherche', 'menu', 'fermer', 'chevron-bas', 'chevron-droite',
+        'recherche', 'menu', 'fermer', 'chevron-bas', 'chevron-droite', 'deconnexion',
         'fleche-droite', 'fleche-gauche', 'fleche-haut', 'lien-externe', 'filtre', 'imprimer',
         'telephone', 'enveloppe', 'localisation', 'horloge', 'calendrier', 'envoyer', 'message',
         'document', 'livre', 'journal', 'telecharger', 'image', 'video', 'audio', 'lecture',

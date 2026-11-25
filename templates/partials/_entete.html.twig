@@ -112,6 +112,12 @@
         <div class="entete__cta-zone">
             <a class="bouton bouton--contour-clair bouton--petit entete__cta" href="{{ path('contact') }}">Contact</a>
 
+            {# Sur téléphone, la bande blanche est masquée : la loupe vient ici. #}
+            <button type="button" class="bouton-icone entete__recherche-mobile" data-ouvre-recherche
+                    aria-label="Ouvrir la recherche" aria-expanded="false" aria-controls="recherche-globale">
+                {{ icone('recherche', 18) }}
+            </button>
+
             <button type="button" class="bouton-icone bouton-burger" data-ouvre-menu
                     aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu-mobile">
                 {{ icone('menu', 20) }}

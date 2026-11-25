@@ -57,14 +57,17 @@ function initEntete() {
 /** Recherche globale en surcouche. */
 function initRecherche() {
     const overlay = document.querySelector('[data-recherche]');
-    const ouvrir = document.querySelector('[data-ouvre-recherche]');
+    // Deux déclencheurs : la loupe de la bande blanche (bureau) et celle de
+    // la bande rouge (téléphone). Le focus revient à celui qui a servi.
+    const declencheurs = [...document.querySelectorAll('[data-ouvre-recherche]')];
     const fermer = document.querySelector('[data-ferme-recherche]');
     const champ = document.querySelector('[data-champ-recherche]');
-    if (!overlay || !ouvrir) return;
+    if (!overlay || declencheurs.length === 0) return;
+    let ouvrir = declencheurs[0];
 
     const basculer = (ouverte) => {
         overlay.classList.toggle('est-ouverte', ouverte);
-        ouvrir.setAttribute('aria-expanded', String(ouverte));
+        declencheurs.forEach((b) => b.setAttribute('aria-expanded', String(ouverte)));
         document.body.style.overflow = ouverte ? 'hidden' : '';
         if (ouverte) {
             champ?.focus();
@@ -73,7 +76,7 @@ function initRecherche() {
         }
     };
 
-    ouvrir.addEventListener('click', () => basculer(true));
+    declencheurs.forEach((b) => b.addEventListener('click', () => { ouvrir = b; basculer(true); }));
     fermer?.addEventListener('click', () => basculer(false));
 
     // Clic sur le fond, en dehors de la boîte de dialogue.

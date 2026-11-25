@@ -83,13 +83,13 @@
                 {% if centresJeunes|length > 0 %}
                     <section aria-labelledby="titre-centres" style="margin-bottom:3rem">
                         <h2 id="titre-centres">Centres Jeunes de ce pilier</h2>
-                        <div class="grille grille--2">
+                        <div class="grille grille--2 grille--apercu-mobile">
                             {% for centre in centresJeunes %}
                                 {{ include('partials/_carte_centre.html.twig', {centre: centre}) }}
                             {% endfor %}
                         </div>
                         <p style="margin-top:1.5rem">
-                            <a class="lien-fleche" href="{{ path('centres_jeunes') }}">Tous les Centres Jeunes</a>
+                            <a class="lien-fleche" href="{{ path('centres_jeunes') }}">Tous les Centres Jeunes{% if centresJeunes|length > 3 %} ({{ centresJeunes|length }}){% endif %}</a>
                         </p>
                     </section>
                 {% endif %}

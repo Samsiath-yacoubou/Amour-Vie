@@ -15,7 +15,9 @@
                 <a href="{{ path('apprendre_mes_certificats') }}" {% if app.request.attributes.get('_route') == 'apprendre_mes_certificats' %}aria-current="page"{% endif %}>
                     {{ icone('etoile', 16) }} Mes certificats
                 </a>
-                <a href="{{ path('apprendre_deconnexion') }}">Se déconnecter</a>
+                <a class="apprendre-barre__sortie" href="{{ path('apprendre_deconnexion') }}" title="Se déconnecter">
+                    {{ icone('deconnexion', 16) }} <span class="apprendre-barre__libelle">Se déconnecter</span>
+                </a>
             {% else %}
                 <a href="{{ path('apprendre_connexion', cible is defined and cible ? {cible: cible} : {}) }}">Se connecter</a>
                 <a class="bouton bouton--primaire bouton--petit" href="{{ path('apprendre_inscription', cible is defined and cible ? {cible: cible} : {}) }}">Créer mon compte</a>

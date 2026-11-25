@@ -27,7 +27,7 @@
                     <section aria-labelledby="titre-description">
                         <span class="surtitre">À propos</span>
                         <h2 id="titre-description">Présentation de l'émission</h2>
-                        <div class="prose">{{ emission.description|nl2br }}</div>
+                        <div class="prose">{{ emission.description|striptags|nl2br }}</div>
                     </section>
                 {% endif %}
             </div>

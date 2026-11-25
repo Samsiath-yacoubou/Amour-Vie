@@ -21,7 +21,7 @@
                 {% endif %}
 
                 {% if centre.description %}
-                    <div class="prose">{{ centre.description|nl2br }}</div>
+                    <div class="prose">{{ centre.description|striptags|nl2br }}</div>
                 {% endif %}
 
                 {% if centre.thematiques|length > 0 %}
