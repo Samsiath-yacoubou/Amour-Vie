@@ -1,140 +1,266 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
-{% block content_title %}Tableau de bord{% endblock %}
+{#
+   Tableau de bord du back-office. Ordre de lecture voulu :
+   1. ce qui attend une action (« À traiter »), avec lien vers la liste filtrée ;
+   2. quatre chiffres clés ;
+   3. la tendance (publications par mois) et les articles les plus lus ;
+   4. l'activité (articles récents, événements, messages) ;
+   5. l'inventaire du site, en bas et en retrait.
+   Styles : assets/styles/admin.css (préfixe .db-, thèmes clair et sombre).
+#}
+
+{% block content_title %}{% endblock %}
+{% block page_title %}Tableau de bord{% endblock %}
 
 {% block main %}
+{% set prenom = app.user.prenom ?? '' %}
+{% set heure = 'now'|date('G') %}
+<div class="db">
 
-    <p class="tb-intro">
-        Bienvenue{% if app.user %}, {{ app.user.prenom }}{% endif %}. Voici l'état des contenus du site.
-    </p>
+    {# ------------------------------------------------------------ En-tête #}
+    <header class="db-entete">
+        <div>
+            <p class="db-date">{{ date()|date_fr }}</p>
+            <h1 class="db-titre">{{ heure >= 18 ? 'Bonsoir' : 'Bonjour' }}{% if prenom %}, {{ prenom }}{% endif %}</h1>
+            <p class="db-sous-titre">
+                {% if totalATraiter == 0 %}
+                    Tout est à jour. Rien n'attend de validation.
+                {% elseif totalATraiter == 1 %}
+                    1 élément attend ton attention.
+                {% else %}
+                    {{ totalATraiter }} éléments attendent ton attention.
+                {% endif %}
+            </p>
+        </div>
+        <div class="db-actions">
+            <a class="btn btn-primary" href="{{ urls.nouvelArticle }}"><i class="fa-solid fa-pen-to-square"></i> Rédiger un article</a>
+            {% if urls.nouvelEvenement %}
+                <a class="btn btn-secondary" href="{{ urls.nouvelEvenement }}"><i class="fa-solid fa-calendar-plus"></i> Nouvel événement</a>
+            {% endif %}
+            <a class="btn btn-secondary" href="{{ path('accueil') }}" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> Voir le site</a>
+        </div>
+    </header>
 
-    {# ------------------------------------------------------- Indicateurs #}
-    <div class="tb-grille">
-        <div class="tb-tuile" style="--accent:#E3001B">
-            <p class="tb-tuile__valeur">{{ indicateurs.articles }}</p>
-            <p class="tb-tuile__libelle">Articles au total</p>
+    {# --------------------------------------------------------- À traiter #}
+    <section aria-labelledby="db-a-traiter" class="db-section">
+        <h2 id="db-a-traiter" class="db-section__titre">À traiter</h2>
+        <div class="db-taches">
+            {% for tache in aTraiter %}
+                {% set enAttente = tache.nombre > 0 and not (tache.information ?? false) %}
+                <a class="db-tache {{ enAttente ? 'db-tache--active' : 'db-tache--calme' }}" href="{{ tache.url }}">
+                    <span class="db-tache__icone" aria-hidden="true"><i class="{{ tache.icone }}"></i></span>
+                    <span class="db-tache__corps">
+                        <span class="db-tache__nombre">{{ tache.nombre }}</span>
+                        <span class="db-tache__libelle">{{ tache.libelle }}</span>
+                    </span>
+                    <span class="db-tache__etat">
+                        {% if tache.information ?? false %}
+                            Voir <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                        {% elseif enAttente %}
+                            Traiter <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                        {% else %}
+                            <i class="fa-solid fa-check" aria-hidden="true"></i> À jour
+                        {% endif %}
+                    </span>
+                </a>
+            {% endfor %}
         </div>
-        <div class="tb-tuile" style="--accent:#2E9E5B">
-            <p class="tb-tuile__valeur">{{ indicateurs.articlesPublies }}</p>
-            <p class="tb-tuile__libelle">Articles publiés</p>
+    </section>
+
+    {# ----------------------------------------------------- Chiffres clés #}
+    <section aria-label="Chiffres clés" class="db-cles">
+        <div class="db-cle">
+            <p class="db-cle__libelle"><i class="fa-solid fa-newspaper" aria-hidden="true"></i> Articles en ligne</p>
+            <p class="db-cle__valeur">{{ cles.publies|nombre_fr }}</p>
+            <p class="db-cle__detail">
+                {{ cles.brouillons }} brouillon{{ cles.brouillons > 1 ? 's' }}{% if cles.planifies %} · {{ cles.planifies }} programmé{{ cles.planifies > 1 ? 's' }}{% endif %}
+            </p>
         </div>
-        <div class="tb-tuile" style="--accent:#1E9E6D">
-            <p class="tb-tuile__valeur">{{ indicateurs.articlesEnAttente }}</p>
-            <p class="tb-tuile__libelle">En attente de validation</p>
+        <div class="db-cle">
+            <p class="db-cle__libelle"><i class="fa-solid fa-eye" aria-hidden="true"></i> Lectures cumulées</p>
+            <p class="db-cle__valeur">{{ cles.lectures|nombre_fr }}</p>
+            <p class="db-cle__detail">≈ {{ cles.lecturesParArticle|nombre_fr }} par article publié</p>
         </div>
-        <div class="tb-tuile" style="--accent:#94a2b3">
-            <p class="tb-tuile__valeur">{{ indicateurs.articlesBrouillons }}</p>
-            <p class="tb-tuile__libelle">Brouillons</p>
+        <div class="db-cle">
+            <p class="db-cle__libelle"><i class="fa-solid fa-at" aria-hidden="true"></i> Abonnés newsletter</p>
+            <p class="db-cle__valeur">{{ cles.abonnes|nombre_fr }}</p>
+            <p class="db-cle__detail">inscriptions actives</p>
         </div>
-        <div class="tb-tuile" style="--accent:#8B5CF6">
-            <p class="tb-tuile__valeur">{{ indicateurs.publications }}</p>
-            <p class="tb-tuile__libelle">Publications</p>
+        <div class="db-cle">
+            <p class="db-cle__libelle"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> E-learning</p>
+            <p class="db-cle__valeur">{{ cles.apprenants|nombre_fr }}</p>
+            <p class="db-cle__detail">apprenant{{ cles.apprenants > 1 ? 's' }} · {{ cles.certificats }} certificat{{ cles.certificats > 1 ? 's' }} délivré{{ cles.certificats > 1 ? 's' }}</p>
         </div>
-        <div class="tb-tuile" style="--accent:#E3001B">
-            <p class="tb-tuile__valeur">{{ indicateurs.programmes }}</p>
-            <p class="tb-tuile__libelle">Programmes actifs</p>
-        </div>
-        <div class="tb-tuile" style="--accent:#8B5CF6">
-            <p class="tb-tuile__valeur">{{ indicateurs.membres }}</p>
-            <p class="tb-tuile__libelle">Membres de l'équipe</p>
-        </div>
-        <div class="tb-tuile" style="--accent:#E3001B">
-            <p class="tb-tuile__valeur">{{ indicateurs.partenaires }}</p>
-            <p class="tb-tuile__libelle">Partenaires</p>
-        </div>
-        <div class="tb-tuile" style="--accent:#2E9E5B">
-            <p class="tb-tuile__valeur">{{ indicateurs.evenements }}</p>
-            <p class="tb-tuile__libelle">Événements à venir</p>
-        </div>
-        <div class="tb-tuile" style="--accent:#D6293E">
-            <p class="tb-tuile__valeur">{{ indicateurs.messagesNonLus }}</p>
-            <p class="tb-tuile__libelle">Messages non lus</p>
-        </div>
-        <div class="tb-tuile" style="--accent:#E3001B">
-            <p class="tb-tuile__valeur">{{ indicateurs.temoignagesEnAttente }}</p>
-            <p class="tb-tuile__libelle">Témoignages en attente</p>
-        </div>
-        <div class="tb-tuile" style="--accent:#8B5CF6">
-            <p class="tb-tuile__valeur">{{ indicateurs.questionsEnAttente }}</p>
-            <p class="tb-tuile__libelle">Questions en attente</p>
-        </div>
-        <div class="tb-tuile" style="--accent:#1E9E6D">
-            <p class="tb-tuile__valeur">{{ indicateurs.abonnesNewsletter }}</p>
-            <p class="tb-tuile__libelle">Abonnés newsletter</p>
-        </div>
+    </section>
+
+    {# ------------------------------------------------------- Graphiques #}
+    <div class="db-grille db-grille--graphiques">
+        {% set maxMois = max(publicationsParMois|map(m => m.nombre)|merge([1])) %}
+        {% set totalMois = publicationsParMois|reduce((somme, m) => somme + m.nombre, 0) %}
+        <section class="db-carte" aria-labelledby="db-rythme">
+            <div class="db-carte__entete">
+                <h2 id="db-rythme" class="db-carte__titre">Rythme de publication</h2>
+                <p class="db-carte__resume">{{ totalMois }} article{{ totalMois > 1 ? 's' }} publié{{ totalMois > 1 ? 's' }} sur 6 mois</p>
+            </div>
+            <div class="db-barres" role="list">
+                {% for m in publicationsParMois %}
+                    <div class="db-barre" role="listitem" tabindex="0"
+                         aria-label="{{ m.moisComplet|capitalize }} {{ m.annee }} : {{ m.nombre }} article{{ m.nombre > 1 ? 's' }} publié{{ m.nombre > 1 ? 's' }}">
+                        <span class="db-barre__bulle" aria-hidden="true">{{ m.nombre }} article{{ m.nombre > 1 ? 's' }}<br><span>{{ m.moisComplet }} {{ m.annee }}</span></span>
+                        <span class="db-barre__piste" aria-hidden="true">
+                            {% set hauteur = m.nombre ? max(4, (m.nombre / maxMois * 100)|round) : 0 %}
+                            <span class="db-barre__valeur{{ loop.last ? ' db-barre__valeur--courant' }}" style="height: {{ hauteur }}%"></span>
+                            {% if loop.last %}<span class="db-barre__etiquette" style="bottom: {{ hauteur }}%">{{ m.nombre }}</span>{% endif %}
+                        </span>
+                        <span class="db-barre__mois" aria-hidden="true">{{ m.mois }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+            {% if totalMois == 0 %}
+                <p class="db-vide">Aucun article publié ces six derniers mois.</p>
+            {% endif %}
+        </section>
+
+        <section class="db-carte" aria-labelledby="db-lus">
+            <div class="db-carte__entete">
+                <h2 id="db-lus" class="db-carte__titre">Les plus lus</h2>
+                <a class="db-lien" href="{{ urls.articles }}">Tous les articles</a>
+            </div>
+            {% set maxVues = max(plusLus|map(a => a.nombreVues)|merge([1])) %}
+            {% if plusLus|length > 0 and maxVues > 0 %}
+                <ol class="db-classement">
+                    {% for article in plusLus %}
+                        <li>
+                            <a href="{{ is_granted('ARTICLE_MODIFIER', article) ? ea_url().unsetAll().setController('App\\Controller\\Admin\\ArticleCrudController').setAction('edit').setEntityId(article.id) : path('actualite_detail', {slug: article.slug}) }}"{% if not is_granted('ARTICLE_MODIFIER', article) %} target="_blank" rel="noopener"{% endif %}>
+                                <span class="db-classement__titre">{{ article.titre }}</span>
+                                <span class="db-classement__valeur">{{ article.nombreVues|nombre_fr }}</span>
+                                <span class="db-classement__piste" aria-hidden="true"><span style="width: {{ max(2, (article.nombreVues / maxVues * 100)|round) }}%"></span></span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ol>
+            {% else %}
+                <p class="db-vide">Pas encore de lectures enregistrées.</p>
+            {% endif %}
+        </section>
     </div>
 
     {# --------------------------------------------------------- Activité #}
-    <div class="tb-colonnes">
-
-        <div class="tb-bloc">
-            <h2>Activité récente</h2>
+    <div class="db-grille db-grille--activite">
+        <section class="db-carte" aria-labelledby="db-recent">
+            <div class="db-carte__entete">
+                <h2 id="db-recent" class="db-carte__titre">{{ is_granted('ROLE_EDITEUR') ? 'Derniers articles modifiés' : 'Mes derniers articles' }}</h2>
+                <a class="db-lien" href="{{ urls.articles }}">Voir tout</a>
+            </div>
             {% if derniersArticles|length > 0 %}
-                <ul class="tb-liste">
+                <ul class="db-liste">
                     {% for article in derniersArticles %}
                         <li>
-                            <span>
-                                <a href="{{ ea_url().setController('App\\Controller\\Admin\\ArticleCrudController').setAction('edit').setEntityId(article.id) }}">
-                                    {{ article.titre|extrait(60) }}
-                                </a>
-                                <span class="badge badge-{{ article.statut.couleur }}" style="margin-left:.4rem">
-                                    {{ article.statut.libelle }}
+                            <a class="db-element" href="{{ ea_url().unsetAll().setController('App\\Controller\\Admin\\ArticleCrudController').setAction('edit').setEntityId(article.id) }}">
+                                {% if article.imageName %}
+                                    <img class="db-element__vignette" src="{{ vich_uploader_asset(article, 'imageFile') }}" alt="" loading="lazy">
+                                {% else %}
+                                    <span class="db-element__vignette db-element__vignette--vide" aria-hidden="true"><i class="fa-solid fa-newspaper"></i></span>
+                                {% endif %}
+                                <span class="db-element__corps">
+                                    <span class="db-element__titre">{{ article.titre }}</span>
+                                    <span class="db-element__meta">
+                                        <span class="badge badge-{{ article.statut.couleur }}">{{ article.statut.libelle }}</span>
+                                        {{ (article.updatedAt ?: article.datePublication)|date_fr }}
+                                    </span>
                                 </span>
-                            </span>
-                            <span class="tb-meta">
-                                {{ (article.updatedAt ?: article.datePublication)|date('d/m/Y') }}
-                            </span>
+                            </a>
                         </li>
                     {% endfor %}
                 </ul>
             {% else %}
-                <p class="tb-vide">Aucun article pour le moment.</p>
+                <p class="db-vide">Aucun article pour le moment.</p>
             {% endif %}
-        </div>
+        </section>
 
-        <div class="tb-bloc">
-            <h2>Derniers messages reçus</h2>
-            {% if derniersMessages|length > 0 %}
-                <ul class="tb-liste">
-                    {% for message in derniersMessages %}
-                        <li>
-                            <span>
-                                <a href="{{ ea_url().setController('App\\Controller\\Admin\\MessageContactCrudController').setAction('detail').setEntityId(message.id) }}">
-                                    {{ message.sujet|extrait(50) }}
-                                </a>
-                                <span class="tb-sous-ligne">
-                                    {{ message.nomComplet }}{% if not message.lu %} · <strong class="tb-alerte">Non lu</strong>{% endif %}
-                                </span>
-                            </span>
-                            <span class="tb-meta">{{ message.createdAt|date('d/m/Y') }}</span>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p class="tb-vide">Aucun message reçu.</p>
-            {% endif %}
-        </div>
-
-        <div class="tb-bloc">
-            <h2>Prochains événements</h2>
+        <section class="db-carte" aria-labelledby="db-agenda">
+            <div class="db-carte__entete">
+                <h2 id="db-agenda" class="db-carte__titre">Prochains événements</h2>
+                {% if urls.nouvelEvenement %}<a class="db-lien" href="{{ urls.evenements }}">Agenda</a>{% endif %}
+            </div>
             {% if prochainsEvenements|length > 0 %}
-                <ul class="tb-liste">
+                <ul class="db-liste">
                     {% for evenement in prochainsEvenements %}
                         <li>
-                            <span>
-                                <a href="{{ ea_url().setController('App\\Controller\\Admin\\EvenementCrudController').setAction('edit').setEntityId(evenement.id) }}">
-                                    {{ evenement.titre|extrait(55) }}
-                                </a>
-                                <span class="tb-sous-ligne">{{ evenement.lieu }}</span>
-                            </span>
-                            <span class="tb-meta">{{ evenement.dateDebut|date('d/m/Y') }}</span>
+                            {% set contenu %}
+                                <span class="db-calendrier" aria-hidden="true">
+                                    <span class="db-calendrier__jour">{{ evenement.dateDebut|date('d') }}</span>
+                                    <span class="db-calendrier__mois">{{ evenement.dateDebut|mois_court }}</span>
+                                </span>
+                                <span class="db-element__corps">
+                                    <span class="db-element__titre">{{ evenement.titre }}</span>
+                                    <span class="db-element__meta">
+                                        <span class="sr-only">{{ evenement.dateDebut|date_fr }} · </span>
+                                        {% if evenement.lieu %}<i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ evenement.lieu }}{% endif %}
+                                    </span>
+                                </span>
+                            {% endset %}
+                            {% if urls.nouvelEvenement %}
+                                <a class="db-element" href="{{ ea_url().unsetAll().setController('App\\Controller\\Admin\\EvenementCrudController').setAction('edit').setEntityId(evenement.id) }}">{{ contenu }}</a>
+                            {% else %}
+                                <div class="db-element">{{ contenu }}</div>
+                            {% endif %}
                         </li>
                     {% endfor %}
                 </ul>
             {% else %}
-                <p class="tb-vide">Aucun événement programmé.</p>
+                <p class="db-vide">Aucun événement programmé.</p>
             {% endif %}
-        </div>
+        </section>
 
+        {% if gestion %}
+            <section class="db-carte" aria-labelledby="db-messages">
+                <div class="db-carte__entete">
+                    <h2 id="db-messages" class="db-carte__titre">Derniers messages</h2>
+                    <a class="db-lien" href="{{ urls.messages }}">Boîte de réception</a>
+                </div>
+                {% if derniersMessages|length > 0 %}
+                    <ul class="db-liste">
+                        {% for message in derniersMessages %}
+                            <li>
+                                <a class="db-element" href="{{ ea_url().unsetAll().setController('App\\Controller\\Admin\\MessageContactCrudController').setAction('detail').setEntityId(message.id) }}">
+                                    <span class="db-avatar" aria-hidden="true">{{ message.nomComplet|first|upper }}</span>
+                                    <span class="db-element__corps">
+                                        <span class="db-element__titre">
+                                            {% if not message.lu %}<span class="db-pastille" title="Non lu"></span><span class="sr-only">Non lu : </span>{% endif %}
+                                            {{ message.sujet }}
+                                        </span>
+                                        <span class="db-element__meta">{{ message.nomComplet }} · {{ message.createdAt|date_fr }}</span>
+                                    </span>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="db-vide db-vide--illustre">
+                        <i class="fa-solid fa-inbox" aria-hidden="true"></i>
+                        <p>Aucun message reçu pour l'instant.</p>
+                    </div>
+                {% endif %}
+            </section>
+        {% endif %}
     </div>
+
+    {# ------------------------------------------------------- Inventaire #}
+    {% if inventaire|length > 0 %}
+        <section aria-labelledby="db-inventaire" class="db-section">
+            <h2 id="db-inventaire" class="db-section__titre">Contenus du site</h2>
+            <div class="db-inventaire">
+                {% for item in inventaire %}
+                    <a class="db-inventaire__item" href="{{ item.url }}">
+                        <i class="{{ item.icone }}" aria-hidden="true"></i>
+                        <span class="db-inventaire__nombre">{{ item.nombre }}</span>
+                        <span class="db-inventaire__libelle">{{ item.libelle }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+</div>
 {% endblock %}

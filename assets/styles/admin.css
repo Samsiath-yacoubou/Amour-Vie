@@ -209,3 +209,378 @@ body {
 
 /* « × » de retrait dans les sélections multiples (TomSelect) : 4,35:1 → 7:1. */
 .ea-light-scheme .ts-wrapper .item .remove { color: #4f5b6a; }
+
+/* =========================================================================
+   Tableau de bord (templates/admin/tableau_de_bord.html.twig) — préfixe .db-
+   Hiérarchie : en-tête et actions → « À traiter » → chiffres clés →
+   graphiques → activité → inventaire. Couleurs : jetons --av-* ci-dessus,
+   plus ceux propres au tableau de bord (clair puis sombre).
+   ========================================================================= */
+
+:root {
+    --db-fond-page: #f6f7f9;
+    --db-ombre: 0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.06);
+    --db-barre: #d0102a;            /* validé : contraste ≥ 3:1, bande de clarté OK */
+    --db-barre-passee: #e98a97;
+    --db-piste: #f0f2f5;
+    --db-active-fond: #fff4f5;
+    --db-active-bordure: #f5c2c9;
+    --db-active-icone-fond: #e3001b;
+    --db-active-texte: #9d0016;     /* 8,3:1 sur le fond rosé */
+    --db-calme-icone-fond: #eef1f5;
+    --db-ok: #13795b;               /* 5,6:1 */
+}
+
+.ea-dark-scheme {
+    --db-fond-page: var(--body-bg);
+    --db-ombre: 0 0 0 1px rgb(255 255 255 / 0.02);
+    --db-barre: #f2566b;            /* validé sur surface sombre */
+    --db-barre-passee: #8c3b47;
+    --db-piste: color-mix(in oklab, #fff 8%, var(--body-bg));
+    --db-active-fond: color-mix(in oklab, #e3001b 14%, var(--body-bg));
+    --db-active-bordure: color-mix(in oklab, #e3001b 40%, var(--body-bg));
+    --db-active-icone-fond: #e3001b;
+    --db-active-texte: #ffb3bd;
+    --db-calme-icone-fond: color-mix(in oklab, #fff 10%, var(--body-bg));
+    --db-ok: #5fd3a6;
+}
+
+.db { display: grid; gap: 1.75rem; max-width: 1400px; color: var(--av-texte); }
+
+/* En-tête ---------------------------------------------------------------- */
+.db-entete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding-top: 0.25rem;
+}
+.db-date {
+    margin: 0 0 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--av-texte-discret);
+}
+.db-titre { margin: 0; font-size: 1.85rem; font-weight: 700; letter-spacing: -0.02em; color: var(--av-texte); }
+.db-sous-titre { margin: 0.35rem 0 0; color: var(--av-texte-doux); }
+.db-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.db-actions .btn { display: inline-flex; align-items: center; gap: 0.45rem; font-weight: 600; }
+
+/* Sections ---------------------------------------------------------------- */
+.db-section { display: grid; gap: 0.85rem; }
+.db-section__titre {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--av-texte-discret);
+}
+
+/* À traiter --------------------------------------------------------------- */
+.db-taches { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.85rem; }
+.db-tache {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.9rem 0.9rem;
+    padding: 1.1rem 1.15rem;
+    border-radius: 14px;
+    border: 1px solid var(--av-carte-bordure);
+    background: var(--av-carte);
+    box-shadow: var(--db-ombre);
+    color: var(--av-texte);
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.db-tache:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgb(16 24 40 / 0.08); color: var(--av-texte); }
+.db-tache:focus-visible { outline: 3px solid var(--db-barre); outline-offset: 2px; }
+.db-tache__icone {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--db-calme-icone-fond);
+    color: var(--av-texte-doux);
+    font-size: 1.05rem;
+}
+.db-tache__corps { display: grid; align-content: center; }
+.db-tache__nombre { font-size: 1.6rem; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; }
+.db-tache__libelle { font-size: 0.88rem; color: var(--av-texte-doux); }
+.db-tache__etat {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--av-separateur);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--av-texte-discret);
+}
+.db-tache--active { background: var(--db-active-fond); border-color: var(--db-active-bordure); }
+.db-tache--active .db-tache__icone { background: var(--db-active-icone-fond); color: #fff; }
+.db-tache--active .db-tache__etat { color: var(--db-active-texte); border-top-color: var(--db-active-bordure); }
+.db-tache--active .db-tache__etat i { transition: transform 0.15s ease; }
+.db-tache--active:hover .db-tache__etat i { transform: translateX(3px); }
+.db-tache--calme .db-tache__nombre { color: var(--av-texte-doux); }
+.db-tache--calme .db-tache__etat { color: var(--db-ok); }
+.db-tache--calme:has(.fa-arrow-right) .db-tache__etat { color: var(--av-texte-doux); }
+
+/* Chiffres clés ----------------------------------------------------------- */
+.db-cles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    border: 1px solid var(--av-carte-bordure);
+    border-radius: 14px;
+    background: var(--av-carte);
+    box-shadow: var(--db-ombre);
+    overflow: hidden;
+}
+.db-cle { padding: 1.25rem 1.4rem; border-right: 1px solid var(--av-separateur); }
+.db-cle:last-child { border-right: 0; }
+.db-cle__libelle {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--av-texte-doux);
+}
+.db-cle__libelle i { color: var(--av-texte-discret); }
+.db-cle__valeur { margin: 0.55rem 0 0.2rem; font-size: 2rem; font-weight: 700; line-height: 1; letter-spacing: -0.03em; color: var(--av-texte); }
+.db-cle__detail { margin: 0; font-size: 0.82rem; color: var(--av-texte-discret); }
+
+/* Cartes ------------------------------------------------------------------ */
+.db-grille { display: grid; gap: 1.25rem; align-items: start; }
+.db-grille--graphiques { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+.db-grille--activite { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.db-carte {
+    padding: 1.25rem 1.4rem 1.35rem;
+    border: 1px solid var(--av-carte-bordure);
+    border-radius: 14px;
+    background: var(--av-carte);
+    box-shadow: var(--db-ombre);
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.db-carte__entete { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: 1.1rem; }
+.db-carte__titre { margin: 0; font-size: 1rem; font-weight: 700; color: var(--av-texte); }
+.db-carte__resume { margin: 0; font-size: 0.82rem; color: var(--av-texte-discret); }
+.db-lien { font-size: 0.84rem; font-weight: 600; color: var(--av-texte-doux); text-decoration: none; white-space: nowrap; }
+.db-lien:hover { color: var(--av-lien-survol); text-decoration: underline; }
+.db-vide { margin: 0; padding: 1rem 0; font-size: 0.9rem; color: var(--av-texte-discret); }
+.db-vide--illustre { flex: 1; display: grid; place-content: center; justify-items: center; gap: 0.5rem; padding: 2rem 0; text-align: center; }
+.db-vide--illustre i { font-size: 1.6rem; color: var(--av-texte-discret); opacity: 0.7; }
+.db-vide--illustre p { margin: 0; }
+
+/* Graphique : publications par mois (une série, une teinte) ---------------- */
+.db-barres {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.75rem;
+    flex: 1;
+    min-height: 220px;
+    padding-top: 1.75rem;
+    border-bottom: 1px solid var(--av-separateur);
+}
+.db-barre { position: relative; display: grid; grid-template-rows: 1fr auto; gap: 0.5rem; outline: none; cursor: default; }
+.db-barre__piste { position: relative; display: flex; align-items: flex-end; justify-content: center; }
+.db-barre__valeur {
+    width: min(42px, 70%);
+    border-radius: 4px 4px 0 0;
+    background: var(--db-barre-passee);
+    transition: filter 0.15s ease;
+}
+.db-barre__valeur--courant { position: relative; background: var(--db-barre); }
+/* Seule la barre du mois en cours porte sa valeur : les autres l'affichent au survol. */
+.db-barre__etiquette {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding-bottom: 0.3rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--av-texte);
+}
+.db-barre:hover .db-barre__etiquette, .db-barre:focus-visible .db-barre__etiquette { opacity: 0; }
+.db-barre__mois { text-align: center; font-size: 0.78rem; color: var(--av-texte-discret); padding-bottom: 0.4rem; }
+.db-barre__bulle {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% - 0.25rem);
+    z-index: 2;
+    transform: translate(-50%, 4px);
+    padding: 0.45rem 0.65rem;
+    border-radius: 8px;
+    background: var(--av-texte);
+    color: var(--av-carte);
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.35;
+    text-align: center;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s ease, transform 0.12s ease;
+}
+.db-barre__bulle span { font-weight: 400; opacity: 0.8; }
+.db-barre:hover .db-barre__bulle, .db-barre:focus-visible .db-barre__bulle { opacity: 1; transform: translate(-50%, 0); }
+.db-barre:hover .db-barre__valeur, .db-barre:focus-visible .db-barre__valeur { filter: brightness(0.92); }
+.db-barre:focus-visible .db-barre__piste { outline: 2px solid var(--db-barre); outline-offset: 2px; border-radius: 4px; }
+
+/* Classement : les plus lus ---------------------------------------------- */
+.db-classement { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; counter-reset: rang; }
+.db-classement li { counter-increment: rang; }
+.db-classement a {
+    display: grid;
+    grid-template-columns: 1.4rem minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    column-gap: 0.6rem;
+    row-gap: 0.35rem;
+    padding: 0.5rem 0.4rem;
+    margin-inline: -0.4rem;
+    border-radius: 8px;
+    color: var(--av-texte);
+    text-decoration: none;
+}
+.db-classement a::before {
+    content: counter(rang);
+    grid-row: 1 / 3;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--av-texte-discret);
+    padding-top: 0.1rem;
+}
+.db-classement a:hover { background: var(--db-piste); }
+.db-classement__titre { font-size: 0.88rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.db-classement__valeur { font-size: 0.85rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--av-texte-doux); }
+.db-classement__piste { grid-column: 2 / 4; height: 6px; border-radius: 999px; background: var(--db-piste); overflow: hidden; }
+.db-classement__piste span { display: block; height: 100%; border-radius: 999px; background: var(--db-barre); }
+
+/* Listes d'activité ------------------------------------------------------- */
+.db-liste { list-style: none; margin: 0; padding: 0; display: grid; }
+.db-liste li + li { border-top: 1px solid var(--av-separateur); }
+.db-element {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.7rem 0.4rem;
+    margin-inline: -0.4rem;
+    border-radius: 8px;
+    color: var(--av-texte);
+    text-decoration: none;
+}
+a.db-element:hover { background: var(--db-piste); color: var(--av-texte); }
+.db-element__vignette {
+    flex: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    object-fit: cover;
+    background: var(--db-calme-icone-fond);
+}
+.db-element__vignette--vide { display: grid; place-items: center; color: var(--av-texte-discret); }
+.db-element__corps { display: grid; gap: 0.25rem; min-width: 0; }
+.db-element__titre {
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.db-element__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.5rem; font-size: 0.8rem; color: var(--av-texte-discret); }
+.db-element__meta .badge { font-size: 0.72rem; }
+
+.db-calendrier {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 52px;
+    border-radius: 10px;
+    border: 1px solid var(--av-carte-bordure);
+    background: var(--av-carte);
+    overflow: hidden;
+    line-height: 1;
+}
+.db-calendrier__jour { font-size: 1.2rem; font-weight: 700; padding-top: 0.35rem; }
+.db-calendrier__mois {
+    align-self: stretch;
+    justify-self: stretch;
+    display: grid;
+    place-items: center;
+    background: var(--db-active-icone-fond);
+    color: #fff;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.db-avatar {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--db-calme-icone-fond);
+    color: var(--av-texte-doux);
+    font-weight: 700;
+}
+.db-pastille { display: inline-block; width: 8px; height: 8px; margin-right: 0.35rem; border-radius: 50%; background: var(--db-barre); vertical-align: middle; }
+
+/* Inventaire -------------------------------------------------------------- */
+.db-inventaire { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0.6rem; }
+.db-inventaire__item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 0.7rem;
+    padding: 0.75rem 0.9rem;
+    border-radius: 12px;
+    border: 1px solid var(--av-carte-bordure);
+    background: var(--av-carte);
+    color: var(--av-texte);
+    text-decoration: none;
+}
+.db-inventaire__item:hover { border-color: var(--db-active-bordure); color: var(--av-texte); }
+.db-inventaire__item i { grid-row: 1 / 3; color: var(--av-texte-discret); font-size: 1rem; width: 1.2rem; text-align: center; }
+.db-inventaire__nombre { font-size: 1.15rem; font-weight: 700; line-height: 1.1; }
+.db-inventaire__libelle { font-size: 0.8rem; color: var(--av-texte-doux); }
+
+@media (max-width: 1100px) {
+    .db-grille--graphiques { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+    .db { gap: 1.25rem; }
+    .db-titre { font-size: 1.5rem; }
+    .db-actions .btn { flex: 1 1 auto; justify-content: center; }
+
+    /* Deux cartes « À traiter » par ligne, sans pied : la carte entière est le lien. */
+    .db-taches { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+    .db-tache { grid-template-columns: 1fr; gap: 0.6rem; padding: 0.9rem; }
+    .db-tache__icone { width: 36px; height: 36px; font-size: 0.95rem; }
+    .db-tache__libelle { font-size: 0.8rem; line-height: 1.3; }
+    .db-tache__etat { padding-top: 0.55rem; font-size: 0.78rem; }
+
+    /* Chiffres clés en grille 2 × 2. */
+    .db-cles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .db-cle { padding: 1rem; border-right: 1px solid var(--av-separateur); border-bottom: 1px solid var(--av-separateur); }
+    .db-cle:nth-child(2n) { border-right: 0; }
+    .db-cle:nth-last-child(-n + 2) { border-bottom: 0; }
+    .db-cle__valeur { font-size: 1.6rem; }
+
+    .db-carte__entete { flex-wrap: wrap; }
+    .db-barres { min-height: 180px; gap: 0.4rem; }
+    .db-inventaire { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
